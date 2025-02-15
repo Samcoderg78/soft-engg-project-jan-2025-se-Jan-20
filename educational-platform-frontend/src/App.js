@@ -9,6 +9,8 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import QuizDashboard from "./components/QuizDashboard"; // Import QuizDashboard
 import GradedAssignment from "./components/Student__GradedAssignment"
+import StudentDashboard from "./components/StudentDashboard/Dashboard"
+import StudentCourses from "./components/StudentCourses/Courses"
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<QuizDashboard />} />
         <Route path="/assignment" element={<GradedAssignment />} />
+        <Route path="/student-dashboard" element={<StudentDashboard />} />
+        <Route path="/student-courses" element={<StudentCourses />} />
       </Routes>
     </Router>
   );
