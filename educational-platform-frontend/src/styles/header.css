@@ -1,0 +1,41 @@
+/* Header Styling */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 16px 24px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  /* Left Side: Logo & Title */
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .logo-placeholder {
+    width: 40px;
+    height: 40px;
+    background-color: #d1d5db; /* Gray placeholder */
+    border-radius: 50%;
+  }
+  
+  /* Title */
+  .header-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #374151;
+  }
+  
+  /* Right Side: Email */
+  .header-email {
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
