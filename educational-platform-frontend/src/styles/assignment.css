@@ -1,0 +1,5 @@
+.assignment, .suggestion {
+    height: 100vh;
+    overflow-y: auto !important;
+    background-color: white;
+  }

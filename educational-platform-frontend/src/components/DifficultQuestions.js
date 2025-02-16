@@ -22,7 +22,7 @@ const DifficultQuestions = () => {
   },
 ]
   return (
-    <div>
+    <div className="assignment">
       <div className="container mt-5 text-center">
         <h2>Difficult Questions</h2>
       </div>

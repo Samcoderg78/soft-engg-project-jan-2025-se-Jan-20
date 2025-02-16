@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "./../styles/assignment.css"
 
 const GradedAssignment = () => {
 
@@ -26,7 +27,7 @@ const GradedAssignment = () => {
   }
 
   return (
-    <div>
+    <div className="assignment">
       <div className="container mt-5 text-center">
         <h2>Graded Assignment { ga.ga_id }</h2>
         <p>Deadline : { ga.deadline }</p>

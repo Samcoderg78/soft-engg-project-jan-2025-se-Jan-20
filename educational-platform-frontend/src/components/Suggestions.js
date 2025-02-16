@@ -6,14 +6,14 @@ const Suggestions = () => {
   const data = location.state;
 
   return (
-    <div className="container">
+    <div className="suggestion">
       <div className="container mt-5 text-center">
       <h2>Suggestions Page</h2>
       </div>
       <div className="container p-0 mb-3 mt-5">
-      <p>{`Question : ${ data.q }`}</p>
-      </div>
+      <h5>{ data.q }</h5>
       <h5>Here are some suggestions based on this question :- </h5>
+      </div>
       <div className="container p-2 mb-3 border rounded">
       <h6 className="text-center">Watch the following lecture</h6>
       <p className="text-center"><a href="/link">Video link</a></p>
