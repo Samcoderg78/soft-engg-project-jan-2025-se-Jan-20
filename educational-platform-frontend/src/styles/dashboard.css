@@ -1,0 +1,574 @@
+/* General Layout */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif; /* Consistent font */
+  background-color: #f5f5f5;
+  height: 100vh;
+  overflow: hidden; /* Prevent unwanted scrolling */
+}
+
+.h-screen {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Layout */
+.layout {
+  display: flex;
+  flex: 1;
+  min-height: 100vh;
+  overflow: hidden; /* Prevent scrolling */
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #1f2937;
+  color: white;
+  padding: 20px;
+  position: fixed;
+  left: 0;
+  top: 64px; /* Below header */
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 5; /* Keeps it below the header */
+}
+
+/* Header */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 64px;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10; /* Keeps it above the sidebar */
+}
+
+/* Main Content */
+main {
+  flex: 1;
+  margin-left: 250px; /* Adjust for sidebar */
+  padding: 24px;
+  background-color: #f3f4f6;
+  overflow-y: auto;
+  padding-top: 64px; /* Prevents header overlap */
+  height: calc(100vh - 64px);
+}
+
+/* Profile Section */
+/* Profile Section - Modern Design */
+.profile-section {
+  background: linear-gradient(135deg, #4724b2, #311a91); /* Gradient for depth */
+  height: 160px;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 50px;
+  color: white; /* Ensures text is visible */
+}
+
+/* Profile Info */
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Profile Picture */
+.profile-picture {
+  width: 60px;
+  height: 60px;
+  background-color: #cbd5e1; /* Light Gray */
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0px 2px 6px rgba(255, 255, 255, 0.2);
+}
+
+/* Profile Name */
+.profile-name {
+  font-size: 1.4rem;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: #ffffff; /* White for contrast */
+}
+
+/* Profile ID */
+.profile-id {
+  font-size: 0.95rem;
+  color: #f3f4f6; /* Light text */
+}
+
+/* Beautiful "Edit Profile" Button */
+.edit-profile-btn {
+  background: linear-gradient(135deg, #ff5722, #e64a19);
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 8px rgba(255, 87, 34, 0.3);
+}
+
+/* Hover Effect */
+.edit-profile-btn:hover {
+  background: linear-gradient(135deg, #e64a19, #bf360c);
+  box-shadow: 0 6px 12px rgba(255, 87, 34, 0.5);
+  transform: scale(1.05);
+}
+
+/* Click Effect */
+.edit-profile-btn:active {
+  background: linear-gradient(135deg, #bf360c, #8e2407);
+  box-shadow: 0 2px 5px rgba(255, 87, 34, 0.3);
+  transform: scale(1);
+}
+
+
+/* Parent container to hold both sections */
+/* Container for both sections */
+.progress-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 900px; /* Centered width */
+  margin: 40px auto;
+  gap: 20px; /* Space between the boxes */
+}
+
+/* Weekly Progress & Activity Streak sections */
+.weekly-progress, .activity-streak {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Make both cards equal size */
+.progress-card, .streak-card {
+  width: 100%;
+  max-width: 400px; /* Fixed width */
+  height: 200px; /* Fixed height */
+  padding: 24px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Text styling */
+.progress-card p, .streak-card p {
+  margin: 6px 0;
+  color: #444;
+  font-size: 16px;
+}
+
+/* Detail Button Styling */
+/* Detail Button Styling */
+.progress-card .detail-button {
+  margin-top: 15px;
+  padding: 12px 18px;
+  font-size: 16px;
+  color: #fff;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.progress-card .detail-button:hover {
+  background: linear-gradient(135deg, #0056b3, #004095);
+  box-shadow: 0 6px 10px rgba(0, 123, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.progress-card .detail-button:active {
+  background: linear-gradient(135deg, #004095, #003377);
+  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
+  transform: translateY(0);
+}
+
+/* Beautiful "Details" Button */
+/* Beautiful "Details" Button */
+.details-button {
+  margin-top: 15px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff !important;  /* Force white text */
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Hover Effect */
+.details-button:hover {
+  background: linear-gradient(135deg, #0056b3, #004095);
+  box-shadow: 0 6px 10px rgba(0, 123, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Click (Active) Effect */
+.details-button:active {
+  background: linear-gradient(135deg, #004095, #003377);
+  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
+  transform: translateY(0);
+}
+
+
+
+
+.streak-card span {
+  color: #28a745;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+/* AI Assistance Section */
+/* AI Assistance Section */
+.ai-assistance-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 40px;
+  background-color: #1e3a8a; /* Dark Blue */
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.ai-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.ai-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  color: black;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+  cursor: pointer; /* Makes the cursor a hand when hovering */
+  transition: transform 0.2s ease-in-out;
+}
+
+.ai-label {
+  background-color: #f59e0b; /* Yellow */
+  color: black;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.ai-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.ai-image {
+  font-size: 40px;
+  background-color: #f3f4f6;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.ai-text {
+  text-align: left;
+}
+
+.ai-category {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1e3a8a;
+}
+
+.ai-description {
+  font-size: 16px;
+  color: #555;
+}
+
+
+
+.ai-box:hover {
+  transform: scale(1.05);
+}
+
+/* Notes & Marked Questions Section */
+.notes-marked-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Adjusted to remove extra vertical space */
+  /* height: 100vh; */
+  width: 100%;
+  background-color: #f9fafb;
+  padding: 10px 0; /* Reduced padding */
+  box-sizing: border-box;
+}
+
+.notes-marked-container h2 {
+  font-size: 22px;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 15px; /* Reduced space below heading */
+  text-align: center;
+}
+
+.notes-card,
+.marked-questions-card {
+  flex: 1;
+  width: 100%;
+  max-width: 400px; /* Match progress-card width */
+  height: 200px; /* Match progress-card height */
+  padding: 24px; /* Match progress-card padding */
+  background: white;
+  border-radius: 12px; /* Match progress-card border-radius */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Align content properly */
+  align-items: center;
+}
+
+.notes-content {
+  display: flex;
+  gap: 20px; /* Match progress-container gap */
+  width: 100%;
+  max-width: 900px; /* Match progress-container width */
+  justify-content: space-between;
+  align-items: center; /* Center align like progress-container */
+}
+
+
+.notes-card p,
+.marked-questions-card p {
+  margin: 4px 0; /* Reduced margin */
+  color: #444;
+  font-size: 14px;
+}
+
+.notes-card button,
+.marked-questions-card button {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #007bff;
+  font-weight: bold;
+}
+
+/* Centering the blue box */
+.feedback-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* Blue Box (Matching AI Section Width) */
+.blue-box {
+  background-color: #007bff; /* Blue background */
+  color: white;
+  
+  border-radius: 12px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 40px;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Feedback Panel inside the blue box */
+.feedback-panel {
+  background-color: white; /* White background for contrast */
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px; /* Keep it slightly smaller inside the box */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: black;
+}
+
+/* Feedback Title */
+.feedback-title {
+  font-size: 22px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Feedback Content */
+.feedback-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Label */
+.feedback-label {
+  font-weight: bold;
+}
+
+/* Input Field */
+.feedback-input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 100%;
+}
+
+/* Submit Button */
+.feedback-submit {
+  background-color: #28a745; /* Green button */
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.feedback-submit:hover {
+  background-color: #218838;
+}
+
+/* Static Live Support Footer */
+/* Full-Screen Live Support Section */
+.live-support {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(135deg, #8800ff, #5f00b3); /* Blue gradient */
+  color: white;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+/* Support Content */
+.support-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Support Info */
+.support-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Support Icon */
+.support-icon img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: white;
+  padding: 5px;
+}
+
+/* Support Text */
+.support-text h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.support-text p {
+  margin: 5px 0;
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* Badges */
+.badges {
+  margin-top: 5px;
+}
+
+.badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 5px;
+  margin-right: 5px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+/* Chat Button */
+.chat-button {
+  background: white;
+  color: #8c00ff;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.chat-button:hover {
+  background: #ffcc00;
+  color: black;
+}
+
+

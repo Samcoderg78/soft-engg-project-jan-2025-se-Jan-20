@@ -1,0 +1,88 @@
+/* Course Card Styles */
+.course-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    max-width: 350px;
+    width: 100%;
+    transition: transform 0.2s ease-in-out;
+    text-align: center;
+    padding-bottom: 1rem;
+  }
+  
+  .course-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Course Image */
+  .course-image {
+    width: 100%;
+    height: 180px;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .course-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .placeholder {
+    width: 100%;
+    height: 100%;
+    background: #ddd;
+  }
+  
+  /* Course Content */
+  .course-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .course-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+  
+  .course-description {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 0.8rem;
+    line-height: 1.4;
+  }
+  
+  /* Tags */
+  .course-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 0.8rem;
+  }
+  
+  .tag {
+    background: #4A90E2;
+    color: white;
+    font-size: 0.85rem;
+    padding: 5px 10px;
+    border-radius: 6px;
+  }
+  
+  /* Footer */
+  .course-footer {
+    font-size: 1rem;
+    color: #444;
+    font-weight: 500;
+  }
+  
