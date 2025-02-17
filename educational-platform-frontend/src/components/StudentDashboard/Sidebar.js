@@ -25,7 +25,7 @@ const Sidebar = () => {
         </li>
         <li>
           <NavLink
-            to="/assignment"
+            to="/deadlines-reminders"
             className={({ isActive }) => (isActive ? "sidebar-item active" : "sidebar-item")}
           >
             Deadlines & Reminders
