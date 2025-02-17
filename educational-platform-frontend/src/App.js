@@ -11,8 +11,6 @@ import QuizDashboard from "./components/QuizDashboard"; // Import QuizDashboard
 import GradedAssignment from "./components/Student__GradedAssignment"
 import StudentDashboard from "./components/StudentDashboard/Dashboard"
 import StudentCourses from "./components/StudentCourses/Courses"
-import DeadlinesReminders from "./components/StudentDeadlines&Reminders/Deadlines&Reminders"
-import AIAssistancePage from "./components/AIAssistance/AIAssistancePage";
 
 function App() {
   return (
@@ -25,8 +23,6 @@ function App() {
         <Route path="/assignment" element={<GradedAssignment />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-courses" element={<StudentCourses />} />
-        <Route path="/deadlines-reminders" element={<DeadlinesReminders />} />
-        <Route path="/ai-assistance" element={<AIAssistancePage />} />
       </Routes>
     </Router>
   );
