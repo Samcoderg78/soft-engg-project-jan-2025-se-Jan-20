@@ -12,6 +12,8 @@ import GradedAssignment from "./components/Student__GradedAssignment"
 import StudentDashboard from "./components/StudentDashboard/Dashboard"
 import StudentCourses from "./components/StudentCourses/Courses"
 import My_Course from "./components/My_Courses/Lectures"
+import DeadlinesReminders from "./components/StudentDeadlines&Reminders/Deadlines&Reminders"
+import AIAssistancePage from "./components/AIAssistance/AIAssistancePage";
 function App() {
   return (
     <Router>
@@ -24,6 +26,8 @@ function App() {
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-courses" element={<StudentCourses />} />
         <Route path="/my-course" element={<My_Course />} />
+        <Route path="/deadlines-reminders" element={<DeadlinesReminders />} />
+        <Route path="/ai-assistance" element={<AIAssistancePage />} />
       </Routes>
     </Router>
   );
