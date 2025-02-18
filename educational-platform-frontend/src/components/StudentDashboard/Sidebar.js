@@ -31,14 +31,14 @@ const Sidebar = () => {
             Deadlines & Reminders
           </NavLink>
         </li>
-        <li>
+        {/* <li>
           <NavLink
             to="/activity-tracker"
             className={({ isActive }) => (isActive ? "sidebar-item active" : "sidebar-item")}
           >
             Activity Streak & Progress Tracker
           </NavLink>
-        </li>
+        </li> */}
         <li>
           <NavLink
             to="/ai-assistance"
