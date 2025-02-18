@@ -7,8 +7,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from "./components/Home"; //Importing home page here
 import Login from "./components/Login";
 import Register from "./components/Register";
+import QuizDashboard from "./components/QuizDashboard"; // Import QuizDashboard
+import Suggestions from "./components/My_Courses/Suggestions";
+import DifficultQuestions from "./components/My_Courses/DifficultQuestions";
+import StudentDashboard from "./components/StudentDashboard/Dashboard"
+import StudentCourses from "./components/StudentCourses/Courses"
+import My_Course from "./components/My_Courses/Lectures"
+import DeadlinesReminders from "./components/StudentDeadlines&Reminders/Deadlines&Reminders"
+import AIAssistance from "./components/AIAssistance/AIAssistancePage"
 import QuizPerformanceReview from "./components/QuizDashboard/QuizPerformanceRiview"; // Import QuizDashboard
-import GradedAssignment from "./components/Student__GradedAssignment";
 import StudentDashboard from "./components/StudentDashboard/Dashboard";
 import StudentCourses from "./components/StudentCourses/Courses";
 import My_Course from "./components/My_Courses/Lectures";
@@ -26,6 +33,9 @@ function App() {
       <Route path="/" element={<Home />} /> {/* Default Home page */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<QuizDashboard />} />
+        <Route path="/suggestions" element={<Suggestions />} />
+        <Route path="/difficult-questions" element={<DifficultQuestions />} />
         <Route path="/quiz-dashboard" element={<QuizPerformanceReview />} />
         <Route path="/weeky-performance" element={<WeeklyPerformance />} />
         <Route path="/quiz-performance" element={<QuizDifficulty />} />
