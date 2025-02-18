@@ -3,6 +3,7 @@ import Sidebar from './Sidebar'; // Import Sidebar
 import Topbar from './Topbar'; // Import Topbar
 import GradedAssignment from './Student__GradedAssignment';
 import './Lectures.css'; // Import the CSS file
+import GradedAssignment from './Student__GradedAssignment'
 
 const Lecture1 = () => {
   const courseName = "Software Engineering"; // Course name for TopBar
@@ -60,7 +61,11 @@ const Lecture1 = () => {
       case "Lecture 2":
         return <div><h3>Lecture 2 Content Goes Here</h3></div>;
       case "Graded Assignment":
+
         return <GradedAssignment />;
+
+        return <div><GradedAssignment/></div>;
+
       case "Programming Assignment":
         return <div><h3>Programming Assignment Content</h3></div>;
       default:
