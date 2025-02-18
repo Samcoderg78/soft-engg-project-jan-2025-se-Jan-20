@@ -13,7 +13,9 @@ import Suggestions from "./components/Suggestions";
 import DifficultQuestions from "./components/DifficultQuestions";
 import StudentDashboard from "./components/StudentDashboard/Dashboard"
 import StudentCourses from "./components/StudentCourses/Courses"
-
+import My_Course from "./components/My_Courses/Lectures"
+import DeadlinesReminders from "./components/StudentDeadlines&Reminders/Deadlines&Reminders"
+import AIAssistance from "./components/AIAssistance/AIAssistancePage"
 function App() {
   return (
     <Router>
@@ -27,6 +29,9 @@ function App() {
         <Route path="/difficult-questions" element={<DifficultQuestions />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-courses" element={<StudentCourses />} />
+        <Route path="/my-course" element={<My_Course />} />
+        <Route path="/deadlines-reminders" element={<DeadlinesReminders />} />
+        <Route path="/ai-assistance" element={<AIAssistance />} />
       </Routes>
     </Router>
   );
