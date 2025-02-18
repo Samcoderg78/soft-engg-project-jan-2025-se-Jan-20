@@ -13,7 +13,7 @@ const Login = () => {
     // Dummy authentication check (Replace with backend auth)
     if (email === "test@example.com" && password === "password") {
       alert("Login successful!");
-      navigate("/dashboard"); // Redirect to Dashboard
+      navigate("/quiz-dashboard"); // Redirect to Dashboard
     } else {
       alert("Invalid credentials");
     }
