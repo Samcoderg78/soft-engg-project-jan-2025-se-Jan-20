@@ -7,7 +7,7 @@ function Sidebar() {
     { to: '/quiz-scores', icon: '📚', text: 'Review Quiz scores', active: false },
     { to: '/quiz-performance', icon: '📅', text: 'Review Quiz Performance', active: true },
     { to: '/weeky-performance', icon: '🎯', text: 'Weekly Perforamce', active: false },
-    { to: '/Ai-assistance', icon: '🤖', text: 'AI Assistance', active: false },
+    { to: '/ai-instructor', icon: '🤖', text: 'AI Assistance', active: false },
   ];
 
   return (
