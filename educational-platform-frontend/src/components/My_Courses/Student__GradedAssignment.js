@@ -1,12 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./../styles/assignment.css"
+import "../../styles/assignment.css"
 
 const GradedAssignment = () => {
 
   const ga = {
-    ga_id : 5,
-    deadline : "16 Feb, 2025"
+    ga_id : 1,
+    deadline : "26 Jan, 2025"
   }
   const Questions = [
     {Question : 'Question 1 : Select one option from the options below.',

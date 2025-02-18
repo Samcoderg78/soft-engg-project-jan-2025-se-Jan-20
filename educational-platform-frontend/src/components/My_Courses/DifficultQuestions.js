@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
+import Sidebar from "./Sidebar";
+import Topbar from "./Topbar";
 
 const DifficultQuestions = () => {
 
+  const [activeLecture, setActiveLecture] = useState(null);
+  const courseName = "Software Engineering"; // Course name for TopBar
   const difficultsQuestions = [{
     week : 1,
     Questions : [
@@ -22,7 +26,15 @@ const DifficultQuestions = () => {
   },
 ]
   return (
-    <div className="assignment">
+    <div className="d-flex">
+    {/* Sidebar with setActiveLecture passed as prop */}
+    <Sidebar setActiveLecture={setActiveLecture} />
+
+    <div className="main-content flex-grow-1">
+    {/* Top Bar */}
+    <Topbar courseName={courseName} />
+
+    <div className="assignment difficultqus">
       <div className="container mt-5 text-center">
         <h2>Difficult Questions</h2>
       </div>
@@ -71,6 +83,8 @@ const DifficultQuestions = () => {
     </form>
   </div>
 )}
+    </div>
+    </div>
     </div>
   );
 };

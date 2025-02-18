@@ -1,11 +1,25 @@
-import React from "react";
+import React,{ useState } from "react";
 import { useLocation } from "react-router-dom";
+import Sidebar from "./Sidebar";
+import Topbar from "./Topbar";
 
 const Suggestions = () => {
+
+  const [activeLecture, setActiveLecture] = useState(null);
+  const courseName = "Software Engineering"; // Course name for TopBar
   const location = useLocation();
   const data = location.state;
 
   return (
+    <div className="d-flex">
+    {/* Sidebar with setActiveLecture passed as prop */}
+    <Sidebar setActiveLecture={setActiveLecture} />
+
+    <div className="main-content flex-grow-1">
+    {/* Top Bar */}
+    <Topbar courseName={courseName} />
+
+    
     <div className="suggestion">
       <div className="container mt-5 text-center">
       <h2>Suggestions Page</h2>
@@ -36,6 +50,8 @@ const Suggestions = () => {
       <h6 className="text-center">Important Links</h6>
       <p><a href="/link">Default link</a></p>
       <p><a href="/link">Default link</a></p>
+    </div>
+    </div>
     </div>
     </div>
   );

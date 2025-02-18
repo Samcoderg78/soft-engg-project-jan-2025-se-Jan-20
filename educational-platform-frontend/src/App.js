@@ -8,9 +8,8 @@ import Home from "./components/Home"; //Importing home page here
 import Login from "./components/Login";
 import Register from "./components/Register";
 import QuizDashboard from "./components/QuizDashboard"; // Import QuizDashboard
-import GradedAssignment from "./components/Student__GradedAssignment";
-import Suggestions from "./components/Suggestions";
-import DifficultQuestions from "./components/DifficultQuestions";
+import Suggestions from "./components/My_Courses/Suggestions";
+import DifficultQuestions from "./components/My_Courses/DifficultQuestions";
 import StudentDashboard from "./components/StudentDashboard/Dashboard"
 import StudentCourses from "./components/StudentCourses/Courses"
 import My_Course from "./components/My_Courses/Lectures"
@@ -24,7 +23,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<QuizDashboard />} />
-        <Route path="/assignment" element={<GradedAssignment />} />
         <Route path="/suggestions" element={<Suggestions />} />
         <Route path="/difficult-questions" element={<DifficultQuestions />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
