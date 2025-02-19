@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar'; // Import Sidebar
 import Topbar from './Topbar'; // Import Topbar
+import GradedAssignment from './Student__GradedAssignment';
 import './Lectures.css'; // Import the CSS file
 import { Navigate } from "react-router-dom";
 
 
+import GradedAssignment from './Student__GradedAssignment'
 
 const Lecture1 = () => {
   const courseName = "Software Engineering"; // Course name for TopBar
