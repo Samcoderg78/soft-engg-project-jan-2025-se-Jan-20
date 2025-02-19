@@ -1,5 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Header from './Header';
+import Sidebar from './Sidebar';
 
 function WeeklyPerformance() {
   const weeklyData = [
@@ -11,6 +13,9 @@ function WeeklyPerformance() {
 
   return (
     <div className="container text-center py-5">
+    <Header />
+    <Sidebar />
+
       <h2 className="fw-bold">Weekly Quiz Performance Breakdown</h2>
       <p className="text-muted">Performance breakdown across four weeks</p>
 

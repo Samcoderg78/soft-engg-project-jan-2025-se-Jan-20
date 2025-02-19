@@ -13,7 +13,7 @@ function Header() {
       <h2 className="m-0 flex-grow-1 text-center">Review Quiz Performance</h2>
 
       {/* Native Bootstrap Dropdown */}
-      <div className="dropdown">
+      {/* <div className="dropdown">
         <button className="btn btn-link text-primary fw-bold dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           Select Quiz
         </button>
@@ -22,7 +22,7 @@ function Header() {
           <li><a className="dropdown-item" href="#/quiz2">Quiz 2</a></li>
           <li><a className="dropdown-item" href="#/quiz3">Quiz 3</a></li>
         </ul>
-      </div>
+      </div> */}
     </header>
   );
 }

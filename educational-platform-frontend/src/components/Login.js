@@ -16,7 +16,7 @@ const Login = () => {
       navigate("/student-dashboard"); // Redirect to Student Dashboard
     } else if (email === "instructor@example.com" && password === "password") {
       alert("Login successful!");
-      navigate("/quiz-dashboard"); // Redirect to Quiz Dashboard
+      navigate("/instructor-dashboard"); // Redirect to Quiz Dashboard
     } else {
       alert("Invalid credentials");
     }
