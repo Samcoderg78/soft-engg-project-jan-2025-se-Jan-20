@@ -488,7 +488,8 @@ main {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: linear-gradient(135deg, #8800ff, #5f00b3); /* Blue gradient */
+  /* background: linear-gradient(135deg, #8800ff, #5f00b3);  */
+  background: linear-gradient(135deg, #5c4c8f, #7a5cf2);
   color: white;
   padding: 20px 40px;
   display: flex;

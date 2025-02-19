@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "../../styles/selectDateRange.css";
 
 export default function SelectDateRange({ onApply }) {
   const [startDate, setStartDate] = useState("");
@@ -27,8 +28,11 @@ export default function SelectDateRange({ onApply }) {
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
-          <div className="col-md-2 d-flex align-items-end">
-            <button className="btn btn-primary w-100" onClick={() => onApply(startDate, endDate)}>
+          <div className="apply-btn-container">
+            <button
+              className="btn btn-primary"
+              onClick={() => onApply(startDate, endDate)}
+            >
               Apply Filter
             </button>
           </div>

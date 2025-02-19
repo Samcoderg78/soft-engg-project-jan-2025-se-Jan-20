@@ -1,0 +1,110 @@
+/* Define root variables for easy theming */
+:root {
+    --primary-bg: #6098bd; /* Main background color */
+    --text-color: #ffffff; /* Default text color */
+    --btn-bg: #4a7a99; /* Slightly darker version of background for button */
+    --btn-hover-bg: #3a6a89; /* Even darker for hover */
+}
+
+/* 📆 Date Range Container */
+.date-range-container {
+    width: 100%;
+    max-width: 100%;
+    background: var(--primary-bg);
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    border: none;
+    padding: 10px;
+    transition: all 0.3s ease-in-out;
+    margin: 20px 0;
+    color: var(--text-color);
+}
+
+/* 📌 Card Title */
+.date-range-container .card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 15px;
+    text-align: left;
+    padding-right: 15px;
+}
+
+/* 📅 Labels */
+.date-range-container label {
+    font-weight: 600;
+    color: var(--text-color);
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+}
+
+/* 🖋 Input Fields */
+.date-range-container input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease-in-out;
+    background: #ffffff; /* White background for readability */
+    color: #333;
+}
+
+.date-range-container input:focus {
+    border-color: #007bff;
+    background: #fff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* 🎯 Apply Button */
+.date-range-container .btn-primary {
+    background: var(--btn-bg);
+    border: none;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: all 0.3s ease-in-out;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-color);
+    margin-top: 10px;
+}
+
+.date-range-container .btn-primary:hover {
+    background: var(--btn-hover-bg);
+    transform: scale(1.03);
+    box-shadow: 0 3px 10px rgba(158, 154, 154, 0.2);
+}
+
+/* 🎯 Centered Apply Button */
+.date-range-container .apply-btn-container {
+    display: flex;
+    justify-content: right;
+    margin-top: 20px;
+}
+
+/* 📌 Row Layout */
+.date-range-container .row {
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+/* 🖥️ Responsive Design */
+@media (max-width: 768px) {
+    .date-range-container {
+        padding: 20px;
+    }
+
+    .date-range-container .row {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .date-range-container .col-md-5,
+    .date-range-container .col-md-2 {
+        width: 100%;
+    }
+}
