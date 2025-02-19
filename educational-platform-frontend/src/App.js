@@ -21,7 +21,7 @@ import My_Course from "./components/My_Courses/Lectures";
 import DeadlinesReminders from "./components/StudentDeadlines&Reminders/Deadlines&Reminders";
 import AIAssistance from "./components/AIAssistance/AIAssistancePage";
 
-import WeeklyPerformance from "./components/QuizDashboard/WeeklyPerformance";
+import WeeklyPerformance from "./components/Instructor/WeeklyPerformance";
 import QuizDifficulty from "./components/QuizDashboard/QuizDifficulty";
 import StudentScores from "./components/QuizDashboard/StudentScores";
 import AIAssistanceInstructor from "./components/QuizDashboard/AiAssitantInstructor";
@@ -30,6 +30,8 @@ import ProgrammingAssignment from "./components/My_Courses/Student_ProgrammingAs
 import LecturePage from "./components/My_Courses/Lectures";
 import AssignmentPage from "./components/My_Courses/Student_ProgrammingAssignment";
 import DifficultQuestionsPage from "./components/My_Courses/DifficultQuestions";
+import Dashboard from "./components/Instructor/Dashboard";
+import AIAssistancePageInstructor from "./components/Instructor/AIAssistancePage";
 
 
 function App() {
@@ -42,7 +44,7 @@ function App() {
         <Route path="/suggestions" element={<Suggestions />} />
         <Route path="/difficult-questions" element={<DifficultQuestions />} />
         <Route path="/quiz-dashboard" element={<QuizPerformanceReview />} />
-        <Route path="/weeky-performance" element={<WeeklyPerformance />} />
+        <Route path="/weekly-performance" element={<WeeklyPerformance />} />
         <Route path="/quiz-performance" element={<QuizDifficulty />} />
         <Route path="/quiz-scores" element={<StudentScores />} />
         <Route path="/ai-instructor" element={<AIAssistanceInstructor />} />
@@ -64,6 +66,10 @@ function App() {
         <Route path="/week2/programming-assignment" element={<AssignmentPage />} />
         <Route path="/week2/graded-assignment" element={<GradedAssignment />} />
         <Route path="/difficult-questions" element={<DifficultQuestionsPage />} />
+
+        <Route path="/instructor-dashboard" element={<Dashboard />} />
+        <Route path="/instructor/ai-assistance" element={<AIAssistancePageInstructor />} />
+
       </Routes>
     </Router>
   );
