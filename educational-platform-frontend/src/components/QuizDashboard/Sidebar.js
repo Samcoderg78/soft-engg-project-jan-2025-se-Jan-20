@@ -6,7 +6,7 @@ function Sidebar() {
   const menuItems = [
     // { to: '/quiz-scores', icon: '📚', text: 'Review Quiz scores', active: false },
     // { to: '/quiz-performance', icon: '📅', text: 'Review Quiz Performance', active: true },
-    { to: '/weeky-performance', icon: '🎯', text: 'Weekly Perforamce', active: false },
+    { to: '/weekly-performance', icon: '🎯', text: 'Weekly Perforamce', active: false },
     { to: '/ai-instructor', icon: '🤖', text: 'AI Assistance', active: false },
   ];
 
