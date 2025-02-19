@@ -18,6 +18,7 @@ import WeeklyPerformance from "./components/QuizDashboard/WeeklyPerformance";
 import QuizDifficulty from "./components/QuizDashboard/QuizDifficulty";
 import StudentScores from "./components/QuizDashboard/StudentScores";
 import AIAssistanceInstructor from "./components/QuizDashboard/AiAssitantInstructor";
+import ProgrammingAssignment from "./components/My_Courses/Student_ProgrammingAssignment"
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route path="/my-course" element={<My_Course />} />
         <Route path="/deadlines-reminders" element={<DeadlinesReminders />} />
         <Route path="/ai-assistance" element={<AIAssistance />} />
+        <Route path="/ProgrammingAssignment" element={<ProgrammingAssignment />} />
       </Routes>
     </Router>
   );
