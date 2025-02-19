@@ -27,6 +27,11 @@ import StudentScores from "./components/QuizDashboard/StudentScores";
 import AIAssistanceInstructor from "./components/QuizDashboard/AiAssitantInstructor";
 import ProgrammingAssignment from "./components/My_Courses/Student_ProgrammingAssignment"
 
+import LecturePage from "./components/My_Courses/Lectures";
+import AssignmentPage from "./components/My_Courses/Student_ProgrammingAssignment";
+import DifficultQuestionsPage from "./components/My_Courses/DifficultQuestions";
+
+
 function App() {
   return (
     <Router>
@@ -49,6 +54,16 @@ function App() {
         <Route path="/deadlines-reminders" element={<DeadlinesReminders />} />
         <Route path="/ProgrammingAssignment" element={<ProgrammingAssignment />} />
         <Route path="/ai-assistance" element={<AIAssistancePage />} />
+
+        <Route path="/week1/lecture1" element={<LecturePage />} />
+        <Route path="/week1/lecture2" element={<LecturePage />} />
+        <Route path="/week1/programming-assignment" element={<AssignmentPage />} />
+        <Route path="/week1/graded-assignment" element={<GradedAssignment />} />
+        <Route path="/week2/lecture1" element={<LecturePage />} />
+        <Route path="/week2/lecture2" element={<LecturePage />} />
+        <Route path="/week2/programming-assignment" element={<AssignmentPage />} />
+        <Route path="/week2/graded-assignment" element={<GradedAssignment />} />
+        <Route path="/difficult-questions" element={<DifficultQuestionsPage />} />
       </Routes>
     </Router>
   );

@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Sidebar from "./Sidebar";
+import Topbar from "./Topbar";
+import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 
 const Question = "This is the question and you have to solve it.";
 
@@ -27,15 +30,34 @@ const ProgrammingAssignment = () => {
   };
 
   return (
-    <div className="vh-100 d-flex flex-column">
-      {/* Fixed Header */}
-    {/* <div className="fixed-top bg-white shadow-sm py-3 text-center">
-      <h2>Programming Assignment</h2>
-      <p>Deadline: 09 Feb, 2025</p>
-    </div> */}
+    <div className="container-fluid p-0 vh-100">
+      {/* Topbar */}
+      <Topbar />
 
-      {/* Main Content with Extra Padding */}
-      <div className="flex-grow-1 overflow-auto container py-5 mt-5">
+      {/* Sidebar */}
+      <div style={{ position: "fixed", top: "60px", left: "0", bottom: "0", width: "250px" }}>
+        <Sidebar />
+      </div>
+
+      {/* Fixed Header */}
+      <div
+        className="fixed-top bg-white shadow-sm py-3 text-center"
+        style={{ top: "60px", left: "250px", right: "0" }}
+      >
+        <h2>Programming Assignment</h2>
+        <p>Deadline: 09 Feb, 2025</p>
+      </div>
+
+      {/* Main Content Area */}
+      <div
+        className="p-4"
+        style={{
+          marginLeft: "250px",
+          marginTop: "120px",
+          overflowY: "auto",
+          height: "calc(100vh - 120px)",
+        }}
+      >
         <div className="problem-section border p-4 rounded mb-4">
           <h4>Problem</h4>
           <p>{Question}</p>

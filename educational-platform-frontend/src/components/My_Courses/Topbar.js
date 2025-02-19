@@ -1,14 +1,12 @@
-import React from 'react';
+import React from "react";
+import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 
-const Topbar = ({ courseName }) => {
+const Topbar = () => {
   return (
-    <div className="top-bar">
-      <h1>{courseName}</h1>
-      <div className="user-info">
-        <span>Welcome, User</span>
-        <button>Logout</button>
-      </div>
-    </div>
+    <nav className="navbar navbar-dark bg-dark">
+      <span className="navbar-brand">My Learning Platform</span>
+      <button>Logout</button>
+    </nav>
   );
 };
 

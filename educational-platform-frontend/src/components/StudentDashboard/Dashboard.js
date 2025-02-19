@@ -43,28 +43,23 @@ const Dashboard = () => {
             <button className="edit-profile-btn">Edit Profile</button>
           </section>
 
-          {/* Progress Section */}
-          <section className="progress-container">
-            {/* Weekly Progress Section */}
-            <div className="weekly-progress">
-              <h2 className="progress-title">Weekly Progress</h2>
-              <div className="progress-card">
-                <p className="week-title">Week 1</p>
-                <p className="completion-text">60% completion</p>
-                <button className="details-button">Details</button>
+          {/* Notes & Marked Questions Section */}
+          <section className="notes-marked-container">
+            <h2>Notes & Marked Questions</h2>
+            <div className="notes-content">
+              <div className="notes-card">
+                <p className="text-gray-700 font-semibold">Important Notes</p>
+                <p className="text-gray-500">3 new notes added</p>
+                <button className="details-button">View Notes</button>
               </div>
-            </div>
-
-            {/* Activity Streak Section */}
-            <div className="activity-streak">
-              <h2>Activity Streak</h2>
-              <div className="streak-card">
-                <p className="text-gray-700 font-semibold">Login Streak</p>
-                <p className="text-gray-500">7-day streak</p>
-                <span className="text-green-500 mt-2">🔥 Keep it up!</span>
+              <div className="marked-questions-card">
+                <p className="text-gray-700 font-semibold">Marked Questions</p>
+                <p className="text-gray-500">5 questions marked for review</p>
+                <button className="details-button">Review Questions</button>
               </div>
             </div>
           </section>
+          
 
           {/* AI Assistance Section */}
           <section className="ai-assistance-container">
@@ -79,23 +74,6 @@ const Dashboard = () => {
                     Get instant solutions to your questions.
                   </p>
                 </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Notes & Marked Questions Section */}
-          <section className="notes-marked-container">
-            <h2>Notes & Marked Questions</h2>
-            <div className="notes-content">
-              <div className="notes-card">
-                <p className="text-gray-700 font-semibold">Important Notes</p>
-                <p className="text-gray-500">3 new notes added</p>
-                <button className="details-button">View Notes</button>
-              </div>
-              <div className="marked-questions-card">
-                <p className="text-gray-700 font-semibold">Marked Questions</p>
-                <p className="text-gray-500">5 questions marked for review</p>
-                <button className="details-button">Review Questions</button>
               </div>
             </div>
           </section>
