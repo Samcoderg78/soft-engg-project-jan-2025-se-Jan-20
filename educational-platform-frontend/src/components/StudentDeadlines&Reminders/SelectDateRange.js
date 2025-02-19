@@ -8,7 +8,7 @@ export default function SelectDateRange({ onApply }) {
   return (
     <div className="card mb-3 date-range-container">
       <div className="card-body">
-        <h2 className="card-title">Select Date Range</h2>
+        {/* <h2 className="card-title">Select Date Range</h2> */}
         <div className="row">
           <div className="col-md-5">
             <label>Start Date</label>

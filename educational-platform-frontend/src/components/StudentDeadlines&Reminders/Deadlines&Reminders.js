@@ -35,8 +35,8 @@ export default function DeadlinesReminders() {
   const [showForm, setShowForm] = useState(false);
 
   const addTask = (newTask) => {
-    setTasks(
-      [...tasks, newTask].sort(
+    setTasks((prevTasks) =>
+      [...prevTasks, newTask].sort(
         (a, b) => new Date(a.deadline) - new Date(b.deadline)
       )
     );
@@ -44,13 +44,14 @@ export default function DeadlinesReminders() {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container deadlines-dashboard">
       <Header />
-      <div className="dashboard-layout">
-        <div className="sidebar-container">
+      <div className="dashboard-layout deadlines-layout">
+        <div className="sidebar-container deadlines-sidebar">
           <Sidebar />
         </div>
-        <div className="dashboard-content">
+        <div className="dashboard-content deadlines-content">
+          {/* Select Date Range */}
           <h2 className="section-title">Select Date Range</h2>
           <SelectDateRange
             onApply={(start, end) =>
@@ -58,17 +59,19 @@ export default function DeadlinesReminders() {
             }
           />
 
+          {/* Upcoming Deadlines & Tasks */}
           <h2 className="section-title">Upcoming Deadlines & Tasks</h2>
           <div className="task-card-wrapper">
             <div className="card mb-3">
               <div className="card-body">
                 {tasks.map((task, index) => (
-                  <TaskCard task={task} />
+                  <TaskCard key={index} task={task} />
                 ))}
               </div>
             </div>
           </div>
 
+          {/* Manage Deadlines */}
           <h2 className="section-title">Manage Deadlines</h2>
           <button
             className="btn btn-primary mb-3"
@@ -79,7 +82,10 @@ export default function DeadlinesReminders() {
 
           {/* Modal for Adding Task */}
           {showForm && (
-            <div className="modal-overlay" onClick={() => setShowForm(false)}>
+            <div
+              className="modal-overlay"
+              onClick={() => setShowForm(false)}
+            >
               <div
                 className="modal-content"
                 onClick={(e) => e.stopPropagation()}
@@ -92,12 +98,14 @@ export default function DeadlinesReminders() {
             </div>
           )}
 
+          {/* Manage Deadlines Cards */}
           <div className="manage-deadlines-container">
             {tasks.map((task, index) => (
               <ManageDeadlineCard key={index} task={task} />
             ))}
           </div>
 
+          {/* Recent Submissions */}
           <h2 className="section-title">Recent Submissions</h2>
           <div className="card">
             <div className="card-body">

@@ -2,6 +2,8 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from './Header';
 import Sidebar from './Sidebar';
+import '../../styles/weekPerformance.css'
+
 
 function WeeklyPerformance() {
   const weeklyData = [
@@ -37,7 +39,7 @@ function WeeklyPerformance() {
         <div className="row mt-4">
           {weeklyData.map((week, index) => (
             <div key={index} className="col-md-3 col-sm-6 mb-4">
-              <div className="card shadow-sm p-3">
+              <div className="cardW shadow-sm p-3">
                 <div className="d-flex justify-content-center align-items-center bg-light rounded-circle" style={{ width: '80px', height: '80px', margin: '0 auto' }}>
                   <span style={{ fontSize: '40px' }}>📅</span>
                 </div>
