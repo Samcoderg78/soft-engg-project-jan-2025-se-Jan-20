@@ -1,3 +1,5 @@
+import '../../styles/manageDeadlineCard.css'
+
 export default function ManageDeadlineCard({ task }) {
     return (
       <div className="deadline-card">

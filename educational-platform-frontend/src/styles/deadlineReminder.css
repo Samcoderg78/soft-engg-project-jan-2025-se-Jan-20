@@ -1,0 +1,157 @@
+/* 📌 Manage Deadlines - Cards should be side by side */
+.manage-deadlines-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .card {
+    /* background: #5295cc;  */
+    background: #438fcc;
+  }
+  
+  /* ✅ Updated: Background for Task Card Outer Box */
+  .task-card-container {
+    background: #eef4fa; /* Light blue background */
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 📌 Individual Task Card */
+  /* .deadline-card {
+    background: #fff;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 220px;
+    text-align: center;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  } */
+  
+  /* 📝 Modal Styling */
+  /* .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  } */
+  
+  .modal-content h2 {
+    margin-bottom: 15px;
+  }
+  
+  /* .modal-content input,
+  .modal-content select {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+   */
+  /* 📌 Dashboard Layout */
+  .dashboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .dashboard-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  
+  .sidebar-container {
+    width: 250px;
+    background: #f8f9fa;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+  }
+  
+  .dashboard-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  /* Add background only to the outer container */
+  .task-card-wrapper {
+    background: #eef4fa; /* Light blue background */
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Ensure TaskCard remains default (inherits its own styles) */
+  .task-card {
+    background: white !important; /* Keeps TaskCard white */
+    border-radius: 8px;
+    padding: 10px;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px; /* Ensures spacing for large modals */
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 600px; /* Increase width */
+    max-width: 90%; /* Responsive */
+    height: auto;
+    max-height: 80vh; /* Prevents overflow */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow-y: auto; /* Allows scrolling if needed */
+  }
+  
+  .modal-content h2 {
+    font-size: 24px; /* Increase title size */
+  }
+  
+  .modal-content label {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .modal-content input,
+  .modal-content select {
+    font-size: 16px;
+    padding: 10px;
+  }
+  
+  .btn-success {
+    font-size: 18px;
+    padding: 10px 20px;
+  }
+
+  
+  
+  

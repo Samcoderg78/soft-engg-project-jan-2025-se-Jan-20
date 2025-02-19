@@ -1,0 +1,141 @@
+/* 📌 Task Card Styling */
+.task-card {
+    background: linear-gradient(135deg, #ffffff, #f9f9f9);
+    /* background: linear-gradient(135deg, #a9d7f6, #b0c5f9); */
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    border: none;
+    transition: all 0.3s ease-in-out;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* 📌 Add a slight glow effect on hover */
+  .task-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* 📌 Card Header Animation */
+  .task-card::before {
+    content: "";
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: 100px;
+    height: 100px;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 50%;
+    transition: all 0.5s ease-in-out;
+  }
+  
+  .task-card:hover::before {
+    top: -30px;
+    left: -30px;
+    width: 120px;
+    height: 120px;
+  }
+  
+  /* 📌 Card Title */
+  .task-card .card-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  
+  /* 📌 Subtle underline effect */
+  /* .task-card .card-title::after {
+    content: "";
+    display: block;
+    width: 50px;
+    height: 3px;
+    background: #3498db;
+    margin: 8px auto 0;
+    border-radius: 2px;
+  } */
+  
+  /* 📌 Task Info */
+  .task-card .card-text {
+    font-size: 1rem;
+    color: #555;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  
+  /* 📌 Assignee Name */
+  .task-card .card-text small {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  /* 📌 Priority Badge */
+  /* .task-card .badge {
+    font-size: 0.85rem;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+  } */
+  
+  /* 🎯 Priority Colors - More Vibrant */
+  /* .task-card .badge.bg-secondary {
+    background: #95a5a6; 
+  }
+  
+  .task-card .badge.high {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: #fff;
+  }
+  
+  .task-card .badge.medium {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: #fff;
+  }
+  
+  .task-card .badge.low {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: #fff;
+  } */
+  
+  /* 📌 Responsive Enhancements */
+  @media (max-width: 768px) {
+    .task-card {
+      padding: 15px;
+    }
+  
+    .task-card .card-title {
+      font-size: 1.2rem;
+    }
+  
+    .task-card .card-text {
+      font-size: 0.9rem;
+    }
+  
+    .task-card .badge {
+      font-size: 0.8rem;
+      padding: 6px 12px;
+    }
+  }
+  
+  /* 🎯 Priority Badge Custom Colors */
+.priority-high {
+    background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+    color: #fff !important;
+  }
+  
+  .priority-medium {
+    background: linear-gradient(135deg, #f39c12, #e67e22) !important;
+    color: #fff !important;
+  }
+  
+  .priority-low {
+    background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+    color: #fff !important;
+  }
+  
