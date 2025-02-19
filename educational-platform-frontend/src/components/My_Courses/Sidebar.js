@@ -1,63 +1,82 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 
-const Sidebar = ({ setActiveLecture }) => {
-  const [activeWeek, setActiveWeek] = useState(null);
-  const navigate = useNavigate(); // Initialize useNavigate
+const Sidebar = () => {
+  const [week1Open, setWeek1Open] = useState(false);
+  const [week2Open, setWeek2Open] = useState(false);
 
-  const toggleWeek = (week) => {
-    setActiveWeek(activeWeek === week ? null : week); // Toggle the active week
-  };
-
-  const handleDifficultQuestionsClick = () => {
-    navigate('/difficult-questions'); // Navigate to the Difficult Questions page
-  };
-
-  const handleCourseIntroClick = () => {
-    setActiveLecture(null); // Show Course Intro content
-  };
+  const toggleWeek1 = () => setWeek1Open(!week1Open);
+  const toggleWeek2 = () => setWeek2Open(!week2Open);
 
   return (
-    <div className="sidebar">
-      <ul>
+    <aside className="bg-light vh-100 p-3">
+      <ul className="list-unstyled">
         <li>
-          <strong
-            onClick={handleCourseIntroClick}
-            style={{ cursor: 'pointer', color: '#fff' }}
-          >
-            Course Intro
-          </strong>
+          <div onClick={toggleWeek1} className="sidebar-item">
+            Week 1
+          </div>
+          {week1Open && (
+            <ul className="list-unstyled pl-3">
+              <li>
+                <NavLink to="/week1/lecture1" className="nav-link">
+                  Lecture 1
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/week1/lecture2" className="nav-link">
+                  Lecture 2
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/week1/programming-assignment" className="nav-link">
+                  Programming Assignment
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/week1/graded-assignment" className="nav-link">
+                  Graded Assignment
+                </NavLink>
+              </li>
+            </ul>
+          )}
         </li>
-        {[1, 2].map((week) => (
-          <li key={week}>
-            <strong
-              onClick={() => toggleWeek(week)}
-              className={`week ${activeWeek === week ? 'active' : ''}`} // Apply 'active' class conditionally
-              style={{ cursor: 'pointer', color: '#fff' }}
-            >
-              Week {week}
-            </strong>
-            {activeWeek === week && ( // Render lectures only if the week is active
-              <ul className="lectures-list">
-                <li onClick={() => setActiveLecture("Lecture 1")}>Lecture 1</li>
-                <li onClick={() => setActiveLecture("Lecture 2")}>Lecture 2</li>
-                <li onClick={() => setActiveLecture("Graded Assignment")}>Graded Assignment</li>
-                <li onClick={() => setActiveLecture("Programming Assignment")}>Programming Assignment</li>
-              </ul>
-            )}
-          </li>
-        ))}
+        <li>
+          <div onClick={toggleWeek2} className="sidebar-item">
+            Week 2
+          </div>
+          {week2Open && (
+            <ul className="list-unstyled pl-3">
+              <li>
+                <NavLink to="/week2/lecture1" className="nav-link">
+                  Lecture 1
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/week2/lecture2" className="nav-link">
+                  Lecture 2
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/week2/programming-assignment" className="nav-link">
+                  Programming Assignment
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/week2/graded-assignment" className="nav-link">
+                  Graded Assignment
+                </NavLink>
+              </li>
+            </ul>
+          )}
+        </li>
+        <li>
+          <NavLink to="/difficult-questions" className="nav-link">
+            Difficult Questions
+          </NavLink>
+        </li>
       </ul>
-
-      {/* Difficult Questions Button */}
-      <strong
-        onClick={handleDifficultQuestionsClick}
-        className="difficult-questions-button"
-        style={{ cursor: 'pointer', color: '#fff' }}
-      >
-        Difficult Questions
-      </strong>
-    </div>
+    </aside>
   );
 };
 

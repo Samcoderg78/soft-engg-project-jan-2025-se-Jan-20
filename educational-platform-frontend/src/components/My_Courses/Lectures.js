@@ -1,96 +1,69 @@
-import React, { useState } from 'react';
-import Sidebar from './Sidebar'; // Import Sidebar
-import Topbar from './Topbar'; // Import Topbar
-import GradedAssignment from './Student__GradedAssignment';
-import './Lectures.css'; // Import the CSS file
-import { Navigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useParams } from "react-router-dom";
+import Sidebar from "./Sidebar";
+import Topbar from "./Topbar";
+import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 
+const LecturePage = () => {
+  const { week, lecture } = useParams();
+  const [notes, setNotes] = useState([]);
+  const [currentNote, setCurrentNote] = useState("");
 
-import GradedAssignment from './Student__GradedAssignment'
-
-const Lecture1 = () => {
-  const courseName = "Software Engineering"; // Course name for TopBar
-  const [notes, setNotes] = useState([
-    "08:00 - We can append in a list by list.append method.",
-    "10:20 - Lists are mutable.",
-    "10:30 - Two lists can be added to make a new list."
-  ]);
-  
-  const [activeLecture, setActiveLecture] = useState(null);
-
-  // Handle adding notes dynamically
   const handleTakeNotes = () => {
-    const newNote = prompt("Enter your note:");
-    if (newNote) {
-      setNotes([...notes, newNote]);
-    }
-  };
-
-  const handleCapture = () => {
-    alert("Screenshot functionality will be added later!");
-  };
-
-  const renderLectureContent = () => {
-    switch (activeLecture) {
-      case "Lecture 1":
-        return (
-          <div>
-            <h3>Video: Introduction to Binary Search</h3>
-            <div className="video-placeholder">
-              <iframe
-                width="560"
-                height="315"
-                src="https://www.youtube.com/embed/mKZ-i-UfE2k" // Replace with actual video
-                title="Lecture Video"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
-            <div className="video-buttons">
-              <button onClick={handleTakeNotes}>Take Notes</button>
-              <button onClick={handleCapture}>Capture</button>
-            </div>
-            <div className="notes-section">
-              <h3>Notes: Lecture 1</h3>
-              <ul>
-                {notes.map((note, index) => (
-                  <li key={index}>{note}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        );
-      case "Lecture 2":
-        return <div><h3>Lecture 2 Content Goes Here</h3></div>;
-      case "Graded Assignment":
-        return <Navigate to="/assignment" />;
-      case "Programming Assignment":
-        return <Navigate to="/ProgrammingAssignment" />;
-      default:
-        return (
-          <div>
-            <h3>Course Introduction</h3>
-            <p>Welcome to the Software Engineering course! In this course, we will cover...</p>
-          </div>
-        );
-    }
+    const timestamp = new Date().toLocaleTimeString();
+    setNotes([...notes, { timestamp, note: currentNote }]);
+    setCurrentNote("");
   };
 
   return (
-    <div className="lecture-page">
-      {/* Sidebar with setActiveLecture passed as prop */}
-      <Sidebar setActiveLecture={setActiveLecture} />
+    <div className="container-fluid p-0">
+      {/* Topbar */}
+      <div className="row">
+        <div className="col-12">
+          <Topbar />
+        </div>
+      </div>
 
-      {/* Top Bar */}
-      <Topbar courseName={courseName} />
+      {/* Main Content Area */}
+      <div className="row">
+        {/* Sidebar */}
+        <div className="col-md-2 p-0">
+          <Sidebar />
+        </div>
 
-      {/* Main Content */}
-      <div className="lecture-content">
-        {renderLectureContent()}
+        {/* Main Content */}
+        <div className="col-md-10 p-4">
+          <div className="lecture-page">
+            <h2>{`Week ${week} - ${lecture}`}</h2>
+            <video controls width="50%">
+              <source src={'#'} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            <div className="mt-3">
+              <textarea
+                value={currentNote}
+                onChange={(e) => setCurrentNote(e.target.value)}
+                placeholder="Take notes..."
+                className="form-control mb-2"
+                rows="4"
+              />
+              <button onClick={handleTakeNotes} className="btn btn-primary">
+                Take Notes
+              </button>
+            </div>
+            <div className="mt-3">
+              <h3>Notes:</h3>
+              {notes.map((note, index) => (
+                <div key={index} className="mb-2">
+                  <strong>{note.timestamp}:</strong> {note.note}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Lecture1;
+export default LecturePage;
