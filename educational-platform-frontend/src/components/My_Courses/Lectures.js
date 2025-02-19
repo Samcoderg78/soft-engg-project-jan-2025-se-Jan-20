@@ -3,7 +3,7 @@ import Sidebar from './Sidebar'; // Import Sidebar
 import Topbar from './Topbar'; // Import Topbar
 import GradedAssignment from './Student__GradedAssignment';
 import './Lectures.css'; // Import the CSS file
-import GradedAssignment from './Student__GradedAssignment'
+// import GradedAssignment from './Student__GradedAssignment'
 
 const Lecture1 = () => {
   const courseName = "Software Engineering"; // Course name for TopBar

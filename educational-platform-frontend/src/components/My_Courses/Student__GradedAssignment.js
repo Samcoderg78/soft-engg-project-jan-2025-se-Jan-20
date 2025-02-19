@@ -1,21 +1,21 @@
 import React from "react";
 
 
-const GradedAssignment = () => {
+// const GradedAssignment = () => {
 
-  const Questions = [
-    {Question : 'Question 1',
-    Answars : ['answar_1', 'answar_2', 'answar_3', 'answar_4']},
-    {Question : 'Question 2',
-      Answars : ['answar_1', 'answar_2', 'answar_3']},
-    {Question : 'Question 3',
-    Answars : ['answar_1', 'answar_2', 'answar_3', 'answar_4']},
-    {Question : 'Question 2',
-      Answars : ['answar_4', 'answar_2', 'answar_3']}
-  ]
+//   const Questions = [
+//     {Question : 'Question 1',
+//     Answars : ['answar_1', 'answar_2', 'answar_3', 'answar_4']},
+//     {Question : 'Question 2',
+//       Answars : ['answar_1', 'answar_2', 'answar_3']},
+//     {Question : 'Question 3',
+//     Answars : ['answar_1', 'answar_2', 'answar_3', 'answar_4']},
+//     {Question : 'Question 2',
+//       Answars : ['answar_4', 'answar_2', 'answar_3']}
+//   ]
 
-  return (
-    <div>
+//   return (
+//     <div>
 
 import { Link } from "react-router-dom";
 import "../../styles/assignment.css"
@@ -87,9 +87,9 @@ const GradedAssignment = () => {
           </div>
           <div className="d-flex justify-content-between w-100">
 
-            <a href="#" className="text-primary">
+            {/* <a href="#" className="text-primary">
               Click here to get suggestions
-            </a>
+            </a> */}
 
             <Link to="/suggestions" state={{q : q.Question}} className="text-primary">
               Click here to get suggestions
@@ -109,7 +109,7 @@ const GradedAssignment = () => {
         </div>
       ))}
 
-      <button type="submit" className="btn btn-light mt-3 d-block mx-auto">
+      {/* <button type="submit" className="btn btn-light mt-3 d-block mx-auto" /> */}
 
       <button type="submit" className="btn btn-light mt-3 d-block mx-auto" onClick={submitAssignment}>
 
