@@ -11,12 +11,16 @@ const Login = () => {
     e.preventDefault();
     
     // Dummy authentication check (Replace with backend auth)
-    if (email === "test@example.com" && password === "password") {
+    if (email === "student@example.com" && password === "password") {
       alert("Login successful!");
-      navigate("/quiz-dashboard"); // Redirect to Dashboard
+      navigate("/student-dashboard"); // Redirect to Student Dashboard
+    } else if (email === "instructor@example.com" && password === "password") {
+      alert("Login successful!");
+      navigate("/quiz-dashboard"); // Redirect to Quiz Dashboard
     } else {
       alert("Invalid credentials");
     }
+    
   };
 
   const handleGoogleLogin = () => {
