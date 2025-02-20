@@ -144,7 +144,6 @@
 
 // export default ProgrammingAssignment;
 
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "./Sidebar";
@@ -198,7 +197,11 @@ const ProgrammingAssignment = () => {
         <div className="pa-problem-section">
           <h4>Problem</h4>
           <p>{Question}</p>
-          <select className="pa-select-language" value={language} onChange={(e) => setLanguage(e.target.value)}>
+          <select
+            className="pa-select-language"
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+          >
             <option value="" disabled>
               Select Language
             </option>
@@ -246,7 +249,11 @@ const ProgrammingAssignment = () => {
         </div>
 
         <div className="pa-additional-options">
-          <Link to="/suggestions" state={{ Question }} className="pa-suggestions-link">
+          <Link
+            to="/suggestions"
+            state={{ Question }}
+            className="pa-suggestions-link"
+          >
             Click here to get suggestions
           </Link>
           <div className="pa-checkbox">
@@ -255,14 +262,17 @@ const ProgrammingAssignment = () => {
           </div>
         </div>
 
-        <button className="pa-feedback-section" onClick={() => console.log("Clicked!")}>
-  <h5>Coding Feedback (powered by AI)</h5>
-  <p>
-    Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-    industry's standard dummy text ever since the 1500s.
-  </p>
-</button>
-
+        <button
+          className="pa-feedback-section"
+          onClick={() => console.log("Clicked!")}
+        >
+          <h5>Coding Feedback (powered by AI)</h5>
+          <p>
+            Lorem ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s.
+          </p>
+        </button>
       </div>
     </div>
   );
