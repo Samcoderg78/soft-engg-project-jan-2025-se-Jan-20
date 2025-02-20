@@ -1,32 +1,109 @@
-.sidebar {
-    width: 250px;
-    background-color: #f4f4f4;
-    padding: 20px;
+/* Wrapper to ensure no outer styles affect the sidebar */
+.custom-sidebar-wrapper {
+  width: 250px;
+  min-height: 100vh;
+  background-color: #211653 !important; /* Dark background */
+  padding: 10px;
+}
+
+/* Sidebar Styles */
+.custom-sidebar {
+  width: 100%;
+  background-color: #211653 !important;
+  padding: 10px 15px;
+  color: white;
+}
+
+/* Sidebar Menu */
+.custom-sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Sidebar Items */
+.custom-sidebar-item {
+  padding: 10px;
+  cursor: pointer;
+  color: white !important;
+  text-decoration: none;
+  display: block;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover Effect */
+.custom-sidebar-item:hover {
+  background-color: #3a2a80 !important; /* Darker shade for hover */
+}
+
+/* Active Sidebar Item */
+.custom-sidebar-item.active {
+  background-color: #007bff !important;
+  color: white !important;
+}
+
+/* Sidebar Submenu */
+.custom-sidebar-submenu {
+  list-style: none;
+  padding-left: 20px;
+}
+
+/* Sidebar Submenu Items */
+.custom-sidebar-submenu .custom-nav-link {
+  font-size: 14px;
+  padding: 8px 15px;
+  display: block;
+  color: white !important;
+  background-color: #2a1b5f; /* Slightly lighter than sidebar */
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+/* Hover Effect for Submenu */
+.custom-sidebar-submenu .custom-nav-link:hover {
+  background-color: #3a2a80 !important;
+}
+
+/* Override Bootstrap Defaults */
+.custom-nav-link {
+  color: white !important;
+  text-decoration: none;
+  padding: 10px;
+  display: block;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.custom-nav-link:hover {
+  background-color: #3a2a80 !important;
+}
+
+/* Scrollable Sidebar */
+@media (max-height: 600px) {
+  .custom-sidebar {
+    overflow-y: auto;
   }
-  
-  .sidebar-menu {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .sidebar-item {
-    padding: 10px;
-    cursor: pointer;
-    color: #333;
-    text-decoration: none;
-    display: block;
-  }
-  
-  .sidebar-item:hover {
-    background-color: #ddd;
-  }
-  
-  .sidebar-item.active {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .sidebar-submenu {
-    list-style: none;
-    padding-left: 20px;
-  }
+}
+
+/* Ensure the active submenu item is highlighted */
+.custom-sidebar-submenu .custom-nav-link.active {
+  background-color: #007bff !important; /* Highlight active item */
+  color: white !important;
+  font-weight: bold;
+}
+
+.custom-nav-link {
+  text-decoration: none;
+  color: #333;
+  padding: 5px;
+}
+
+.custom-nav-link.active {
+  font-weight: bold;
+  color: #007bff; /* Bootstrap primary color */
+  border-left: 3px solid #007bff;
+  padding-left: 8px;
+}
+
+
