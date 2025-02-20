@@ -1,0 +1,240 @@
+/* General Layout */
+.pa-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    font-family: "Arial", sans-serif;
+    background-color: #f8f9fa;
+  }
+  
+  /* Sidebar */
+  .pa-sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    width: 250px;
+    background-color: #fff;
+    border-right: 1px solid #ddd;
+    /* padding-top: 20px; */
+  }
+  
+  /* Header */
+  .pa-header {
+    position: fixed;
+    top: 60px;
+    left: 250px;
+    right: 0;
+    background-color: #fff;
+    padding: 15px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    text-align: center;
+  }
+  
+  .pa-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: bold;
+  }
+  
+  .pa-header p {
+    margin: 5px 0 0;
+    color: #6c757d;
+    font-size: 1rem;
+  }
+  
+  /* Main Content */
+  .pa-main {
+    margin-left: 250px;
+    margin-top: 120px;
+    padding: 20px;
+    overflow-y: auto;
+    height: calc(100vh - 120px);
+  }
+  
+  /* Problem Section */
+  .pa-problem-section {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .pa-problem-section h4 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .pa-select-language {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  /* Code Editor */
+  .pa-code-editor {
+    width: 100%;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    min-height: 150px;
+  }
+  
+  /* Buttons */
+  .pa-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .pa-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .pa-test-run {
+    background-color: #343a40;
+    color: white;
+  }
+  
+  .pa-test-run:hover {
+    background-color: #23272b;
+  }
+  
+  .pa-submit {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .pa-submit:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Test Result Section */
+  .pa-test-result-section {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .pa-test-result-section h4 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  /* Test Case Table */
+  .pa-test-case-table {
+    margin-top: 10px;
+  }
+  
+  .pa-test-case-header {
+    display: flex;
+    font-weight: bold;
+    background: #f1f1f1;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .pa-test-case-row {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .pa-test-case-header div,
+  .pa-test-case-row div {
+    flex: 1;
+    text-align: center;
+  }
+  
+  /* Additional Options */
+  .pa-additional-options {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .pa-suggestions-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .pa-suggestions-link:hover {
+    text-decoration: underline;
+  }
+  
+  /* Checkbox */
+  .pa-checkbox {
+    display: flex;
+    align-items: center;
+  }
+  
+  .pa-checkbox input {
+    margin-right: 5px;
+  }
+  
+  /* Feedback Section */
+  .pa-feedback-section {
+    background: linear-gradient(135deg, #6a11cb, #2575fc); /* Gradient background */
+    color: white;
+    padding: 60px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 100%;
+    margin: auto;
+    border: none; /* Removes default button border */
+    cursor: pointer; /* Indicates it's clickable */
+    font-size: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Add hover effect for better interaction */
+.pa-feedback-section:hover {
+    transform: scale(1.05); /* Slight zoom effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Add focus effect for accessibility */
+.pa-feedback-section:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.pa-feedback-section h5 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.pa-feedback-section p {
+    font-size: 16px;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+
+  .pa-header p {
+    color: red;
+    font-weight: bold;
+  }
+  

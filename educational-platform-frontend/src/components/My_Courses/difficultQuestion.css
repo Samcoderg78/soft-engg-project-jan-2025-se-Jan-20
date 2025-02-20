@@ -1,0 +1,96 @@
+/* Ensure full-page layout */
+.difficult-questions-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  
+  .sidebar {
+    flex: 0 0 250px; /* Adjust sidebar width */
+    background-color: #f4f4f4;
+    height: 100vh;
+  }
+  
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto; /* Enables scrolling only here */
+  }
+  
+  .assignment {
+    width: 80%; /* Increased width */
+    max-width: 1200px; /* Adjust max width */
+    padding: 30px; /* More padding for better spacing */
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: auto; /* Keeps it centered */
+  }
+  
+  
+  
+  /* Title */
+  .container-title {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Weekly questions */
+  .week-container {
+    margin-bottom: 20px;
+  }
+  
+  /* Week title */
+  .week-title {
+    padding: 12px;
+    background: #007bff;
+    color: white;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  
+  /* Question box */
+  .question-container {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+    margin-bottom: 12px;
+  }
+  
+  /* Answer options */
+  .answer-options {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Action buttons */
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  /* Suggestion link */
+  .suggestion-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .suggestion-link:hover {
+    text-decoration: underline;
+  }
+  
