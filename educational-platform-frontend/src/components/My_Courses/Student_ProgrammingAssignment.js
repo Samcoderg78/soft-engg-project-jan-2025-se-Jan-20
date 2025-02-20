@@ -256,10 +256,10 @@ const ProgrammingAssignment = () => {
           >
             Click here to get suggestions
           </Link>
-          <div className="pa-checkbox">
+          {/* <div className="pa-checkbox">
             <input type="checkbox" id="mark-as-difficult" />
             <label htmlFor="mark-as-difficult">Mark as difficult</label>
-          </div>
+          </div> */}
         </div>
 
         <button
