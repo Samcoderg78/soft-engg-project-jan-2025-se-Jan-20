@@ -1,0 +1,18 @@
+openapi: 3.0.0
+info:
+  title: Educational platform API Documentation
+  description: API documentation for the Educational platform
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001/api/v1/education
+    description: Local development server
+  - url: https://educational-platform-development.lawsikho.dev/api/education
+    description: Stagging development server
+paths:
+  /register:
+    post:
+      summary: user registration
+      description: user can register using this api.
+      tags:
+        - User
+      
