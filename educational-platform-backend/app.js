@@ -29,6 +29,12 @@ app.use("/api/dr", drRoute);
 const courseRoute = require('./courses/route/course');
 app.use("/api/course", courseRoute);
 
+const weekRoute = require('./weeks/route/week');
+app.use("/api/week", weekRoute);
+
+const lectureRoute = require('./lectures/route/lecture');
+app.use("/api/lecture", lectureRoute);
+
 // Swagger
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJSDocs));
 
