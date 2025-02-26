@@ -23,7 +23,8 @@ const swaggerJSDocs = YAML.load("./api.yaml");
 const userRoute = require('./user/route/user');
 app.use("/api/user", userRoute);
 
-
+const drRoute = require('./deadlines_&_reminders/route/dr');
+app.use("/api/dr", drRoute);
 
 // Swagger
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJSDocs));
@@ -37,5 +38,3 @@ app.listen(port, () => {
     console.log(`You can have Api docs from here ➡️  http://localhost:${port}/api-docs/ and after clicking on this link select HTTP`)
 });
 
-
-module.exports = app;
