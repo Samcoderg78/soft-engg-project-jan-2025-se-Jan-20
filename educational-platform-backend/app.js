@@ -26,6 +26,9 @@ app.use("/api/user", userRoute);
 const drRoute = require('./deadlines_&_reminders/route/dr');
 app.use("/api/dr", drRoute);
 
+const courseRoute = require('./courses/route/course');
+app.use("/api/course", courseRoute);
+
 // Swagger
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJSDocs));
 

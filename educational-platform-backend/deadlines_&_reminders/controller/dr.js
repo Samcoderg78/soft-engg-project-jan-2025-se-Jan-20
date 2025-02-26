@@ -1,6 +1,6 @@
 const Task = require('../model/dr');
 
-// Create a new task
+
 exports.addTask = async (req, res) => {
   try {
     const { name, subject, deadline, priority } = req.body;
@@ -19,7 +19,8 @@ exports.addTask = async (req, res) => {
   }
 };
 
-// Get all tasks
+
+
 exports.getAllTasks = async (req, res) => {
   try {
     const tasks = await Task.find();
