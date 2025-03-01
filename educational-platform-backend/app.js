@@ -44,6 +44,15 @@ app.use("/api/difficultquestions", difficultquestionsRoutes);
 const progAssignmentRoutes = require("./programming_assignment/route/progAssignmentRoutes");
 app.use("/api/prog-assignment", progAssignmentRoutes);
 
+const deadlineRoute = require("./getDeadlines/route/gd");
+app.use("/api/gd", deadlineRoute);
+
+const submissionRoute = require("./recentSubmissions/route/rs");
+app.use("/api/rs", submissionRoute);
+
+const noteRoute = require("./takeNotes/route/tn");
+app.use("/api/tn", noteRoute);
+
 // Swagger
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJSDocs));
 
