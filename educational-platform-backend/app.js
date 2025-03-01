@@ -29,13 +29,11 @@ app.use("/api/dr", drRoute);
 const courseRoute = require('./courses/route/course');
 app.use("/api/course", courseRoute);
 
-<<<<<<< HEAD
 const weekRoute = require('./weeks/route/week');
 app.use("/api/week", weekRoute);
 
 const lectureRoute = require('./lectures/route/lecture');
 app.use("/api/lecture", lectureRoute);
-=======
 const assignmentRoutes = require("./assignment/route/assignment");
 app.use("/api/assignment", assignmentRoutes);
 
@@ -45,7 +43,6 @@ app.use("/api/difficultquestions", difficultquestionsRoutes);
 // Programming Assignments Routes
 const progAssignmentRoutes = require("./programming_assignment/route/progAssignmentRoutes");
 app.use("/api/prog-assignment", progAssignmentRoutes);
->>>>>>> ea246e8a2422ace2f0bdea830b1d426e232f851d
 
 // Swagger
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJSDocs));
