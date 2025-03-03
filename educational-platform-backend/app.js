@@ -19,6 +19,10 @@ const swaggerUI = require("swagger-ui-express");
 const YAML = require("yamljs");
 const swaggerJSDocs = YAML.load("./api.yaml");
 
+// AI ROUTES
+const topicSimplification = require('./ai_agent/topic_simplification/route/aiRoute');
+app.use("/api/ai", topicSimplification);
+
 // routes
 const userRoute = require('./user/route/user');
 app.use("/api/user", userRoute);
