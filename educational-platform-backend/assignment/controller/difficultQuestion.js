@@ -4,9 +4,9 @@ const Assignment = require("../model/assignment");
 // Mark a question as difficult
 exports.markAsDifficult = async (req, res) => {
     try {
-      const { user_id, assignment_id, question_id } = req.body;
+      const { user_id, assignment_id, question } = req.body;
   
-      const existingEntry = await DifficultQuestion.findOne({ user_id, assignment_id, question_id });
+      const existingEntry = await DifficultQuestion.findOne({ user_id, assignment_id, question });
   
       if (existingEntry) {
         return res.status(200).json({ message: "Question is already marked as difficult" });
@@ -15,7 +15,7 @@ exports.markAsDifficult = async (req, res) => {
       const newDifficultQuestion = new DifficultQuestion({
         user_id,
         assignment_id,
-        question_id,
+        question,
         marked_on: new Date(),
       });
   
