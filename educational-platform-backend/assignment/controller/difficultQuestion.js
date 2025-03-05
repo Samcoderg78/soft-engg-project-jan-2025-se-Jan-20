@@ -4,9 +4,9 @@ const Assignment = require("../model/assignment");
 // Mark a question as difficult
 exports.markAsDifficult = async (req, res) => {
     try {
-      const { user_id, assignment_id, question_id } = req.body;
+      const { user_id, assignment_id, question } = req.body;
   
-      const existingEntry = await DifficultQuestion.findOne({ user_id, assignment_id, question_id });
+      const existingEntry = await DifficultQuestion.findOne({ user_id, assignment_id, question });
   
       if (existingEntry) {
         return res.status(200).json({ message: "Question is already marked as difficult" });
@@ -15,7 +15,7 @@ exports.markAsDifficult = async (req, res) => {
       const newDifficultQuestion = new DifficultQuestion({
         user_id,
         assignment_id,
-        question_id,
+        question,
         marked_on: new Date(),
       });
   
@@ -49,3 +49,20 @@ exports.markAsDifficult = async (req, res) => {
       res.status(500).json({ message: "Error fetching difficult questions", error });
     }
   };
+
+  // Remove a question from difficult questions
+exports.removeDifficultQuestion = async (req, res) => {
+  try {
+      const { user_id, question_id } = req.params;
+
+      const deletedQuestion = await DifficultQuestion.findOneAndDelete({ user_id, question: question_id });
+
+      if (!deletedQuestion) {
+          return res.status(404).json({ message: "Difficult question not found" });
+      }
+
+      res.status(200).json({ message: "Question removed from difficult list", deletedQuestion });
+  } catch (error) {
+      res.status(500).json({ message: "Error removing difficult question", error });
+  }
+};

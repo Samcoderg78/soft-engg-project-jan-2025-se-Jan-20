@@ -30,12 +30,31 @@
     font-size: 1.2rem;
     font-weight: bold;
     color: #374151;
+    margin: 0;
   }
   
-  /* Right Side: Email */
+  /* Right Side: Email and Logout */
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
   .header-email {
     color: #374151;
     font-size: 14px;
     font-weight: 500;
+  }
+  
+  /* Logout Button */
+  .header-right .btn-outline-danger {
+    padding: 4px 12px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+  
+  .header-right .btn-outline-danger:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
   }
   

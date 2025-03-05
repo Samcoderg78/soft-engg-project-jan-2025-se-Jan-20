@@ -4,15 +4,642 @@ info:
   description: API documentation for the Educational platform
   version: 1.0.0
 servers:
-  - url: http://localhost:3001/api/v1/education
+  - url: http://localhost:3009/api
     description: Local development server
   - url: https://educational-platform-development.lawsikho.dev/api/education
     description: Stagging development server
 paths:
-  /register:
+  /user/add-user:
     post:
-      summary: user registration
-      description: user can register using this api.
+      summary: User Registration
+      description: Register a new user in the system
       tags:
         - User
-      
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  description: User's full name
+                roll_no:
+                  type: string
+                  description: User's roll number (optional)
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                role:
+                  type: string
+                  description: User's role in the system (optional)
+                password:
+                  type: string
+                  format: password
+                  description: User's password
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User created successfully!
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      roll_no:
+                        type: string
+                      email:
+                        type: string
+                      role:
+                        type: string
+        '400':
+          description: Bad request - Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing required fields
+                  data:
+                    type: string
+                    example: ""
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error creating user
+                  error:
+                    type: string
+
+  /user/login:
+    post:
+      summary: User Login
+      description: Authenticate a user and receive a JWT token
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                password:
+                  type: string
+                  format: password
+                  description: User's password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Login successful
+                  token:
+                    type: string
+                    description: JWT token for authentication
+                  user:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      roll_no:
+                        type: string
+                      email:
+                        type: string
+                      role:
+                        type: string
+        '400':
+          description: Bad request - Missing credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Email and password are required
+                  data:
+                    type: string
+                    example: ""
+        '401':
+          description: Unauthorized - Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid credentials
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error logging in
+                  error:
+                    type: string
+
+
+  /prog-assignment/create:
+    post:
+      summary: Create a new programming assignment
+      tags:
+        - Assignments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - course_id
+                - title
+                - type
+                - question
+                - due_date
+                - total_marks
+              properties:
+                course_id:
+                  type: string
+                title:
+                  type: string
+                type:
+                  type: string
+                  enum: [practice, graded]
+                question:
+                  type: string
+                due_date:
+                  type: string
+                  format: date-time
+                total_marks:
+                  type: number
+      responses:
+        '201':
+          description: Assignment created successfully
+        '400':
+          description: Missing required fields
+        '500':
+          description: Internal server error
+
+  /prog-assignment/all:
+    get:
+      summary: Get all programming assignments
+      tags:
+        - Assignments
+      responses:
+        '200':
+          description: List of assignments
+        '500':
+          description: Internal server error
+
+  /prog-assignment/course/{course_id}:
+    get:
+      summary: Get assignments by course ID
+      tags:
+        - Assignments
+      parameters:
+        - name: course_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of assignments for the course
+        '404':
+          description: No assignments found
+        '500':
+          description: Internal server error
+
+  /prog-assignment/{assignment_id}:
+    get:
+      summary: Get an assignment by ID
+      tags:
+        - Assignments
+      parameters:
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assignment details
+        '404':
+          description: Assignment not found
+        '500':
+          description: Internal server error
+
+  /prog-assignment/submit:
+    post:
+      summary: Submit a programming assignment response
+      tags:
+        - Responses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - assignment_id
+                - course_id
+                - response
+                - actual_output
+              properties:
+                user_id:
+                  type: string
+                assignment_id:
+                  type: string
+                course_id:
+                  type: string
+                response:
+                  type: string
+                actual_output:
+                  type: string
+      responses:
+        '201':
+          description: Response submitted successfully
+        '400':
+          description: Missing required fields
+        '500':
+          description: Internal server error
+
+  /prog-assignment/score/{user_id}/{assignment_id}:
+    get:
+      summary: Get a programming assignment score
+      tags:
+        - Scores
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Score details
+        '404':
+          description: Score not found
+        '500':
+          description: Internal server error
+
+  /prog-assignment/score/update:
+    post:
+      summary: Update programming assignment score
+      tags:
+        - Scores
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - assignment_id
+                - score
+              properties:
+                user_id:
+                  type: string
+                assignment_id:
+                  type: string
+                score:
+                  type: number
+      responses:
+        '200':
+          description: Score updated successfully
+        '201':
+          description: Score recorded successfully
+        '500':
+          description: Internal server error
+
+  /prog-assignment/responses/course/{course_id}:
+    get:
+      summary: Get all responses for a given course
+      tags:
+        - Responses
+      parameters:
+        - name: course_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of responses for the course
+        '404':
+          description: No responses found
+        '500':
+          description: Internal server error
+
+  /assignment/create:
+    post:
+      summary: Create a new assignment
+      tags:
+        - Assignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - course_id
+                - week
+                - title
+                - type
+                - due_date
+                - total_marks
+              properties:
+                course_id:
+                  type: string
+                week:
+                  type: number
+                title:
+                  type: string
+                type:
+                  type: string
+                  enum: [practice, graded]
+                due_date:
+                  type: string
+                  format: date-time
+                total_marks:
+                  type: number
+      responses:
+        '201':
+          description: Assignment created successfully
+        '400':
+          description: Missing required fields
+        '500':
+          description: Internal server error
+
+  /assignment/questions/add:
+    post:
+      summary: Add a question to an assignment
+      tags:
+        - Assignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - assignment_id
+                - question
+                - type
+                - options
+                - category
+                - full_marks
+                - correct_options
+              properties:
+                assignment_id:
+                  type: string
+                question:
+                  type: string
+                type:
+                  type: string
+                  enum: [single, multi]
+                options:
+                  type: array
+                  items:
+                    type: string
+                category:
+                  type: string
+                  enum: [easy, medium, hard]
+                full_marks:
+                  type: number
+                correct_options:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Question added successfully
+        '400':
+          description: Missing required fields
+        '500':
+          description: Internal server error
+
+  /assignment/{course_id}:
+    get:
+      summary: Get all assignments for a course
+      tags:
+        - Assignment
+      parameters:
+        - name: course_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of assignments for the course
+        '404':
+          description: No assignments found
+        '500':
+          description: Internal server error
+
+  /assignment/questions/{assignment_id}:
+    get:
+      summary: Get questions for a specific assignment
+      tags:
+        - Assignment
+      parameters:
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assignment details with questions
+        '404':
+          description: Assignment not found
+        '500':
+          description: Internal server error
+
+  /assignment/submit:
+    post:
+      summary: Submit an assignment response
+      tags:
+        - Assignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - assignment_id
+                - responses
+              properties:
+                user_id:
+                  type: string
+                assignment_id:
+                  type: string
+                responses:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      question_id:
+                        type: string
+                      response:
+                        type: array
+                        items:
+                          type: string
+      responses:
+        '201':
+          description: Assignment submitted successfully
+        '400':
+          description: Missing required fields
+        '500':
+          description: Internal server error
+
+  /assignment/response/{user_id}/{assignment_id}:
+    get:
+      summary: Get assignment response by user and assignment ID
+      tags:
+        - Assignment Responses
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assignment response details
+        '404':
+          description: Assignment response not found
+        '500':
+          description: Internal server error
+
+  /difficultquestions/markasdifficult:
+    post:
+      summary: Mark a question as difficult
+      tags:
+        - Difficult Questions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - assignment_id
+                - question
+              properties:
+                user_id:
+                  type: string
+                assignment_id:
+                  type: string
+                question:
+                  type: string
+      responses:
+        '201':
+          description: Question marked as difficult
+        '200':
+          description: Question is already marked as difficult
+        '500':
+          description: Internal server error
+
+  /difficultquestions/{user_id}/{course_id}:
+    get:
+      summary: Get all difficult questions for a user in a specific course
+      tags:
+        - Difficult Questions
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: course_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of difficult questions
+        '404':
+          description: No difficult questions found
+        '500':
+          description: Internal server error
+
+  /difficultquestions/remove/{user_id}/{question_id}:
+    delete:
+      summary: Remove a question from difficult questions
+      tags:
+        - Difficult Questions
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: question_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Question removed from difficult list
+        '404':
+          description: Difficult question not found
+        '500':
+          description: Internal server error
