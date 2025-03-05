@@ -177,15 +177,11 @@ paths:
                     type: string
 
 
-
-
-
-
   /prog-assignment/create:
     post:
       summary: Create a new programming assignment
       tags:
-        - Programming Assignments
+        - Assignments
       requestBody:
         required: true
         content:
@@ -226,7 +222,7 @@ paths:
     get:
       summary: Get all programming assignments
       tags:
-        - Programming Assignments
+        - Assignments
       responses:
         '200':
           description: List of assignments
@@ -237,7 +233,7 @@ paths:
     get:
       summary: Get assignments by course ID
       tags:
-        - Programming Assignments
+        - Assignments
       parameters:
         - name: course_id
           in: path
@@ -256,7 +252,7 @@ paths:
     get:
       summary: Get an assignment by ID
       tags:
-        - Programming Assignments
+        - Assignments
       parameters:
         - name: assignment_id
           in: path
@@ -275,7 +271,7 @@ paths:
     post:
       summary: Submit a programming assignment response
       tags:
-        - Programming Assignments Responses
+        - Responses
       requestBody:
         required: true
         content:
@@ -311,7 +307,7 @@ paths:
     get:
       summary: Get a programming assignment score
       tags:
-        - Programming Assignments Scores
+        - Scores
       parameters:
         - name: user_id
           in: path
@@ -335,7 +331,7 @@ paths:
     post:
       summary: Update programming assignment score
       tags:
-        - Programming Assignments Scores
+        - Scores
       requestBody:
         required: true
         content:
@@ -365,7 +361,7 @@ paths:
     get:
       summary: Get all responses for a given course
       tags:
-        - Programming Assignments Responses
+        - Responses
       parameters:
         - name: course_id
           in: path
@@ -379,9 +375,6 @@ paths:
           description: No responses found
         '500':
           description: Internal server error
-
-
-
 
   /assignment/create:
     post:
@@ -650,18 +643,10 @@ paths:
           description: Difficult question not found
         '500':
           description: Internal server error
-
-
-
-
-
-
   /add:
     post:
       summary: Add a new task
       description: Creates a new task if it does not already exist with the same name and subject.
-      tags:
-        - Task
       requestBody:
         required: true
         content:
@@ -720,8 +705,6 @@ paths:
     get:
       summary: Get all tasks
       description: Retrieves a list of all tasks in the database.
-      tags:
-        - Task
       responses:
         "200":
           description: A list of tasks
@@ -755,8 +738,6 @@ paths:
     delete:
       summary: Delete a task
       description: Deletes a task by its ID.
-      tags:
-        - Task
       parameters:
         - name: id
           in: path
@@ -775,12 +756,104 @@ paths:
 
 
 
-  /programming/programming-hint:
+  /summary-report:
+    post:
+      summary: Generate a summary report for an assignment
+      description: Generates and retrieves a summary report for a given assignment based on students' scores and responses.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - assignmentId
+              properties:
+                assignmentId:
+                  type: string
+                  format: uuid
+                  example: "65c9d10f4a5f24d2b8d8a61c"
+      responses:
+        "200":
+          description: Successfully generated summary report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summaryReport:
+                    type: object
+                    properties:
+                      assignmentId:
+                        type: string
+                        example: "65c9d10f4a5f24d2b8d8a61c"
+                      totalStudents:
+                        type: integer
+                        example: 50
+                      averageScore:
+                        type: number
+                        example: 78.5
+                      highestScore:
+                        type: number
+                        example: 98
+                      lowestScore:
+                        type: number
+                        example: 45
+                      commonMistakes:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Incorrect answer for question 101", "Incorrect answer for question 205"]
+                      difficultyStats:
+                        type: object
+                        properties:
+                          easy:
+                            type: object
+                            properties:
+                              totalQuestions:
+                                type: integer
+                                example: 10
+                              correctAnswers:
+                                type: integer
+                                example: 8
+                              averageScore:
+                                type: number
+                                example: 80.0
+                          medium:
+                            type: object
+                            properties:
+                              totalQuestions:
+                                type: integer
+                                example: 15
+                              correctAnswers:
+                                type: integer
+                                example: 10
+                              averageScore:
+                                type: number
+                                example: 66.7
+                          hard:
+                            type: object
+                            properties:
+                              totalQuestions:
+                                type: integer
+                                example: 5
+                              correctAnswers:
+                                type: integer
+                                example: 2
+                              averageScore:
+                                type: number
+                                example: 40.0
+        "400":
+          description: Assignment ID is missing in the request
+        "500":
+          description: Error generating summary report
+
+
+
+  /programming-hint:
     post:
       summary: Get a programming hint
-      description: Provides hints for programming assignments.
-      tags:
-       - AI Programming Assistance
+      description: Provides a hint or explanation for a given programming query.
       requestBody:
         required: true
         content:
@@ -792,65 +865,22 @@ paths:
               properties:
                 query:
                   type: string
-                  example: "How to reverse a list in Python?"
+                  example: "How do I reverse a linked list in Python?"
                 context:
                   type: string
-                  example: "Python assignment on list operations"
+                  example: "Data Structures Assignment"
       responses:
         "200":
-          description: Successfully generated a programming hint
+          description: Successfully retrieved a programming hint
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  hint:
-                    type: string
-                    example: "Hint: You can use slicing to reverse a list. Try using [::-1]."
-        "500":
-          description: Error processing request
+              
 
-  /programming/code-review:
+  /ask-ai:
     post:
-      summary: Get a code review
-      description: Provides constructive feedback on code quality and best practices.
-      tags:
-       - AI Programming Assistance
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - code
-              properties:
-                code:
-                  type: string
-                  example: "def factorial(n): return n * factorial(n-1) if n > 1 else 1"
-                context:
-                  type: string
-                  example: "Python recursion assignment"
-      responses:
-        "200":
-          description: Successfully provided code review feedback
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  feedback:
-                    type: string
-                    example: "Ensure base cases are handled correctly to avoid infinite recursion."
-        "500":
-          description: Error processing request
-
-  /programming/programming-resources:
-    post:
-      summary: Get programming resources
-      description: Retrieves relevant educational resources for a given programming topic.
-      tags:
-       - AI Programming Assistance
+      summary: Get a simplified explanation
+      description: AI provides a simplified response to a complex topic.
       requestBody:
         required: true
         content:
@@ -862,10 +892,43 @@ paths:
               properties:
                 query:
                   type: string
-                  example: "Best resources for learning Python"
-                context:
+                  example: "Explain recursion in simple terms."
+                videoContext:
                   type: string
-                  example: "Beginner Python tutorials"
+                  example: "Lecture on recursion"
+      responses:
+        "200":
+          description: Successfully generated a simplified response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+                    example: "Recursion is when a function calls itself to break a problem into smaller parts."
+        "500":
+          description: Error processing AI request
+
+  /ask-resources:
+    post:
+      summary: Get educational resources
+      description: AI retrieves useful resources for a given topic.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                  example: "Best Python tutorials for beginners"
+                videoContext:
+                  type: string
+                  example: "Python basics class"
       responses:
         "200":
           description: Successfully retrieved resources
@@ -876,81 +939,40 @@ paths:
                 items:
                   type: object
                   properties:
-                    resourceType:
+                    type:
                       type: string
-                      example: "Documentation"
-                    resourceUrl:
+                      example: "Tutorial"
+                    url:
                       type: string
-                      example: "https://docs.python.org/3/"
-                    resourceDescription:
+                      example: "https://realpython.com/python-basics/"
+                    description:
                       type: string
-                      example: "Official Python documentation."
+                      example: "A complete Python beginner guide."
         "500":
-          description: Error processing request
+          description: Error processing AI request
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  /topic_simplification/ask-ai:
+  /ask:
     post:
-      summary: Simplifies lecture topics
-      tags:
-        - AI Doubt Clarification
+      summary: Get assignment help
+      description: AI provides hints and guidance for assignments.
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
+              required:
+                - query
               properties:
                 query:
                   type: string
-                  example: "Explain recursion in simple terms."
+                  example: "How to implement a binary search tree in Python?"
                 videoContext:
                   type: string
-                  example: "Lecture on Data Structures"
+                  example: "Binary Search Tree lecture"
       responses:
         "200":
-          description: AI-generated simplification response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  response:
-                    type: string
-        "500":
-          description: Internal Server Error
-
-  /topic_simplification/ask-resources:
-    post:
-      summary: Retrieves learning resources
-      tags:
-        - AI Doubt Clarification
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                query:
-                  type: string
-                  example: "Python documentation"
-      responses:
-        "200":
-          description: List of relevant resources
+          description: Successfully provided assignment guidance
           content:
             application/json:
               schema:
@@ -960,749 +982,16 @@ paths:
                   properties:
                     type:
                       type: string
-                    url:
+                      example: "General"
+                    response:
                       type: string
-                    description:
+                      example: "To implement a BST in Python, define a class with insert and search functions."
+                    resourceType:
                       type: string
-        "500":
-          description: Internal Server Error
-
-  /topic_simplification/ask:
-    post:
-      summary: Provides assignment-related help
-      tags:
-        - AI Doubt Clarification
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                query:
-                  type: string
-                  example: "Solve this equation: x^2 - 4x + 4 = 0"
-      responses:
-        "200":
-          description: AI-generated assignment assistance
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  response:
-                    type: string
-        "500":
-          description: Internal Server Error
-
-
-
-
-
-
-
-
-
-
-
-
-  /instructor/supplementary-content:
-    post:
-      summary: Generate supplementary content for a given topic
-      tags:
-        - AI Instructor Assistance
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                topic:
-                  type: string
-                  example: "Introduction to Machine Learning"
-                context:
-                  type: string
-                  example: "Computer Science Course"
-      responses:
-        "200":
-          description: AI-generated supplementary content
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  content:
-                    type: string
-        "500":
-          description: Internal Server Error
-
-  /instructor/instructor-query:
-    post:
-      summary: Answer instructor queries
-      tags:
-        - AI Instructor Assistance
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                query:
-                  type: string
-                  example: "How to explain recursion to students?"
-                context:
-                  type: string
-                  example: "Data Structures Course"
-      responses:
-        "200":
-          description: AI-generated response for instructor query
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  response:
-                    type: string
-        "500":
-          description: Internal Server Error
-
-
-
-
-
-
-
-  
-
-  
-
-
-
-
-
-
-
-
-  /tasks:
-    get:
-      tags:
-        - deadline
-      summary: Get all tasks
-      description: Fetches a list of all available tasks.
-      responses:
-        '200':
-          description: A list of tasks.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Task'
-        '500':
-          description: Error fetching tasks
-
-  /tasks/add:
-    post:
-      tags:
-        - deadline
-      summary: Add a new task
-      description: Adds a new task to the system.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TaskInput'
-      responses:
-        '201':
-          description: Task successfully added
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
-        '400':
-          description: Task with the same name and subject already exists
-        '500':
-          description: Error adding task
-
-  /tasks/{id}:
-    delete:
-      tags:
-        - remainder
-      summary: Delete a task
-      description: Deletes a task by its ID.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Task deleted successfully
-        '404':
-          description: Task not found
-        '500':
-          description: Error deleting task
-
-
-
-
-
-
-
-
-
-
-  /courses:
-    get:
-      tags:
-        - Courses
-      summary: Get all courses
-      description: Fetches a list of all available courses.
-      responses:
-        '200':
-          description: A list of courses.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Course'
-        '500':
-          description: Error fetching courses
-
-  /courses/add:
-    post:
-      tags:
-        - Courses
-      summary: Add a new course
-      description: Adds a new course to the system.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CourseInput'
-      responses:
-        '201':
-          description: Course successfully added
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Course'
-        '400':
-          description: Course with this title already exists
-        '500':
-          description: Error adding course
-
-  /courses/{id}:
-    delete:
-      tags:
-        - courses
-      summary: Delete a course
-      description: Deletes a course by its ID.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Course deleted successfully
-        '404':
-          description: Course not found
-        '500':
-          description: Error deleting course
-
-
-
-  /lectures/add:
-    post:
-      tags:
-        - lectures
-      summary: Add a new lecture
-      description: Adds a new lecture to a specific course and week.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LectureInput'
-      responses:
-        '201':
-          description: Lecture successfully added
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Lecture'
-        '400':
-          description: Lecture already exists for this course, week, and lecture number
-        '500':
-          description: Error adding lecture
-
-  /lectures/{course}/{week}:
-    get:
-      tags:
-        - lectures
-      summary: Get lectures by course and week
-      description: Fetches all lectures for a given course and week.
-      parameters:
-        - name: course
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: week
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: List of lectures for the specified course and week
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Lecture'
-        '404':
-          description: No lectures found for the specified course and week
-        '500':
-          description: Error fetching lectures
-
-
-
-
-
-
-  /weeks/add:
-    post:
-      tags:
-        - weeks
-      summary: Add a new week
-      description: Adds a new week to a specified course.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WeekInput'
-      responses:
-        '201':
-          description: Week successfully added
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Week'
-        '400':
-          description: Week already exists for this course
-        '500':
-          description: Error adding week
-
-  /weeks/course/{courseId}:
-    get:
-      tags:
-        - weeks
-      summary: Get weeks for a course
-      description: Fetches all weeks associated with a given course.
-      parameters:
-        - name: courseId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: A list of weeks for the specified course.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Week'
-        '500':
-          description: Error fetching weeks for the course
-
-  /weeks/{id}:
-    get:
-      tags:
-        - weeks
-      summary: Get week by ID
-      description: Fetches details of a specific week by its ID.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Details of the specified week
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Week'
-        '404':
-          description: Week not found
-        '500':
-          description: Error fetching the week
-
-
-
-
-  /feedback/submit:
-    post:
-      tags:
-        - feedback
-      summary: Submit feedback
-      description: Allows users to submit feedback for a course.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FeedbackInput'
-      responses:
-        '201':
-          description: Feedback submitted successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Feedback'
-        '400':
-          description: All fields are required
-        '500':
-          description: Error submitting feedback
-
-  /feedback/course/{course_id}:
-    get:
-      tags:
-        - feedback
-      summary: Get feedback for a course
-      description: Fetch all feedback given for a specific course.
-      parameters:
-        - name: course_id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: Unique identifier for the course
-      responses:
-        '200':
-          description: List of feedback for the course
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Feedback'
-        '404':
-          description: No feedback found for the course
-        '500':
-          description: Error fetching feedback
-
-
-
-
-
-components:
-  schemas:
-    Course:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the course
-        title:
-          type: string
-          description: Title of the course
-        description:
-          type: string
-          description: Brief course description
-        tags:
-          type: array
-          items:
-            type: string
-          description: Tags associated with the course
-        professor:
-          type: string
-          description: Name of the professor teaching the course
-        image:
-          type: string
-          description: URL of the course image
-        createdAt:
-          type: string
-          format: date-time
-          description: Timestamp of course creation
-        updatedAt:
-          type: string
-          format: date-time
-          description: Timestamp of last update
-
-    CourseInput:
-      type: object
-      required:
-        - title
-        - description
-        - professor
-        - image
-      properties:
-        title:
-          type: string
-          description: Title of the course
-        description:
-          type: string
-          description: Brief course description
-        tags:
-          type: array
-          items:
-            type: string
-          description: Tags associated with the course
-        professor:
-          type: string
-          description: Name of the professor teaching the course
-        image:
-          type: string
-          description: URL of the course image
-
-
-
-
-    Task:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the task
-        name:
-          type: string
-          description: Name of the task
-        subject:
-          type: string
-          description: Subject of the task
-        deadline:
-          type: string
-          format: date-time
-          description: Deadline for the task
-        priority:
-          type: string
-          enum: [High, Medium, Low]
-          description: Priority level of the task
-        createdAt:
-          type: string
-          format: date-time
-          description: Timestamp of task creation
-        updatedAt:
-          type: string
-          format: date-time
-          description: Timestamp of last update
-
-    TaskInput:
-      type: object
-      required:
-        - name
-        - subject
-        - deadline
-      properties:
-        name:
-          type: string
-          description: Name of the task
-        subject:
-          type: string
-          description: Subject of the task
-        deadline:
-          type: string
-          format: date-time
-          description: Deadline for the task
-        priority:
-          type: string
-          enum: [High, Medium, Low]
-          description: Priority level of the task
-
-
-
-
-
-    Lecture:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the lecture
-        course:
-          type: string
-          description: Name of the course
-        week:
-          type: integer
-          description: Week number
-        lectureNumber:
-          type: integer
-          description: Lecture number within the week
-        title:
-          type: string
-          description: Title of the lecture
-        description:
-          type: string
-          description: Brief description of the lecture
-        videoUrl:
-          type: string
-          description: URL of the lecture video
-        createdAt:
-          type: string
-          format: date-time
-          description: Timestamp of lecture creation
-        updatedAt:
-          type: string
-          format: date-time
-          description: Timestamp of last update
-
-    LectureInput:
-      type: object
-      required:
-        - course
-        - week
-        - lectureNumber
-        - title
-        - description
-      properties:
-        course:
-          type: string
-          description: Name of the course
-        week:
-          type: integer
-          description: Week number
-        lectureNumber:
-          type: integer
-          description: Lecture number within the week
-        title:
-          type: string
-          description: Title of the lecture
-        description:
-          type: string
-          description: Brief description of the lecture
-        videoUrl:
-          type: string
-          description: URL of the lecture video (optional)
-
-
-
-
-
-
-    Week:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the week
-        courseId:
-          type: string
-          description: ID of the course this week belongs to
-        weekNumber:
-          type: number
-          description: The week number within the course
-        title:
-          type: string
-          description: Title of the week
-        description:
-          type: string
-          description: Description of the week
-        lecture:
-          type: array
-          items:
-            type: string
-          description: List of lecture IDs associated with the week
-        createdAt:
-          type: string
-          format: date-time
-          description: Timestamp of week creation
-        updatedAt:
-          type: string
-          format: date-time
-          description: Timestamp of last update
-
-    WeekInput:
-      type: object
-      required:
-        - courseId
-        - weekNumber
-        - title
-      properties:
-        courseId:
-          type: string
-          description: ID of the course this week belongs to
-        weekNumber:
-          type: number
-          description: The week number within the course
-        title:
-          type: string
-          description: Title of the week
-        description:
-          type: string
-          description: Description of the week
-        lecture:
-          type: array
-          items:
-            type: string
-          description: List of lecture IDs associated with the week
-
-
-
-    Feedback:
-      type: object
-      properties:
-        user_id:
-          type: string
-          format: uuid
-          description: Unique identifier for the user
-        course_id:
-          type: string
-          format: uuid
-          description: Unique identifier for the course
-        feedback_string:
-          type: string
-          description: Feedback text provided by the user
-        rating:
-          type: integer
-          minimum: 1
-          maximum: 5
-          description: Rating given by the user (1-5)
-        created_at:
-          type: string
-          format: date-time
-          description: Timestamp when feedback was submitted
-
-    FeedbackInput:
-      type: object
-      required:
-        - user_id
-        - course_id
-        - feedback_string
-        - rating
-      properties:
-        user_id:
-          type: string
-          format: uuid
-          description: Unique identifier for the user
-        course_id:
-          type: string
-          format: uuid
-          description: Unique identifier for the course
-        feedback_string:
-          type: string
-          description: Feedback text provided by the user
-        rating:
-          type: integer
-          minimum: 1
-          maximum: 5
-          description: Rating given by the user (1-5)
-
-
+                      example: "Documentation"
+                    resourceUrl:
+                      type: string
+                      example: "https://docs.python.org/3/library/bisect.html"
 
 
 
