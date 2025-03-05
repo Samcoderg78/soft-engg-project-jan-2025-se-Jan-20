@@ -49,3 +49,20 @@ exports.markAsDifficult = async (req, res) => {
       res.status(500).json({ message: "Error fetching difficult questions", error });
     }
   };
+
+  // Remove a question from difficult questions
+exports.removeDifficultQuestion = async (req, res) => {
+  try {
+      const { user_id, question_id } = req.params;
+
+      const deletedQuestion = await DifficultQuestion.findOneAndDelete({ user_id, question: question_id });
+
+      if (!deletedQuestion) {
+          return res.status(404).json({ message: "Difficult question not found" });
+      }
+
+      res.status(200).json({ message: "Question removed from difficult list", deletedQuestion });
+  } catch (error) {
+      res.status(500).json({ message: "Error removing difficult question", error });
+  }
+};

@@ -376,4 +376,270 @@ paths:
         '500':
           description: Internal server error
 
-      
+  /assignment/create:
+    post:
+      summary: Create a new assignment
+      tags:
+        - Assignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - course_id
+                - week
+                - title
+                - type
+                - due_date
+                - total_marks
+              properties:
+                course_id:
+                  type: string
+                week:
+                  type: number
+                title:
+                  type: string
+                type:
+                  type: string
+                  enum: [practice, graded]
+                due_date:
+                  type: string
+                  format: date-time
+                total_marks:
+                  type: number
+      responses:
+        '201':
+          description: Assignment created successfully
+        '400':
+          description: Missing required fields
+        '500':
+          description: Internal server error
+
+  /assignment/questions/add:
+    post:
+      summary: Add a question to an assignment
+      tags:
+        - Assignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - assignment_id
+                - question
+                - type
+                - options
+                - category
+                - full_marks
+                - correct_options
+              properties:
+                assignment_id:
+                  type: string
+                question:
+                  type: string
+                type:
+                  type: string
+                  enum: [single, multi]
+                options:
+                  type: array
+                  items:
+                    type: string
+                category:
+                  type: string
+                  enum: [easy, medium, hard]
+                full_marks:
+                  type: number
+                correct_options:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Question added successfully
+        '400':
+          description: Missing required fields
+        '500':
+          description: Internal server error
+
+  /assignment/{course_id}:
+    get:
+      summary: Get all assignments for a course
+      tags:
+        - Assignment
+      parameters:
+        - name: course_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of assignments for the course
+        '404':
+          description: No assignments found
+        '500':
+          description: Internal server error
+
+  /assignment/questions/{assignment_id}:
+    get:
+      summary: Get questions for a specific assignment
+      tags:
+        - Assignment
+      parameters:
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assignment details with questions
+        '404':
+          description: Assignment not found
+        '500':
+          description: Internal server error
+
+  /assignment/submit:
+    post:
+      summary: Submit an assignment response
+      tags:
+        - Assignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - assignment_id
+                - responses
+              properties:
+                user_id:
+                  type: string
+                assignment_id:
+                  type: string
+                responses:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      question_id:
+                        type: string
+                      response:
+                        type: array
+                        items:
+                          type: string
+      responses:
+        '201':
+          description: Assignment submitted successfully
+        '400':
+          description: Missing required fields
+        '500':
+          description: Internal server error
+
+  /assignment/response/{user_id}/{assignment_id}:
+    get:
+      summary: Get assignment response by user and assignment ID
+      tags:
+        - Assignment Responses
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assignment response details
+        '404':
+          description: Assignment response not found
+        '500':
+          description: Internal server error
+
+  /difficultquestions/markasdifficult:
+    post:
+      summary: Mark a question as difficult
+      tags:
+        - Difficult Questions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - assignment_id
+                - question
+              properties:
+                user_id:
+                  type: string
+                assignment_id:
+                  type: string
+                question:
+                  type: string
+      responses:
+        '201':
+          description: Question marked as difficult
+        '200':
+          description: Question is already marked as difficult
+        '500':
+          description: Internal server error
+
+  /difficultquestions/{user_id}/{course_id}:
+    get:
+      summary: Get all difficult questions for a user in a specific course
+      tags:
+        - Difficult Questions
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: course_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of difficult questions
+        '404':
+          description: No difficult questions found
+        '500':
+          description: Internal server error
+
+  /difficultquestions/remove/{user_id}/{question_id}:
+    delete:
+      summary: Remove a question from difficult questions
+      tags:
+        - Difficult Questions
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: question_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Question removed from difficult list
+        '404':
+          description: Difficult question not found
+        '500':
+          description: Internal server error
