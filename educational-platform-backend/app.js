@@ -23,6 +23,11 @@ const swaggerJSDocs = YAML.load("./api.yaml");
 const aiAgentRoutes = require('./ai_agent/topic_simplification/route/aiAgentRoutes');
 app.use('/api/topic_simplification', aiAgentRoutes);
 
+
+const programmingRoutes = require('./ai_agent/programming_assistance/route/programmingRoutes');
+app.use('/api/programming', programmingRoutes);
+
+
 // routes
 const userRoute = require('./user/route/user');
 app.use("/api/user", userRoute);
