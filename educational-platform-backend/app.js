@@ -27,6 +27,12 @@ app.use('/api/topic_simplification', aiAgentRoutes);
 const programmingRoutes = require('./ai_agent/programming_assistance/route/programmingRoutes');
 app.use('/api/programming', programmingRoutes);
 
+const instructorRoutes = require('./ai_agent/instructor_assistant/routes/instructorRoutes');
+app.use('/api/instructor', instructorRoutes);
+
+
+const assignmentSummaryRoutes = require('./ai_agent/assignment_summary/routes/summaryRoutes');
+app.use('/api/summary', assignmentSummaryRoutes);
 
 // routes
 const userRoute = require('./user/route/user');
