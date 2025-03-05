@@ -4,7 +4,7 @@ info:
   description: API documentation for the Educational platform
   version: 1.0.0
 servers:
-  - url: http://localhost:3011/api
+  - url: http://localhost:3009/api
     description: Local development server
   - url: https://educational-platform-development.lawsikho.dev/api/education
     description: Stagging development server
@@ -175,4 +175,205 @@ paths:
                     example: Error logging in
                   error:
                     type: string
+
+
+  /prog-assignment/create:
+    post:
+      summary: Create a new programming assignment
+      tags:
+        - Assignments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - course_id
+                - title
+                - type
+                - question
+                - due_date
+                - total_marks
+              properties:
+                course_id:
+                  type: string
+                title:
+                  type: string
+                type:
+                  type: string
+                  enum: [practice, graded]
+                question:
+                  type: string
+                due_date:
+                  type: string
+                  format: date-time
+                total_marks:
+                  type: number
+      responses:
+        '201':
+          description: Assignment created successfully
+        '400':
+          description: Missing required fields
+        '500':
+          description: Internal server error
+
+  /prog-assignment/all:
+    get:
+      summary: Get all programming assignments
+      tags:
+        - Assignments
+      responses:
+        '200':
+          description: List of assignments
+        '500':
+          description: Internal server error
+
+  /prog-assignment/course/{course_id}:
+    get:
+      summary: Get assignments by course ID
+      tags:
+        - Assignments
+      parameters:
+        - name: course_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of assignments for the course
+        '404':
+          description: No assignments found
+        '500':
+          description: Internal server error
+
+  /prog-assignment/{assignment_id}:
+    get:
+      summary: Get an assignment by ID
+      tags:
+        - Assignments
+      parameters:
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assignment details
+        '404':
+          description: Assignment not found
+        '500':
+          description: Internal server error
+
+  /prog-assignment/submit:
+    post:
+      summary: Submit a programming assignment response
+      tags:
+        - Responses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - assignment_id
+                - course_id
+                - response
+                - actual_output
+              properties:
+                user_id:
+                  type: string
+                assignment_id:
+                  type: string
+                course_id:
+                  type: string
+                response:
+                  type: string
+                actual_output:
+                  type: string
+      responses:
+        '201':
+          description: Response submitted successfully
+        '400':
+          description: Missing required fields
+        '500':
+          description: Internal server error
+
+  /prog-assignment/score/{user_id}/{assignment_id}:
+    get:
+      summary: Get a programming assignment score
+      tags:
+        - Scores
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Score details
+        '404':
+          description: Score not found
+        '500':
+          description: Internal server error
+
+  /prog-assignment/score/update:
+    post:
+      summary: Update programming assignment score
+      tags:
+        - Scores
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - assignment_id
+                - score
+              properties:
+                user_id:
+                  type: string
+                assignment_id:
+                  type: string
+                score:
+                  type: number
+      responses:
+        '200':
+          description: Score updated successfully
+        '201':
+          description: Score recorded successfully
+        '500':
+          description: Internal server error
+
+  /prog-assignment/responses/course/{course_id}:
+    get:
+      summary: Get all responses for a given course
+      tags:
+        - Responses
+      parameters:
+        - name: course_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of responses for the course
+        '404':
+          description: No responses found
+        '500':
+          description: Internal server error
+
       
