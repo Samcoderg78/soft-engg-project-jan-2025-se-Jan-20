@@ -35,36 +35,3 @@ module.exports = router;
 
 
 
-
-
-// const express = require("express");
-// const router = express.Router();
-// const progAssignmentController = require("../controller/progAssignmentController");
-
-
-// // Create a new programming assignment
-// router.post("/create", progAssignmentController.createProgAssignment);
-
-// // Get all programming assignments
-// router.get("/all", progAssignmentController.getAllProgAssignments);
-
-// // Get a specific programming assignment by ID
-// router.get("/:id", progAssignmentController.getProgAssignmentById);
-
-
-// // Get all programming assignments for a given course
-// router.get("/:course_id", progAssignmentController.getAllProgAssignments);
-
-// // Get a specific programming assignment by ID
-// router.get("/assignment/:assignment_id", progAssignmentController.getProgAssignment);
-
-// // Submit a programming assignment response
-// router.post("/submit", progAssignmentController.submitProgAssignment);
-
-// // Get programming assignment score
-// router.get("/score/:user_id/:assignment_id", progAssignmentController.getProgAssignmentScore);
-
-// // Update programming assignment score
-// router.post("/score/update", progAssignmentController.updateProgAssignmentScore);
-
-// module.exports = router;

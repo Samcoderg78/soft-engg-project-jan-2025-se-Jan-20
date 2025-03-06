@@ -1,6 +1,5 @@
 const Task = require('../model/dr');
 
-
 exports.addTask = async (req, res) => {
   try {
     const { name, subject, deadline, priority } = req.body;

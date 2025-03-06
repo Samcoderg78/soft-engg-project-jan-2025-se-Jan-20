@@ -1,21 +1,19 @@
 const { Assignment, ProgAssignment } = require("../model/gd"); 
 
-const mongoose = require("mongoose");
 
 exports.getDeadlines = async (req, res) => {
     try {
         const { course_id } = req.query;
 
-        const startOfToday = new Date();
-        startOfToday.setUTCHours(0, 0, 0, 0);
-
-        const assignmentQuery = { due_date: { $gte: startOfToday } };
-        const progAssignmentQuery = { due_date: { $gte: startOfToday } };
+        const assignmentQuery = {};  
+        const progAssignmentQuery = {}; 
 
         if (course_id) {
             assignmentQuery.course_id = course_id.trim();
             progAssignmentQuery.course_id = course_id.trim();
         }
+
+        console.log("Assignment Query:", assignmentQuery);
 
         const assignments = await Assignment.find(assignmentQuery).sort({ due_date: 1 });
         const progAssignments = await ProgAssignment.find(progAssignmentQuery).sort({ due_date: 1 });
