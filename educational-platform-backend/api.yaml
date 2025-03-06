@@ -1085,11 +1085,11 @@ paths:
 
 
 
-  /tasks:
+  /dr:
     get:
       tags:
         - deadline
-      summary: Get all tasks
+      summary: Get all deadlines & reminders
       description: Fetches a list of all available tasks.
       responses:
         '200':
@@ -1103,11 +1103,11 @@ paths:
         '500':
           description: Error fetching tasks
 
-  /tasks/add:
+  /dr/add:
     post:
       tags:
         - deadline
-      summary: Add a new task
+      summary: Add a new deadline or reminder
       description: Adds a new task to the system.
       requestBody:
         required: true
@@ -1127,11 +1127,11 @@ paths:
         '500':
           description: Error adding task
 
-  /tasks/{id}:
+  /dr/{id}:
     delete:
       tags:
-        - remainder
-      summary: Delete a task
+        - Reminder
+      summary: Delete a deadline reminder
       description: Deletes a task by its ID.
       parameters:
         - name: id
@@ -1156,7 +1156,7 @@ paths:
 
 
 
-  /courses:
+  /course:
     get:
       tags:
         - Courses
@@ -1174,7 +1174,7 @@ paths:
         '500':
           description: Error fetching courses
 
-  /courses/add:
+  /course/add:
     post:
       tags:
         - Courses
@@ -1198,7 +1198,7 @@ paths:
         '500':
           description: Error adding course
 
-  /courses/{id}:
+  /course/{id}:
     delete:
       tags:
         - courses
@@ -1220,7 +1220,7 @@ paths:
 
 
 
-  /lectures/add:
+  /lecture/add:
     post:
       tags:
         - lectures
@@ -1244,7 +1244,7 @@ paths:
         '500':
           description: Error adding lecture
 
-  /lectures/{course}/{week}:
+  /lecture/{course}/{week}:
     get:
       tags:
         - lectures
@@ -1280,7 +1280,7 @@ paths:
 
 
 
-  /weeks/add:
+  /week/add:
     post:
       tags:
         - weeks
@@ -1304,7 +1304,7 @@ paths:
         '500':
           description: Error adding week
 
-  /weeks/course/{courseId}:
+  /week/course/{courseId}:
     get:
       tags:
         - weeks
@@ -1328,7 +1328,7 @@ paths:
         '500':
           description: Error fetching weeks for the course
 
-  /weeks/{id}:
+  /week/{id}:
     get:
       tags:
         - weeks
@@ -1409,6 +1409,220 @@ paths:
 
 
 
+
+  /gd/deadlines:
+    get:
+      summary: Get Deadlines for Assignments
+      description: Fetch upcoming assignment deadlines and program assignments.
+      tags:
+        - Deadlines
+      parameters:
+        - name: course_id
+          in: query
+          description: Optional filter for the course ID to fetch deadlines for a specific course.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of assignments and program assignments.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  assignments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Assignment'
+                  progAssignments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProgAssignment'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+
+
+
+  /rs/recent_submissions/{user_id}:
+    get:
+      summary: Get Recent Submissions
+      description: Fetch recent submissions for a specific user based on user ID.
+      tags:
+        - Submissions
+      parameters:
+        - name: user_id
+          in: path
+          description: The ID of the user whose recent submissions are to be fetched.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of recent submissions for the user.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  assignmentSubmissions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AssignmentResponse'
+                  progAssignmentSubmissions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProgAssignmentResponse'
+        '400':
+          description: User ID is missing.
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+
+
+
+
+  /tn/take_note:
+    post:
+      summary: Add a Note
+      description: Allow users to add notes related to a lecture for a specific course.
+      tags:
+        - Notes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                lecture_id:
+                  type: string
+                course_id:
+                  type: string
+                note:
+                  type: string
+      responses:
+        '201':
+          description: Note added successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  note:
+                    $ref: '#/components/schemas/Note'
+        '400':
+          description: Missing required fields in the request body.
+        '500':
+          description: Internal Server Error.
+  /tn/lecture/{lecture_id}:
+    get:
+      summary: Get Notes for a Specific Lecture
+      description: Fetch all notes for a specific lecture.
+      tags:
+        - Notes
+      parameters:
+        - name: lecture_id
+          in: path
+          description: The ID of the lecture to fetch notes for.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of notes for the specified lecture.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Note'
+        '400':
+          description: Missing lecture ID.
+        '500':
+          description: Internal Server Error.
+  /tn/course/{course_id}:
+    get:
+      summary: Get Notes for a Specific Course
+      description: Fetch all notes for a specific course.
+      tags:
+        - Notes
+      parameters:
+        - name: course_id
+          in: path
+          description: The ID of the course to fetch notes for.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of notes for the specified course.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Note'
+        '400':
+          description: Missing course ID.
+        '500':
+          description: Internal Server Error.
+  /tn/user/{user_id}:
+    get:
+      summary: Get Notes for a Specific User
+      description: Fetch all notes for a specific user.
+      tags:
+        - Notes
+      parameters:
+        - name: user_id
+          in: path
+          description: The ID of the user to fetch notes for.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of notes for the specified user.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Note'
+        '400':
+          description: Missing user ID.
+        '500':
+          description: Internal Server Error.
+
+    
 
 components:
   schemas:
@@ -1701,6 +1915,92 @@ components:
           minimum: 1
           maximum: 5
           description: Rating given by the user (1-5)
+
+
+    Assignment:
+      type: object
+      properties:
+        course_id:
+          type: string
+        week:
+          type: integer
+        title:
+          type: string
+        type:
+          type: string
+        due_date:
+          type: string
+          format: date-time
+        total_marks:
+          type: integer
+    ProgAssignment:
+      type: object
+      properties:
+        course_id:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        question:
+          type: string
+        due_date:
+          type: string
+          format: date-time
+        total_marks:
+          type: integer
+    AssignmentResponse:
+      type: object
+      properties:
+        user_id:
+          type: string
+        assignment_id:
+          type: string
+        responses:
+          type: array
+          items:
+            type: object
+            properties:
+              question_id:
+                type: string
+              response:
+                type: array
+                items:
+                  type: string
+        submitted_on:
+          type: string
+          format: date-time
+    ProgAssignmentResponse:
+      type: object
+      properties:
+        user_id:
+          type: string
+        assignment_id:
+          type: string
+        course_id:
+          type: string
+        response:
+          type: string
+        actual_output:
+          type: string
+        submitted_on:
+          type: string
+          format: date-time
+    Note:
+      type: object
+      properties:
+        user_id:
+          type: string
+        lecture_id:
+          type: string
+        course_id:
+          type: string
+        note:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
 
 
 
