@@ -1,9 +1,9 @@
-// assignment-summary/routes/summaryRoutes.js
+// assignmentSummaryRoutes.js
 const express = require('express');
-const router = express.Router();
-const { handleSummaryReport } = require('../controllers/summaryController');
+const assignmentSummaryController = require('../controllers/summaryController');
 
-// Summary report endpoint
-router.post('/summary-report', handleSummaryReport);
+const router = express.Router();
+
+router.get('/:assignmentId', assignmentSummaryController.getAssignmentSummary);
 
 module.exports = router;
