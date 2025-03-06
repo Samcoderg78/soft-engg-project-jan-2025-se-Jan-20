@@ -3,7 +3,7 @@ const Week = require('../model/week');
 
 exports.addWeek = async (req, res) => {
   try {
-    const { courseId, weekNumber, title, description, lessons } = req.body;
+    const { courseId, weekNumber, title, description, lecture } = req.body;
 
     // const course = await Course.findById(courseId);
     // if (!course) {
@@ -21,7 +21,7 @@ exports.addWeek = async (req, res) => {
       weekNumber,
       title,
       description,
-      lessons
+      lecture
     });
 
     const savedWeek = await newWeek.save();

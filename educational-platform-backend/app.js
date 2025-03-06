@@ -27,6 +27,12 @@ app.use('/api/topic_simplification', aiAgentRoutes);
 const programmingRoutes = require('./ai_agent/programming_assistance/route/programmingRoutes');
 app.use('/api/programming', programmingRoutes);
 
+const instructorRoutes = require('./ai_agent/instructor_assistant/routes/instructorRoutes');
+app.use('/api/instructor', instructorRoutes);
+
+
+const assignmentSummaryRoutes = require('./ai_agent/assignment_summary/routes/summaryRoutes');
+app.use('/api/summary', assignmentSummaryRoutes);
 
 // routes
 const userRoute = require('./user/route/user');
@@ -43,6 +49,7 @@ app.use("/api/week", weekRoute);
 
 const lectureRoute = require('./lectures/route/lecture');
 app.use("/api/lecture", lectureRoute);
+
 const assignmentRoutes = require("./assignment/route/assignment");
 app.use("/api/assignment", assignmentRoutes);
 
@@ -52,6 +59,19 @@ app.use("/api/difficultquestions", difficultquestionsRoutes);
 // Programming Assignments Routes
 const progAssignmentRoutes = require("./programming_assignment/route/progAssignmentRoutes");
 app.use("/api/prog-assignment", progAssignmentRoutes);
+
+const deadlineRoute = require("./getDeadlines/route/gd");
+app.use("/api/gd", deadlineRoute);
+
+const submissionRoute = require("./recentSubmissions/route/rs");
+app.use("/api/rs", submissionRoute);
+
+const noteRoute = require("./takeNotes/route/tn");
+app.use("/api/tn", noteRoute);
+
+//feedback routes
+const feedbackRoutes = require("./feedback/routes/feedbackRoutes"); 
+app.use("/api/feedback", feedbackRoutes);
 
 // Swagger
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJSDocs));
