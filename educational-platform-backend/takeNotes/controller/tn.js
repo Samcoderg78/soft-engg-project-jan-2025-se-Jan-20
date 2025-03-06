@@ -1,4 +1,5 @@
 const Notes = require("../model/tn");
+const mongoose = require("mongoose");
 
 // ✅ Add a Note
 exports.takeNote = async (req, res) => {
@@ -10,22 +11,14 @@ exports.takeNote = async (req, res) => {
             return res.status(400).json({ message: "User ID, Lecture ID, Course ID, and Note are required" });
         }
 
-        // Debugging: Log the received data
+        // Debugging: Log received data
         console.log("Received data:", { user_id, lecture_id, course_id, note });
-
-        // Convert string IDs to ObjectId
-        const userObjectId = new mongoose.Types.ObjectId(user_id);
-        const lectureObjectId = new mongoose.Types.ObjectId(lecture_id);
-        const courseObjectId = new mongoose.Types.ObjectId(course_id);
-
-        // Debugging: Log the converted ObjectIds
-        console.log("Converted ObjectIds:", { userObjectId, lectureObjectId, courseObjectId });
 
         // Create a new note document
         const newNote = new Notes({
-            user_id: userObjectId,
-            lecture_id: lectureObjectId,
-            course_id: courseObjectId,
+            user_id,  // Store as string
+            lecture_id,
+            course_id,
             note,
             timestamp: new Date()
         });
@@ -39,6 +32,7 @@ exports.takeNote = async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
 
 
 // ✅ Fetch Notes for a Specific Lecture

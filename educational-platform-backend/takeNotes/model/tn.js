@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const NotesSchema = new mongoose.Schema({
-  user_id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" }, 
-  lecture_id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Lecture" },
-  course_id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Course" },
+const notesSchema = new mongoose.Schema({
+  user_id: { type: String, required: true, ref: "User" },
+  lecture_id: { type: String, required: true, ref: "Lecture" },
+  course_id: { type: String, required: true, ref: "Course" },
   note: { type: String, required: true },
   timestamp: { type: Date, default: Date.now }
-});
+}, { versionKey: false }); // Prevents adding __v field automatically
 
-const Notes = mongoose.models.Notes || mongoose.model("Notes", NotesSchema);
+const Notes = mongoose.models.Notes || mongoose.model("Notes", notesSchema);
 module.exports = Notes;
