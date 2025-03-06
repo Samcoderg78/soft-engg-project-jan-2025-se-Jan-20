@@ -8,6 +8,8 @@ router.post("/submit", assignmentController.submitAssignment);
 router.post("/create", assignmentController.createAssignment);
 router.post("/questions/add", assignmentController.createAssignmentQuestion);
 router.get("/response/:user_id/:assignment_id", assignmentController.getAssignmentResponse);
+router.post("/score/generate/:assignment_id", assignmentController.generateAssignmentScores);
+router.get("/score/:user_id/:assignment_id", assignmentController.getAssignmentScore);
 
 
 module.exports = router;
