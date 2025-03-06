@@ -698,126 +698,6 @@ paths:
 
 
 
-
-  /add:
-    post:
-      summary: Add a new task
-      description: Creates a new task if it does not already exist with the same name and subject.
-      tags:
-        - Task
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - name
-                - subject
-                - deadline
-              properties:
-                name:
-                  type: string
-                  example: "Math Assignment"
-                subject:
-                  type: string
-                  example: "Mathematics"
-                deadline:
-                  type: string
-                  format: date
-                  example: "2025-03-10"
-                priority:
-                  type: string
-                  enum: ["High", "Medium", "Low"]
-                  example: "High"
-      responses:
-        "201":
-          description: Task created successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  _id:
-                    type: string
-                    example: "65c9d10f4a5f24d2b8d8a61c"
-                  name:
-                    type: string
-                    example: "Math Assignment"
-                  subject:
-                    type: string
-                    example: "Mathematics"
-                  deadline:
-                    type: string
-                    format: date
-                    example: "2025-03-10"
-                  priority:
-                    type: string
-                    example: "High"
-        "400":
-          description: Task with the same name and subject already exists
-        "500":
-          description: Server error
-
-  /:
-    get:
-      summary: Get all tasks
-      description: Retrieves a list of all tasks in the database.
-      tags:
-        - Task
-      responses:
-        "200":
-          description: A list of tasks
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    _id:
-                      type: string
-                      example: "65c9d10f4a5f24d2b8d8a61c"
-                    name:
-                      type: string
-                      example: "Math Assignment"
-                    subject:
-                      type: string
-                      example: "Mathematics"
-                    deadline:
-                      type: string
-                      format: date
-                      example: "2025-03-10"
-                    priority:
-                      type: string
-                      example: "High"
-        "500":
-          description: Server error
-
-  /{id}:
-    delete:
-      summary: Delete a task
-      description: Deletes a task by its ID.
-      tags:
-        - Task
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: The ID of the task to delete
-          schema:
-            type: string
-            example: "65c9d10f4a5f24d2b8d8a61c"
-      responses:
-        "200":
-          description: Task deleted successfully
-        "404":
-          description: Task not found
-        "500":
-          description: Server error
-
-
-
   /programming/programming-hint:
     post:
       summary: Get a programming hint
@@ -1666,6 +1546,124 @@ paths:
           description: Internal Server Error.
 
     
+
+
+
+  /summary/summary-report:
+    post:
+      summary: Generate an assignment summary report
+      description: Generates a summary report based on assignment scores, responses, and questions.
+      tags:
+      - Assignment Analytics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assignmentId:
+                  type: string
+                  example: "67c4611f6c84bbc2846638ac"
+              required:
+                - assignmentId
+      responses:
+        "200":
+          description: Summary report generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summaryReport:
+                    type: object
+                    properties:
+                      assignmentId:
+                        type: string
+                        example: "67c4611f6c84bbc2846638ac"
+                      totalStudents:
+                        type: integer
+                        example: 50
+                      averageScore:
+                        type: number
+                        format: float
+                        example: 78.5
+                      highestScore:
+                        type: integer
+                        example: 95
+                      lowestScore:
+                        type: integer
+                        example: 40
+                      commonMistakes:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Incorrect answer for question 123", "Incorrect answer for question 456"]
+                      difficultyStats:
+                        type: object
+                        properties:
+                          easy:
+                            type: object
+                            properties:
+                              totalQuestions:
+                                type: integer
+                                example: 10
+                              correctAnswers:
+                                type: integer
+                                example: 8
+                              averageScore:
+                                type: number
+                                format: float
+                                example: 80.0
+                          medium:
+                            type: object
+                            properties:
+                              totalQuestions:
+                                type: integer
+                                example: 15
+                              correctAnswers:
+                                type: integer
+                                example: 10
+                              averageScore:
+                                type: number
+                                format: float
+                                example: 66.7
+                          hard:
+                            type: object
+                            properties:
+                              totalQuestions:
+                                type: integer
+                                example: 5
+                              correctAnswers:
+                                type: integer
+                                example: 2
+                              averageScore:
+                                type: number
+                                format: float
+                                example: 40.0
+        "400":
+          description: Invalid request (missing assignment ID)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Assignment ID is required."
+        "500":
+          description: Error generating summary report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error generating summary report."
+
+
+
 
 components:
   schemas:
