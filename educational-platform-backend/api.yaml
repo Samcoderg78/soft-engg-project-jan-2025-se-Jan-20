@@ -573,7 +573,7 @@ paths:
         '500':
           description: Internal server error
 
-  /assignments/score/generate/{assignment_id}:
+  /assignment/score/generate/{assignment_id}:
     post:
       summary: Generate scores for all assignment responses of a specific assignment
       tags:
@@ -592,7 +592,7 @@ paths:
         '500':
           description: Internal server error
 
-  /assignments/score/{user_id}/{assignment_id}:
+  /assignment/score/{user_id}/{assignment_id}:
     get:
       summary: Get assignment score for a specific user and assignment
       tags:
