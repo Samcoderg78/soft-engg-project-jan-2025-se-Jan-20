@@ -566,6 +566,49 @@ paths:
         '500':
           description: Internal server error
 
+  /assignments/score/generate/{assignment_id}:
+    post:
+      summary: Generate scores for all assignment responses of a specific assignment
+      tags:
+        - Assignment Score
+      parameters:
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Scores generated for all responses
+        '404':
+          description: No assignment responses found for this assignment
+        '500':
+          description: Internal server error
+
+  /assignments/score/{user_id}/{assignment_id}:
+    get:
+      summary: Get assignment score for a specific user and assignment
+      tags:
+        - Assignment Score
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assignment score retrieved successfully
+        '404':
+          description: No assignment response found for this user and assignment / Score not generated for this assignment response
+        '500':
+          description: Internal server error
+
   /difficultquestions/markasdifficult:
     post:
       summary: Mark a question as difficult
