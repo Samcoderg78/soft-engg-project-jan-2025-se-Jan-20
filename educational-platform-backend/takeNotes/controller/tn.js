@@ -40,8 +40,10 @@ exports.getNotesByLecture = async (req, res) => {
     try {
         const { lecture_id } = req.params;
 
-        if (!lecture_id) {
-            return res.status(400).json({ message: "Lecture ID is required" });
+        if (!lecture_id || !mongoose.isValidObjectId(lecture_id)) {
+            return res.status(400).json({ message: "Invalid Lecture ID format" });
+        // if (!lecture_id) {
+        //     return res.status(400).json({ message: "Lecture ID is required" });
         }
 
         const notes = await Notes.find({ lecture_id }).sort({ timestamp: -1 });
@@ -57,9 +59,11 @@ exports.getNotesByLecture = async (req, res) => {
 exports.getNotesByCourse = async (req, res) => {
     try {
         const { course_id } = req.params;
-
-        if (!course_id) {
-            return res.status(400).json({ message: "Course ID is required" });
+        
+        if (!course_id || !mongoose.isValidObjectId(course_id)) {
+            return res.status(400).json({ message: "Invalid Course ID format" });
+        // if (!course_id) {
+        //     return res.status(400).json({ message: "Course ID is required" });
         }
 
         const notes = await Notes.find({ course_id }).sort({ timestamp: -1 });
@@ -76,8 +80,10 @@ exports.getNotesByUser = async (req, res) => {
     try {
         const { user_id } = req.params;
 
-        if (!user_id) {
-            return res.status(400).json({ message: "User ID is required" });
+        if (!user_id || !mongoose.isValidObjectId(user_id)) {
+            return res.status(400).json({ message: "Invalid User ID format" });
+        // if (!user_id) {
+        //     return res.status(400).json({ message: "User ID is required" });
         }
 
         const notes = await Notes.find({ user_id }).sort({ timestamp: -1 });
