@@ -85,3 +85,5 @@ app.listen(port, () => {
     console.log(`You can have Api docs from here ➡️  http://localhost:${port}/api-docs/ and after clicking on this link select HTTP`)
 });
 
+module.exports = { app };
+
