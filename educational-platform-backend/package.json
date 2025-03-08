@@ -4,7 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest ./user/tests/userLogin.test.js"
+    "test": "jest ./user/tests/userLogin.test.js",
+    "course_test": "jest courses/test_cases/course.test.js",
+    "dr_test": "jest deadlines_&_reminders/test_cases/dr.test.js",
+    "gd_test": "jest getDeadlines/test_cases/gd.test.js",
+    "lecture_test": "jest lectures/test_cases/lecture.test.js",
+    "rs_test": "jest recentSubmissions/test_cases/rs.test.js",
+    "tn_test": "jest takeNotes/test_cases/tn.test.js",
+    "week_test": "jest weeks/test_cases/week.test.js",
+    "assignment-test": "jest ./assignment/tests/assignment.test.js"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +27,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "gpt-3-encoder": "^1.1.4",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.12.0",
