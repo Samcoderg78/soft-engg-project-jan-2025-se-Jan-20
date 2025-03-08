@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "assignmetn-test": "jest ./assignment/tests/assignment.test.js"
+    "assignment-test": "jest ./assignment/tests/assignment.test.js"
   },
   "keywords": [],
   "author": "",
