@@ -64,11 +64,12 @@ const generateResponse = async (query, documents = [], type) => {
         if (type === 'assignment') {
             inputText += "Provide a hint to guide the student without revealing the answer. Focus on concepts.";
         } else if (type === 'simplification') {
-            inputText += "Explain this in simple terms for a student to understand easily.";
+            inputText += "Consider yourself an expert teacher who is known for his easy way of explanining topics and concepts to students. Now, clear this concept or doubt of the student so that he understands it fully and easily.";
         }
 
         const response = await axios.post(
             'https://api-inference.huggingface.co/models/google/flan-t5-large',
+            // 'https://api-inference.huggingface.co/models/deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B',
             { inputs: inputText },
             {
                 headers: {
