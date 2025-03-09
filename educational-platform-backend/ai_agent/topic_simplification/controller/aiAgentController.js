@@ -78,7 +78,7 @@
 // module.exports = { handleAIRequest };
 
 
-const { retrieveDocuments, generateResponse, createDocument } = require('../service/aiService');
+const { retrieveDocuments, generateResponse, createDocument, generateHint, retrieveResources } = require('../service/aiService');
 
 const handleAIRequest = async (req, res) => {
     try {
@@ -122,4 +122,44 @@ const handleAIRequest = async (req, res) => {
     }
 };
 
-module.exports = { handleAIRequest };
+const handleAssignmentRequest = async (req, res) => {
+    try {
+        const { query } = req.body;
+        if (!query) {
+            return res.status(400).json({ message: 'Query is required' });
+        }
+
+        // Generate hints for the assignment question
+        const hints = await generateHint(query);
+
+        // Return the hints
+        res.json({ hints });
+    } catch (error) {
+        console.error('🚨 Error handling assignment request:', error.message);
+        res.status(500).json({ message: 'Error processing assignment request' });
+    }
+};
+
+const handleResourceRequest = async (req, res) => {
+    try {
+        const { query } = req.body;
+        if (!query) {
+            return res.status(400).json({ message: 'Query is required' });
+        }
+
+        // Retrieve resources related to the query
+        const resources = await retrieveResources(query);
+
+        // Return the resources
+        res.json(resources);
+    } catch (error) {
+        console.error('🚨 Error handling resource request:', error.message);
+        res.status(500).json({ message: 'Error processing resource request' });
+    }
+};
+
+module.exports = { 
+    handleAIRequest,
+    handleAssignmentRequest,
+    handleResourceRequest // Export the new function
+};
