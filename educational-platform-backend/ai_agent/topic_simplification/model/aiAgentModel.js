@@ -24,7 +24,7 @@ const mongoose = require('mongoose');
 const aiAgentSchema = new mongoose.Schema({
     userQuery: { type: String, required: true },
     response: { type: String, required: true },
-    videoContext: { type: String, default: 'General' },
+    // videoContext: { type: String, default: 'General' },
     embedding: { type: [Number] }, // Vector embeddings for semantic search
     createdAt: { type: Date, default: Date.now }
 });
