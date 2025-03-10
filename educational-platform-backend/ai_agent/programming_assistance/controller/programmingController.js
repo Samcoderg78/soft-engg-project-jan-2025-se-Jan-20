@@ -1,5 +1,4 @@
-// programming-assistance/controllers/programmingController.js
-const { provideProgrammingHint, reviewCode, retrieveProgrammingResources } = require('../service/programmingService');
+const { provideProgrammingHint, reviewCode } = require('../service/programmingService');
 const Programming = require('../model/programmingModel');
 
 // Handle programming assistance requests
@@ -34,17 +33,4 @@ const handleCodeReview = async (req, res) => {
     }
 };
 
-// Handle resource requests
-const handleResourceRequest = async (req, res) => {
-    try {
-        const { query, context } = req.body;
-        const resources = await retrieveProgrammingResources(query, context);
-
-        res.json(resources);
-    } catch (error) {
-        console.error('Error handling resource request:', error.message);
-        res.status(500).json({ message: 'Error processing request.' });
-    }
-};
-
-module.exports = { handleProgrammingHint, handleCodeReview, handleResourceRequest };
+module.exports = { handleProgrammingHint, handleCodeReview };
