@@ -48,6 +48,10 @@ describe("Recent Submissions API", () => {
 
   // Test case for handling server errors gracefully
   it("should handle errors gracefully and return a 500 status on failure", async () => {
+    // Mock console.error to suppress the error log
+    const originalConsoleError = console.error;
+    console.error = jest.fn();
+
     // Mock the find method to throw an error
     jest.spyOn(AssignmentResponse, 'find').mockImplementationOnce(() => {
       throw new Error("Database error");
@@ -58,6 +62,9 @@ describe("Recent Submissions API", () => {
       .expect(500);  // Expecting 500 for server error
 
     expect(response.body.message).toBe("Internal Server Error");
+
+    // Restore console.error
+    console.error = originalConsoleError;
   });
 });
 

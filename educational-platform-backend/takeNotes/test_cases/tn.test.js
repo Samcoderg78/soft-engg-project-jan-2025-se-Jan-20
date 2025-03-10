@@ -119,6 +119,10 @@ describe("Notes API", () => {
 
   // Mocking a database error
   it("should handle errors gracefully and return a 500 status on failure", async () => {
+    // Mock console.error to suppress the error log
+    const originalConsoleError = console.error;
+    console.error = jest.fn();
+
     jest.spyOn(Notes, 'find').mockImplementationOnce(new Error("Database error"));
 
     const response = await request(app)
@@ -126,6 +130,9 @@ describe("Notes API", () => {
       .expect(500);
 
     expect(response.body).toHaveProperty("message", "Internal Server Error");
+
+    // Restore console.error
+    console.error = originalConsoleError;
   });
 });
 
