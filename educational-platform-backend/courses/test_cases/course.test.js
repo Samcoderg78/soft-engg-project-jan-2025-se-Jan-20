@@ -1,10 +1,9 @@
 // Mock @xenova/transformers
 jest.mock("@xenova/transformers", () => ({
-  pipeline: jest.fn(() => Promise.resolve({
-    featureExtraction: jest.fn(() => Promise.resolve([0.1, 0.2, 0.3])), // Mock embedding
-  })),
+  pipeline: jest.fn(() => ({
+    featureExtraction: jest.fn(() => [0.1, 0.2, 0.3]), // Mock embedding
+  })),
 }));
-
 
 const request = require('supertest');
 const { app } = require('../../app');
