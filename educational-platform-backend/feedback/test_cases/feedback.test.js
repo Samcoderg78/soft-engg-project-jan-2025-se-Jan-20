@@ -57,7 +57,9 @@ describe("Feedback API", () => {
       const response = await request(app).post("/api/feedback/submit").send(feedbackData);
 
       // ✅ Fix: Adjust expectation to allow either 400 or 500
-      expect([400, 500]).toContain(response.status);
+      // expect([400, 500]).toContain(response.status);
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty("message", "Rating is out of range");
     });
   });
 
@@ -92,7 +94,9 @@ describe("Feedback API", () => {
       const response = await request(app).get(`/api/feedback/course/invalidCourseId`);
 
       // ✅ Fix: Adjust expectation to allow either 400 or 404
-      expect([400, 404]).toContain(response.status);
+      // expect([400, 404]).toContain(response.status);
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty("message", "Invalid course_id format");
     });
   });
 });
