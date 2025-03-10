@@ -1,52 +1,157 @@
-// instructor-assistant/services/instructorService.js
-const axios = require('axios');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { pipeline } = require('@xenova/transformers'); // For embeddings
 const Instructor = require('../models/instructorModel');
 require('dotenv').config();
 
-// Generate supplementary content for a given topic
-const generateSupplementaryContent = async (topic, context) => {
-    try {
-        const prompt = `You are an AI assistant for instructors. Generate supplementary content for the following topic. Be concise and clear.\n\nTopic: ${topic}\n\nContext: ${context}`;
-        const response = await axios.post(
-            'https://api-inference.huggingface.co/models/deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B',
-            { inputs: prompt },
-            {
-                headers: {
-                    Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-                },
-            }
-        );
+// Initialize Google Generative AI client
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENAI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-        // Return the model's raw response
-        const generatedText = response.data[0]?.generated_text || 'No response generated.';
-        return generatedText;
+// Initialize Hugging Face embedding model
+let embeddingPipeline;
+const initializeEmbeddingModel = async () => {
+    try {
+        embeddingPipeline = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+        console.log('✅ Hugging Face embedding model loaded');
     } catch (error) {
-        console.error('Error generating supplementary content:', error.message);
-        return "Error generating supplementary content.";
+        console.error('Error loading Hugging Face embedding model:', error.message);
     }
 };
 
-// Handle general queries from the instructor
-const handleInstructorQuery = async (query, context) => {
-    try {
-        const prompt = `You are an AI assistant for instructors. Answer the following query. Be concise and clear.\n\nQuery: ${query}\n\nContext: ${context}`;
-        const response = await axios.post(
-            'https://api-inference.huggingface.co/models/deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B',
-            { inputs: prompt },
-            {
-                headers: {
-                    Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-                },
-            }
-        );
+// Call this during server startup
+initializeEmbeddingModel();
 
-        // Return the model's raw response
-        const generatedText = response.data[0]?.generated_text || 'No response generated.';
-        return generatedText;
+// Function to generate embeddings using Hugging Face
+const generateEmbedding = async (text) => {
+    try {
+        // Add input validation
+        if (!text) {
+            console.error('Empty text provided for embedding generation');
+            return null;
+        }
+
+        if (!embeddingPipeline) {
+            await initializeEmbeddingModel();
+        }
+
+        const output = await embeddingPipeline(text, { pooling: 'mean', normalize: true });
+        console.log('🔍 Generated Embedding for:', text);
+        return Array.from(output.data);
+    } catch (error) {
+        console.error('Error generating embedding:', error.message);
+        return null;
+    }
+};
+
+// Function to find an exact match for a query
+const findExactMatch = async (query) => {
+    try {
+        const exactMatch = await Instructor.findOne({ query: query });
+        if (exactMatch) {
+            console.log('✅ Found exact match in database for query:', query);
+            return exactMatch.response;
+        }
+        return null;
+    } catch (error) {
+        console.error('Error finding exact match:', error.message);
+        return null;
+    }
+}
+
+// Function to handle general instructor queries using Gemini
+const handleInstructorQuery = async (query) => {
+    try {
+        // Basic validation
+        if (!query || typeof query !== 'string' || query.trim() === '') {
+            throw new Error('Invalid query provided');
+        }
+
+        console.log('📝 Processing query:', query);
+        
+        // Step 1: Try to find an exact match first (faster)
+        const exactMatchResponse = await findExactMatch(query);
+        if (exactMatchResponse) {
+            console.log('🎯 Using exact match from database');
+            return exactMatchResponse;
+        }
+        
+        // Step 2: Try semantic search with vector embeddings
+        const queryEmbedding = await generateEmbedding(query);
+        
+        if (queryEmbedding) {
+            try {
+                console.log('🔍 Performing vector search...');
+                
+                // Check if any documents exist in the collection before attempting vector search
+                const count = await Instructor.countDocuments();
+                console.log(`📊 Total documents in collection: ${count}`);
+                
+                if (count > 0) {
+                    try {
+                        const documents = await Instructor.aggregate([
+                            {
+                                $vectorSearch: {
+                                    queryVector: queryEmbedding,
+                                    path: "embedding",
+                                    numCandidates: 100,
+                                    limit: 5,
+                                    index: "instructor_vectorSearch"
+                                }
+                            }
+                        ]);
+
+                        if (documents && documents.length > 0) {
+                            console.log('✅ Found similar documents via vector search:', documents.length);
+                            // You could implement a threshold here to ensure only sufficiently similar results are returned
+                            return documents[0].response;
+                        } else {
+                            console.log('❌ No similar documents found via vector search');
+                        }
+                    } catch (vectorSearchError) {
+                        console.error('Vector search error:', vectorSearchError.message);
+                        // Continue to Gemini generation
+                    }
+                } else {
+                    console.log('⚠️ No documents in collection to search');
+                }
+            } catch (searchError) {
+                console.error('Error during search:', searchError.message);
+            }
+        } else {
+            console.log('⚠️ Could not generate embedding for search');
+        }
+
+        console.log('🤖 Generating new response with Gemini...');
+
+        // Generate response with Gemini
+        const prompt = `You are an AI assistant for instructors. Answer the following query. Be concise and clear.\n\nQuery: ${query}`;
+        const result = await model.generateContent(prompt);
+
+        if (result && result.response) {
+            const generatedText = result.response.text();
+            
+            // Store the response
+            try {
+                // Save with both the original query and the embedding for future retrieval
+                await Instructor.create({ 
+                    query: query, 
+                    response: generatedText,
+                    embedding: queryEmbedding || [] // Store empty array if embedding failed
+                });
+                console.log('✅ Successfully stored new response in database');
+            } catch (dbError) {
+                console.error('Error storing in database:', dbError.message);
+                // Still return the generated text even if DB storage fails
+            }
+            
+            return generatedText;
+        }
+
+        return "No response generated.";
     } catch (error) {
         console.error('Error handling instructor query:', error.message);
-        return "Error handling query.";
+        throw new Error('Error handling instructor query: ' + error.message);
     }
 };
 
-module.exports = { generateSupplementaryContent, handleInstructorQuery };
+module.exports = { handleInstructorQuery, generateEmbedding };
