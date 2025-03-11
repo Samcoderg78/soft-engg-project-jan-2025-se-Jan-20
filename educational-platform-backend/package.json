@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+
+    "p_test": "jest ./programming_assignment/tests/programming_assignment.test.js"
     "test": "jest ./user/tests/userLogin.test.js",
     "course_test": "jest courses/test_cases/course.test.js",
     "dr_test": "jest deadlines_&_reminders/test_cases/dr.test.js",
@@ -14,6 +16,7 @@
     "week_test": "jest weeks/test_cases/week.test.js",
     "feedback_test": "jest feedback/test_cases/feedback.test.js",
     "assignment-test": "jest ./assignment/tests/assignment.test.js"
+
   },
   "keywords": [],
   "author": "",
