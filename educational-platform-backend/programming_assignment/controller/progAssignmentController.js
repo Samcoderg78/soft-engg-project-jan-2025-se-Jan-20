@@ -103,7 +103,7 @@ exports.submitProgAssignment = async (req, res) => {
 
     await newResponse.save();
 
-    res.status(201).json({ message: "Programming assignment submitted successfully", response: newResponse });
+    res.status(201).json({ message: "Response submitted successfully", response: newResponse });
   } catch (error) {
     res.status(500).json({ message: "Error submitting programming assignment", error });
   }
