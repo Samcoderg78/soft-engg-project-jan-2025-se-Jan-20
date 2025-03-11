@@ -1,55 +1,85 @@
-// aiAgentController.js
-const { retrieveDocuments, generateResponse } = require('../service/aiService');
-const AIAgent = require('../model/aiAgentModel');
+const { retrieveDocuments, generateResponse, createDocument, generateHint, retrieveResources } = require('../service/aiService');
 
-// Unified Handler for All AI Requests
 const handleAIRequest = async (req, res) => {
     try {
-        const { query, videoContext, type } = req.body;
-
-        // Step 1: Retrieve relevant documents based on the context
-        let documents = await retrieveDocuments(query, videoContext);
-
-        // Step 2: If no documents are found, provide a default context
-        if (documents.length === 0) {
-            console.log('No documents found. Using default context.');
-            documents = [{
-                response: "Python is a high-level programming language known for its simplicity and readability.",
-                resourceType: "Documentation",
-                resourceUrl: "https://docs.python.org/3/",
-                resourceDescription: "Official Python documentation."
-            }];
+        const { query, videoContext } = req.body;
+        if (!query) {
+            return res.status(400).json({ message: 'Query is required' });
         }
 
-        // Step 3: Generate a response or return resources
+        // First search in the database using vector search
+        let documents = await retrieveDocuments(query);
         let response;
-        if (type === 'resources') {
-            // For /ask-resources, return resources
-            response = documents.map(doc => ({
-                type: doc.resourceType,
-                url: doc.resourceUrl,
-                description: doc.resourceDescription
-            }));
-        } else if (type === 'assignment') {
-            // For /ask, return assignment help
-            response = documents.map(doc => ({
-                type: doc.assignmentType || 'General',
-                response: doc.response,
-                resourceType: doc.resourceType,
-                resourceUrl: doc.resourceUrl,
-                resourceDescription: doc.resourceDescription
-            }));
+
+        if (!documents || documents.length === 0) {
+            console.log('❌ No documents found for query:', query);
+            console.log('Generating with LLM...');
+            
+            // Generate response with LLM
+            const generatedResponse = await generateResponse(query, videoContext || '');
+            
+            // Store the new response in the database with vector embedding
+            try {
+                await createDocument(query, generatedResponse, videoContext);
+                console.log('✅ Successfully stored new response in database');
+            } catch (storageError) {
+                console.log('⚠️ Failed to store response, but continuing:', storageError.message);
+            }
+            
+            // Return the generated response
+            response = generatedResponse;
         } else {
-            // For /ask-ai, generate a response using the Hugging Face model
-            response = await generateResponse(query, documents, type);
-            await AIAgent.create({ userQuery: query, response, videoContext });
+            console.log('✅ Found relevant documents in database for query:', query);
+            
+            // Return the most relevant document's response
+            response = documents[0].response;
         }
 
         res.json(response);
     } catch (error) {
-        console.error('Error handling AI request:', error.message);
+        console.error('🚨 Error handling AI request:', error.message);
         res.status(500).json({ message: 'Error processing AI request' });
     }
 };
 
-module.exports = { handleAIRequest };
+const handleAssignmentRequest = async (req, res) => {
+    try {
+        const { query } = req.body;
+        if (!query) {
+            return res.status(400).json({ message: 'Query is required' });
+        }
+
+        // Generate hints for the assignment question
+        const hints = await generateHint(query);
+
+        // Return the hints
+        res.json({ hints });
+    } catch (error) {
+        console.error('🚨 Error handling assignment request:', error.message);
+        res.status(500).json({ message: 'Error processing assignment request' });
+    }
+};
+
+const handleResourceRequest = async (req, res) => {
+    try {
+        const { query } = req.body;
+        if (!query) {
+            return res.status(400).json({ message: 'Query is required' });
+        }
+
+        // Retrieve resources related to the query
+        const resources = await retrieveResources(query);
+
+        // Return the resources
+        res.json(resources);
+    } catch (error) {
+        console.error('🚨 Error handling resource request:', error.message);
+        res.status(500).json({ message: 'Error processing resource request' });
+    }
+};
+
+module.exports = { 
+    handleAIRequest,
+    handleAssignmentRequest,
+    handleResourceRequest // Export the new function
+};

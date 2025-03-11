@@ -41,6 +41,15 @@ exports.getAssignmentQuestions = async (req, res) => {
 exports.submitAssignment = async (req, res) => {
     try {
       const { user_id, assignment_id, responses } = req.body;
+
+      const assignment = await Assignment.findById(assignment_id);
+      if (!assignment) {
+        return res.status(404).json({ message: "Assignment not found" });
+      }
+
+      if (!responses) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
   
       let existingResponse = await AssignmentResponse.findOne({ user_id, assignment_id });
   

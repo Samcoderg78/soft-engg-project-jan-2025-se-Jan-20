@@ -1,109 +1,99 @@
-const axios = require('axios');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { pipeline } = require('@xenova/transformers'); // For embeddings
 const Programming = require('../model/programmingModel');
 require('dotenv').config();
 
-// Provide hints for programming assignments
+// Initialize Google Generative AI client
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENAI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+// Initialize Hugging Face embedding model
+let embeddingPipeline;
+const initializeEmbeddingModel = async () => {
+    try {
+        embeddingPipeline = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+        console.log('✅ Hugging Face embedding model loaded');
+    } catch (error) {
+        console.error('Error loading Hugging Face embedding model:', error.message);
+    }
+};
+
+// Function to generate embeddings using Hugging Face
+const generateEmbedding = async (text) => {
+    try {
+        if (!embeddingPipeline) {
+            await initializeEmbeddingModel(); // Ensure the model is loaded
+        }
+
+        const output = await embeddingPipeline(text, { pooling: 'mean', normalize: true });
+        console.log('🔍 Generated Embedding for:', text);
+        return Array.from(output.data); // Convert Float32Array to a regular array of numbers
+    } catch (error) {
+        console.error('Error generating embedding:', error.message);
+        return null;
+    }
+};
+
+// Provide hints for programming assignments using RAG
 const provideProgrammingHint = async (query, context) => {
     try {
-        const prompt = `You are a programming tutor. A student is trying to ${query}. Provide a helpful hint without giving away the solution. Be concise and clear. Example: "You can use slicing to reverse a list."`;
-        const response = await axios.post(
-            'https://api-inference.huggingface.co/models/deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B',
-            { inputs: prompt },
+        // First, check if a similar query exists in the database
+        const queryEmbedding = await generateEmbedding(query);
+        const documents = await Programming.aggregate([
             {
-                headers: {
-                    Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-                },
+                $vectorSearch: {
+                    queryVector: queryEmbedding,
+                    path: "embedding",
+                    numCandidates: 100,
+                    limit: 5,
+                    index: "programming_vectorSearch"
+                }
             }
-        );
+        ]);
 
-        // Return the model's raw response
-        const generatedText = response.data[0]?.generated_text || 'No response generated.';
-        return generatedText;
+        if (documents.length > 0) {
+            console.log('✅ Found relevant documents in database for query:', query);
+            return documents[0].response;
+        }
+
+        console.log('❌ No documents found for query:', query);
+        console.log('Generating with Gemini...');
+
+        // Generate hint with Gemini
+        const prompt = `You are a programming tutor. A student is trying to ${query}. Provide a helpful hint without giving away the solution. Be concise and clear. Example: "You can use slicing to reverse a list."`;
+        const result = await model.generateContent(prompt);
+
+        if (result && result.response) {
+            const generatedHint = result.response.text();
+            await Programming.create({ userQuery: query, response: generatedHint, context, embedding: queryEmbedding });
+            console.log('✅ Successfully stored new hint in database');
+            return generatedHint;
+        }
+
+        return "No hint generated.";
     } catch (error) {
         console.error('Error generating programming hint:', error.message);
         return "Error generating hint.";
     }
 };
 
-// Review code and provide feedback
+// Review code and provide feedback using Gemini
 const reviewCode = async (code, context) => {
     try {
-        const prompt = `You are a code reviewer. Review the following code for quality, readability, and best practices. Provide constructive feedback without giving away the solution. Be concise and clear. Do not provide code.\n\nCode: ${code}\n\nContext: ${context}`;
-        const response = await axios.post(
-            'https://api-inference.huggingface.co/models/deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B',
-            { inputs: prompt },
-            {
-                headers: {
-                    Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-                },
-            }
-        );
+        // Generate feedback with Gemini
+        const prompt = `You are a code reviewer. Review the following code for quality, readability, and best practices. If the code is incorrect, provide the complete solution. Be concise and clear.\n\nCode: ${code}\n\nContext: ${context}`;
+        const result = await model.generateContent(prompt);
 
-        // Check if the response is valid
-        const generatedText = response.data[0]?.generated_text || '';
-        if (generatedText && !generatedText.includes('def') && !generatedText.includes('```')) {
-            return generatedText;
-        } else {
-            console.error('Model provided code or invalid response. Using fallback.');
-            return getFallbackFeedback(code);
+        if (result && result.response) {
+            const generatedFeedback = result.response.text();
+            return generatedFeedback;
         }
+
+        return "No feedback generated.";
     } catch (error) {
         console.error('Error reviewing code:', error.message);
-        return getFallbackFeedback(code);
+        return "Error reviewing code.";
     }
 };
 
-// Fallback hint for programming help
-const getFallbackHint = (query) => {
-    if (query.toLowerCase().includes('reverse a list')) {
-        return "Hint: You can use slicing to reverse a list. Try using [::-1].";
-    } else if (query.toLowerCase().includes('sort a list')) {
-        return "Hint: You can use the built-in `sorted()` function or the `list.sort()` method.";
-    } else {
-        return "Hint: Break the problem into smaller steps and solve each step individually.";
-    }
-};
-
-// Fallback feedback for code review
-const getFallbackFeedback = (code) => {
-    if (code.includes('for') || code.includes('while')) {
-        return "Feedback: Ensure your loop is properly indented and uses meaningful variable names.";
-    } else if (code.includes('if') || code.includes('else')) {
-        return "Feedback: Ensure your conditional statements are clear and cover all edge cases.";
-    } else {
-        return "Feedback: Ensure your code is readable, uses meaningful variable names, and follows best practices.";
-    }
-};
-
-// Retrieve relevant resources for programming queries
-const retrieveProgrammingResources = async (query, context) => {
-    try {
-        const resources = await Programming.find(
-            { $text: { $search: query } },
-            { score: { $meta: "textScore" } }
-        ).sort({ score: { $meta: "textScore" } }).limit(5);
-
-        if (resources.length === 0) {
-            return [{
-                resourceType: "Documentation",
-                resourceUrl: "https://docs.python.org/3/",
-                resourceDescription: "Official Python documentation."
-            }];
-        }
-
-        return resources.map(resource => ({
-            resourceType: resource.resourceType,
-            resourceUrl: resource.resourceUrl,
-            resourceDescription: resource.resourceDescription
-        }));
-    } catch (error) {
-        console.error('Error retrieving resources:', error.message);
-        return [{
-            resourceType: "Documentation",
-            resourceUrl: "https://docs.python.org/3/",
-            resourceDescription: "Official Python documentation."
-        }];
-    }
-};
-
-module.exports = { provideProgrammingHint, reviewCode, retrieveProgrammingResources };
+module.exports = { provideProgrammingHint, reviewCode };

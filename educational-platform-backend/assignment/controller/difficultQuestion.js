@@ -5,6 +5,15 @@ const Assignment = require("../model/assignment");
 exports.markAsDifficult = async (req, res) => {
     try {
       const { user_id, assignment_id, question } = req.body;
+
+      if (!assignment_id || !user_id || !question) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      const assignment = await Assignment.findById(assignment_id);
+      if (!assignment) {
+        return res.status(404).json({ message: "Assignment not found" });
+      }
   
       const existingEntry = await DifficultQuestion.findOne({ user_id, assignment_id, question });
   
