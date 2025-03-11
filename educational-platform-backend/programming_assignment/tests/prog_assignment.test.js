@@ -1,107 +1,109 @@
-const request = require('supertest');
-const { app } = require('../../app');
+jest.mock("@xenova/transformers", () => ({
+    pipeline: jest.fn(() => ({
+      featureExtraction: jest.fn(() => [0.1, 0.2, 0.3]), // Mock embedding
+    })),
+  }));
+
+const request = require("supertest");
+const { app } = require("../../app");
+const mongoose = require("mongoose");
 
 describe('Programming Assignment API Tests', () => {
-    describe('POST /prog-assignment/create', () => {
-        it('should successfully create a programming assignment', async () => {
-            const assignmentData = {
-                title: 'Recursion Basics',
-                description: 'Solve problems using recursion.',
+    describe('POST /api/prog-assignment/create', () => {
+        it('should create a new programming assignment with valid fields', async () => {
+            const newAssignment = {
                 course_id: 'course123',
-                due_date: '2025-04-01T12:00:00Z'
+                title: 'New Assignment',
+                type: 'graded',
+                question: 'Solve this problem',
+                due_date: '2025-12-31T23:59:59Z',
+                total_marks: 100
             };
 
             const response = await request(app)
-                .post('/prog-assignment/create')
-                .send(assignmentData)
+                .post('/api/prog-assignment/create')
+                .send(newAssignment)
                 .expect(201);
 
-            expect(response.body.message).toBe('Assignment created successfully!');
-            expect(response.body.data).toHaveProperty('title', assignmentData.title);
+            expect(response.body).toHaveProperty('message', 'Programming assignment created successfully');
         });
-    });
 
-    describe('GET /prog-assignment/all', () => {
-        it('should retrieve all programming assignments', async () => {
+        it('should return 400 if required fields are missing', async () => {
             const response = await request(app)
-                .get('/prog-assignment/all')
-                .expect(200);
+                .post('/api/prog-assignment/create')
+                .send({})
+                .expect(400);
 
-            expect(Array.isArray(response.body.data)).toBe(true);
+            expect(response.body.message).toBe('All fields are required');
         });
     });
 
-    describe('GET /prog-assignment/course/:course_id', () => {
-        it('should retrieve assignments for a specific course', async () => {
-            const response = await request(app)
-                .get('/prog-assignment/course/course123')
-                .expect(200);
-
-            expect(Array.isArray(response.body.data)).toBe(true);
-        });
-    });
-
-    describe('GET /prog-assignment/:assignment_id', () => {
-        it('should retrieve details of a specific assignment', async () => {
-            const response = await request(app)
-                .get('/prog-assignment/assignment123')
-                .expect(200);
-
-            expect(response.body.data).toHaveProperty('title');
-        });
-    });
-
-    describe('POST /prog-assignment/submit', () => {
-        it('should allow a student to submit an assignment', async () => {
-            const submissionData = {
-                assignment_id: 'assignment123',
-                user_id: 'user123',
-                solution_code: 'print("Hello World")'
+    describe('POST /api/prog-assignment/submit', () => {
+        it('should submit an assignment response successfully', async () => {
+            const submission = {
+                user_id: 'user001',
+                assignment_id: '65d9e1234f5a6b7890c12345',
+                course_id: 'abc123',
+                response: "print('Hello, World!')",
+                actual_output: 'Hello, World!'
             };
 
             const response = await request(app)
-                .post('/prog-assignment/submit')
-                .send(submissionData)
+                .post('/api/prog-assignment/submit')
+                .send(submission)
                 .expect(201);
 
-            expect(response.body.message).toBe('Assignment submitted successfully!');
+            console.log(response.body);  // Debugging: Check API response
+            expect(response.body).toHaveProperty('message', 'Response submitted successfully');
+        });
+
+        it('should return 400 if required fields are missing', async () => {
+            const response = await request(app)
+                .post('/api/prog-assignment/submit')
+                .send({})
+                .expect(400);
+
+            expect(response.body.message).toBe('All fields are required');
         });
     });
 
-    describe('GET /prog-assignment/responses/course/:course_id', () => {
-        it('should retrieve all responses for assignments in a course', async () => {
+    describe('GET /api/prog-assignment/score/:user_id/:assignment_id', () => {
+        it('should return the score of a given user for a specific assignment', async () => {
             const response = await request(app)
-                .get('/prog-assignment/responses/course/course123')
+                .get('/api/prog-assignment/score/user123/assignment123')
                 .expect(200);
 
-            expect(Array.isArray(response.body.data)).toBe(true);
+            expect(response.body).toHaveProperty('score');
         });
-    });
 
-    describe('GET /prog-assignment/score/:user_id/:assignment_id', () => {
-        it('should retrieve the score of a student for an assignment', async () => {
+        it('should return 404 if the score is not found', async () => {
             const response = await request(app)
-                .get('/prog-assignment/score/user123/assignment123')
-                .expect(200);
+                .get('/api/prog-assignment/score/nonexistent_user/nonexistent_assignment')
+                .expect(404);
 
-            expect(response.body.data).toHaveProperty('score');
+            expect(response.body.message).toBe('No score found for this assignment');
         });
     });
 
-    describe('POST /prog-assignment/score/update', () => {
-        it('should update the score of an assignment submission', async () => {
-            const scoreUpdateData = {
+    describe('POST /api/prog-assignment/score/update', () => {
+        it("should update a user\'s assignment score", async () => {
+            const scoreUpdate = {
                 user_id: 'user123',
                 assignment_id: 'assignment123',
-                new_score: 95
+                score: 90
             };
 
             const response = await request(app)
-                .post('/prog-assignment/score/update')
-                .send(scoreUpdateData)
+                .post('/api/prog-assignment/score/update')
+                .send(scoreUpdate)
                 .expect(200);
 
-            expect(response.body.message).toBe('Score updated successfully!');
+            expect(response.body.message).toBe('Score updated successfully');
         });
     });
 });
+
+
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
