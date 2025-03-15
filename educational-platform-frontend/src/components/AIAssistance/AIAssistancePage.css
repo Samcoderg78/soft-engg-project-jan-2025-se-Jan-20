@@ -1,0 +1,144 @@
+/* Scope styles to the AI Assistance page */
+.ai-assistance-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Full viewport height */
+  background: linear-gradient(to right, #e0f7fa, #ffffff); /* Softer background */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.dashboard-content {
+  margin-top: 100px;
+}
+
+/* Outer container with a soft glassmorphic effect */
+.ai-assistance-container {
+  background: rgba(255, 255, 255, 0.95); /* Clear background for readability */
+  padding: 40px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect for a slight floating effect */
+.ai-assistance-container:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Main heading */
+.ai-assistance-container h1 {
+  font-size: 2.4rem;
+  color: #e9e9ee; /* Dark navy for strong contrast */
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* User email styling */
+.user-email {
+  font-size: 1rem;
+  color: #f7f4f4; /* Deep gray for clear readability */
+  margin-bottom: 25px;
+  background: rgba(0, 0, 0, 0.07); /* Soft gray background */
+  padding: 10px 14px;
+  border-radius: 8px;
+  display: inline-block;
+  font-weight: 500;
+}
+
+/* Section styles */
+.recommended-section,
+.ai-help-section {
+  margin-bottom: 30px;
+}
+
+.recommended-section h2,
+.ai-help-section h2 {
+  font-size: 1.5rem;
+  color: #cce8f7; /* Deep blue for an elegant touch */
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+/* Search input */
+.search-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #bbb;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1a1a2e;
+  font-size: 1.1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+/* Placeholder text */
+.search-input::placeholder {
+  color: #888;
+}
+
+/* Input focus effect */
+.search-input:focus {
+  border-color: #0077b6;
+  background: white;
+  box-shadow: 0 0 8px rgba(0, 119, 182, 0.4);
+}
+
+/* AI Help button */
+.ai-help-button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: #0077b6; /* Deep blue for a premium feel */
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+/* Button hover effect */
+.ai-help-button:hover {
+  background: #005f91;
+  box-shadow: 0 5px 15px rgba(0, 119, 182, 0.3);
+  transform: translateY(-3px);
+}
+
+/* Button active click effect */
+.ai-help-button:active {
+  transform: scale(0.95);
+}
+
+/* Dashboard layout adjustments */
+.ai-assistance-page .dashboard-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .ai-assistance-container {
+      padding: 30px;
+  }
+
+  .ai-assistance-container h1 {
+      font-size: 1.9rem;
+  }
+
+  .search-input,
+  .ai-help-button {
+      font-size: 1rem;
+  }
+}

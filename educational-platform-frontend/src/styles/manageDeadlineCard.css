@@ -1,0 +1,62 @@
+/* 🌟 Manage Deadline Card Styles */
+.deadline-card {
+    background: #ffffff; /* Clean white background */
+    border-radius: 12px; /* Rounded corners */
+    padding: 20px; /* Spacious padding */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    transition: all 0.3s ease-in-out;
+    border-left: 6px solid var(--deadline-color, #007bff); /* Dynamic left border */
+    width: 100%;
+    max-width: 400px;
+    margin: 15px auto;
+    position: relative;
+}
+
+/* 🎯 Title (Task Name) */
+.deadline-card h5 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* 📌 Task Details */
+.deadline-card p {
+    font-size: 0.95rem;
+    color: #555;
+    margin: 5px 0;
+    line-height: 1.5;
+}
+
+/* 🔥 Subject & Deadline Bold Text */
+.deadline-card p strong {
+    color: #222;
+}
+
+/* 🚀 Hover Effect */
+.deadline-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* 🔴 Deadline Indicator */
+.deadline-card::after {
+    content: "⏳";
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.2rem;
+}
+
+/* 🎨 Deadline Color Themes */
+.deadline-card[data-deadline="urgent"] {
+    --deadline-color: #ff4d4d; /* Red for urgent */
+}
+
+.deadline-card[data-deadline="upcoming"] {
+    --deadline-color: #ffa500; /* Orange for upcoming */
+}
+
+.deadline-card[data-deadline="normal"] {
+    --deadline-color: #007bff; /* Blue for normal */
+}

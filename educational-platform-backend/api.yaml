@@ -1,0 +1,2031 @@
+openapi: 3.0.0
+info:
+  title: Educational platform API Documentation
+  description: API documentation for the Educational platform
+  version: 1.0.0
+servers:
+  - url: http://localhost:3009/api
+    description: Local development server
+  - url: https://educational-platform-development.lawsikho.dev/api/education
+    description: Stagging development server
+paths:
+  /user/add-user:
+    post:
+      summary: User Registration
+      description: Register a new user in the system
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  description: User's full name
+                roll_no:
+                  type: string
+                  description: User's roll number (optional)
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                role:
+                  type: string
+                  description: User's role in the system (optional)
+                password:
+                  type: string
+                  format: password
+                  description: User's password
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User created successfully!
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      roll_no:
+                        type: string
+                      email:
+                        type: string
+                      role:
+                        type: string
+        '400':
+          description: Bad request - Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing required fields
+                  data:
+                    type: string
+                    example: ""
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error creating user
+                  error:
+                    type: string
+
+  /user/login:
+    post:
+      summary: User Login
+      description: Authenticate a user and receive a JWT token
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                password:
+                  type: string
+                  format: password
+                  description: User's password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Login successful
+                  token:
+                    type: string
+                    description: JWT token for authentication
+                  user:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      roll_no:
+                        type: string
+                      email:
+                        type: string
+                      role:
+                        type: string
+        '400':
+          description: Bad request - Missing credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Email and password are required
+                  data:
+                    type: string
+                    example: ""
+        '401':
+          description: Unauthorized - Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid credentials
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error logging in
+                  error:
+                    type: string
+
+
+
+
+
+
+  /prog-assignment/create:
+    post:
+      summary: Create a new programming assignment
+      tags:
+        - Programming Assignments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - course_id
+                - title
+                - type
+                - question
+                - due_date
+                - total_marks
+              properties:
+                course_id:
+                  type: string
+                title:
+                  type: string
+                type:
+                  type: string
+                  enum: [practice, graded]
+                question:
+                  type: string
+                due_date:
+                  type: string
+                  format: date-time
+                total_marks:
+                  type: number
+      responses:
+        '201':
+          description: Assignment created successfully
+        '400':
+          description: Missing required fields
+        '500':
+          description: Internal server error
+
+  /prog-assignment/all:
+    get:
+      summary: Get all programming assignments
+      tags:
+        - Programming Assignments
+      responses:
+        '200':
+          description: List of assignments
+        '500':
+          description: Internal server error
+
+  /prog-assignment/course/{course_id}:
+    get:
+      summary: Get assignments by course ID
+      tags:
+        - Programming Assignments
+      parameters:
+        - name: course_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of assignments for the course
+        '404':
+          description: No assignments found
+        '500':
+          description: Internal server error
+
+  /prog-assignment/{assignment_id}:
+    get:
+      summary: Get an assignment by ID
+      tags:
+        - Programming Assignments
+      parameters:
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assignment details
+        '404':
+          description: Assignment not found
+        '500':
+          description: Internal server error
+
+  /prog-assignment/submit:
+    post:
+      summary: Submit a programming assignment response
+      tags:
+        - Programming Assignments Responses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - assignment_id
+                - course_id
+                - response
+                - actual_output
+              properties:
+                user_id:
+                  type: string
+                assignment_id:
+                  type: string
+                course_id:
+                  type: string
+                response:
+                  type: string
+                actual_output:
+                  type: string
+      responses:
+        '201':
+          description: Response submitted successfully
+        '400':
+          description: Missing required fields
+        '500':
+          description: Internal server error
+
+  /prog-assignment/score/{user_id}/{assignment_id}:
+    get:
+      summary: Get a programming assignment score
+      tags:
+        - Programming Assignments Scores
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Score details
+        '404':
+          description: Score not found
+        '500':
+          description: Internal server error
+
+  /prog-assignment/score/update:
+    post:
+      summary: Update programming assignment score
+      tags:
+        - Programming Assignments Scores
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - assignment_id
+                - score
+              properties:
+                user_id:
+                  type: string
+                assignment_id:
+                  type: string
+                score:
+                  type: number
+      responses:
+        '200':
+          description: Score updated successfully
+        '201':
+          description: Score recorded successfully
+        '500':
+          description: Internal server error
+
+  /prog-assignment/responses/course/{course_id}:
+    get:
+      summary: Get all responses for a given course
+      tags:
+        - Programming Assignments Responses
+      parameters:
+        - name: course_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of responses for the course
+        '404':
+          description: No responses found
+        '500':
+          description: Internal server error
+
+
+
+
+  /assignment/create:
+    post:
+      summary: Create a new assignment
+      tags:
+        - Assignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - course_id
+                - week
+                - title
+                - type
+                - due_date
+                - total_marks
+              properties:
+                course_id:
+                  type: string
+                week:
+                  type: number
+                title:
+                  type: string
+                type:
+                  type: string
+                  enum: [practice, graded]
+                due_date:
+                  type: string
+                  format: date-time
+                total_marks:
+                  type: number
+      responses:
+        '201':
+          description: Assignment created successfully
+        '400':
+          description: Missing required fields
+        '500':
+          description: Internal server error
+
+  /assignment/questions/add:
+    post:
+      summary: Add a question to an assignment
+      tags:
+        - Assignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - assignment_id
+                - question
+                - type
+                - options
+                - category
+                - full_marks
+                - correct_options
+              properties:
+                assignment_id:
+                  type: string
+                question:
+                  type: string
+                type:
+                  type: string
+                  enum: [single, multi]
+                options:
+                  type: array
+                  items:
+                    type: string
+                category:
+                  type: string
+                  enum: [easy, medium, hard]
+                full_marks:
+                  type: number
+                correct_options:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Question added successfully
+        '400':
+          description: Missing required fields
+        '500':
+          description: Internal server error
+
+  /assignment/{course_id}:
+    get:
+      summary: Get all assignments for a course
+      tags:
+        - Assignment
+      parameters:
+        - name: course_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of assignments for the course
+        '404':
+          description: No assignments found
+        '500':
+          description: Internal server error
+
+  /assignment/questions/{assignment_id}:
+    get:
+      summary: Get questions for a specific assignment
+      tags:
+        - Assignment
+      parameters:
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assignment details with questions
+        '404':
+          description: Assignment not found
+        '500':
+          description: Internal server error
+
+  /assignment/submit:
+    post:
+      summary: Submit an assignment response
+      tags:
+        - Assignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - assignment_id
+                - responses
+              properties:
+                user_id:
+                  type: string
+                assignment_id:
+                  type: string
+                responses:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      question_id:
+                        type: string
+                      response:
+                        type: array
+                        items:
+                          type: string
+      responses:
+        '201':
+          description: Assignment submitted successfully
+        '400':
+          description: Missing required fields
+        '500':
+          description: Internal server error
+
+  /assignment/response/{user_id}/{assignment_id}:
+    get:
+      summary: Get assignment response by user and assignment ID
+      tags:
+        - Assignment Responses
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assignment response details
+        '404':
+          description: Assignment response not found
+        '500':
+          description: Internal server error
+
+  /assignment/score/generate/{assignment_id}:
+    post:
+      summary: Generate scores for all assignment responses of a specific assignment
+      tags:
+        - Assignment Score
+      parameters:
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Scores generated for all responses
+        '404':
+          description: No assignment responses found for this assignment
+        '500':
+          description: Internal server error
+
+  /assignment/score/{user_id}/{assignment_id}:
+    get:
+      summary: Get assignment score for a specific user and assignment
+      tags:
+        - Assignment Score
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: assignment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assignment score retrieved successfully
+        '404':
+          description: No assignment response found for this user and assignment / Score not generated for this assignment response
+        '500':
+          description: Internal server error
+
+  /difficultquestions/markasdifficult:
+    post:
+      summary: Mark a question as difficult
+      tags:
+        - Difficult Questions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - assignment_id
+                - question
+              properties:
+                user_id:
+                  type: string
+                assignment_id:
+                  type: string
+                question:
+                  type: string
+      responses:
+        '201':
+          description: Question marked as difficult
+        '200':
+          description: Question is already marked as difficult
+        '500':
+          description: Internal server error
+
+  /difficultquestions/{user_id}/{course_id}:
+    get:
+      summary: Get all difficult questions for a user in a specific course
+      tags:
+        - Difficult Questions
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: course_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of difficult questions
+        '404':
+          description: No difficult questions found
+        '500':
+          description: Internal server error
+
+  /difficultquestions/remove/{user_id}/{question_id}:
+    delete:
+      summary: Remove a question from difficult questions
+      tags:
+        - Difficult Questions
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: question_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Question removed from difficult list
+        '404':
+          description: Difficult question not found
+        '500':
+          description: Internal server error
+
+
+
+
+
+  /programming/programming-hint:
+    post:
+      summary: Get a programming hint
+      description: Provides hints for programming assignments.
+      tags:
+       - AI Programming Assistance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                  example: "How to reverse a list in Python?"
+                context:
+                  type: string
+                  example: "Python assignment on list operations"
+      responses:
+        "200":
+          description: Successfully generated a programming hint
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hint:
+                    type: string
+                    example: "Hint: You can use slicing to reverse a list. Try using [::-1]."
+        "500":
+          description: Error processing request
+
+  /programming/code-review:
+    post:
+      summary: Get a code review
+      description: Provides constructive feedback on code quality and best practices.
+      tags:
+       - AI Programming Assistance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+              properties:
+                code:
+                  type: string
+                  example: "def factorial(n): return n * factorial(n-1) if n > 1 else 1"
+                context:
+                  type: string
+                  example: "Python recursion assignment"
+      responses:
+        "200":
+          description: Successfully provided code review feedback
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  feedback:
+                    type: string
+                    example: "Ensure base cases are handled correctly to avoid infinite recursion."
+        "500":
+          description: Error processing request
+
+  /programming/programming-resources:
+    post:
+      summary: Get programming resources
+      description: Retrieves relevant educational resources for a given programming topic.
+      tags:
+       - AI Programming Assistance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                  example: "Best resources for learning Python"
+                context:
+                  type: string
+                  example: "Beginner Python tutorials"
+      responses:
+        "200":
+          description: Successfully retrieved resources
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    resourceType:
+                      type: string
+                      example: "Documentation"
+                    resourceUrl:
+                      type: string
+                      example: "https://docs.python.org/3/"
+                    resourceDescription:
+                      type: string
+                      example: "Official Python documentation."
+        "500":
+          description: Error processing request
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /topic_simplification/ask-ai:
+    post:
+      summary: Simplifies lecture topics
+      tags:
+        - AI Doubt Clarification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  example: "Explain recursion in simple terms."
+                videoContext:
+                  type: string
+                  example: "Lecture on Data Structures"
+      responses:
+        "200":
+          description: AI-generated simplification response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+        "500":
+          description: Internal Server Error
+
+  /topic_simplification/ask-resources:
+    post:
+      summary: Retrieves learning resources
+      tags:
+        - AI Doubt Clarification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  example: "Python documentation"
+      responses:
+        "200":
+          description: List of relevant resources
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    url:
+                      type: string
+                    description:
+                      type: string
+        "500":
+          description: Internal Server Error
+
+  /topic_simplification/ask:
+    post:
+      summary: Provides assignment-related help
+      tags:
+        - AI Doubt Clarification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  example: "Solve this equation: x^2 - 4x + 4 = 0"
+      responses:
+        "200":
+          description: AI-generated assignment assistance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+        "500":
+          description: Internal Server Error
+
+
+
+
+
+
+
+
+
+
+
+
+  /instructor/supplementary-content:
+    post:
+      summary: Generate supplementary content for a given topic
+      tags:
+        - AI Instructor Assistance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                topic:
+                  type: string
+                  example: "Introduction to Machine Learning"
+                context:
+                  type: string
+                  example: "Computer Science Course"
+      responses:
+        "200":
+          description: AI-generated supplementary content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: string
+        "500":
+          description: Internal Server Error
+
+  /instructor/instructor-query:
+    post:
+      summary: Answer instructor queries
+      tags:
+        - AI Instructor Assistance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  example: "How to explain recursion to students?"
+                context:
+                  type: string
+                  example: "Data Structures Course"
+      responses:
+        "200":
+          description: AI-generated response for instructor query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+        "500":
+          description: Internal Server Error
+
+
+
+
+
+
+
+  
+
+  
+
+
+
+
+
+
+
+
+  /dr:
+    get:
+      tags:
+        - deadline
+      summary: Get all deadlines & reminders
+      description: Fetches a list of all available tasks.
+      responses:
+        '200':
+          description: A list of tasks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '500':
+          description: Error fetching tasks
+
+  /dr/add:
+    post:
+      tags:
+        - deadline
+      summary: Add a new deadline or reminder
+      description: Adds a new task to the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskInput'
+      responses:
+        '201':
+          description: Task successfully added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Task with the same name and subject already exists
+        '500':
+          description: Error adding task
+
+  /dr/{id}:
+    delete:
+      tags:
+        - Reminder
+      summary: Delete a deadline reminder
+      description: Deletes a task by its ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task deleted successfully
+        '404':
+          description: Task not found
+        '500':
+          description: Error deleting task
+
+
+
+
+
+
+
+
+
+
+  /course:
+    get:
+      tags:
+        - Courses
+      summary: Get all courses
+      description: Fetches a list of all available courses.
+      responses:
+        '200':
+          description: A list of courses.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+        '500':
+          description: Error fetching courses
+
+  /course/add:
+    post:
+      tags:
+        - Courses
+      summary: Add a new course
+      description: Adds a new course to the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseInput'
+      responses:
+        '201':
+          description: Course successfully added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        '400':
+          description: Course with this title already exists
+        '500':
+          description: Error adding course
+
+  /course/{id}:
+    delete:
+      tags:
+        - courses
+      summary: Delete a course
+      description: Deletes a course by its ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Course deleted successfully
+        '404':
+          description: Course not found
+        '500':
+          description: Error deleting course
+
+
+
+  /lecture/add:
+    post:
+      tags:
+        - lectures
+      summary: Add a new lecture
+      description: Adds a new lecture to a specific course and week.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LectureInput'
+      responses:
+        '201':
+          description: Lecture successfully added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lecture'
+        '400':
+          description: Lecture already exists for this course, week, and lecture number
+        '500':
+          description: Error adding lecture
+
+  /lecture/{course}/{week}:
+    get:
+      tags:
+        - lectures
+      summary: Get lectures by course and week
+      description: Fetches all lectures for a given course and week.
+      parameters:
+        - name: course
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: week
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of lectures for the specified course and week
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Lecture'
+        '404':
+          description: No lectures found for the specified course and week
+        '500':
+          description: Error fetching lectures
+
+
+
+
+
+
+  /week/add:
+    post:
+      tags:
+        - weeks
+      summary: Add a new week
+      description: Adds a new week to a specified course.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WeekInput'
+      responses:
+        '201':
+          description: Week successfully added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Week'
+        '400':
+          description: Week already exists for this course
+        '500':
+          description: Error adding week
+
+  /week/course/{courseId}:
+    get:
+      tags:
+        - weeks
+      summary: Get weeks for a course
+      description: Fetches all weeks associated with a given course.
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of weeks for the specified course.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Week'
+        '500':
+          description: Error fetching weeks for the course
+
+  /week/{id}:
+    get:
+      tags:
+        - weeks
+      summary: Get week by ID
+      description: Fetches details of a specific week by its ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Details of the specified week
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Week'
+        '404':
+          description: Week not found
+        '500':
+          description: Error fetching the week
+
+
+
+
+  /feedback/submit:
+    post:
+      tags:
+        - feedback
+      summary: Submit feedback
+      description: Allows users to submit feedback for a course.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackInput'
+      responses:
+        '201':
+          description: Feedback submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feedback'
+        '400':
+          description: All fields are required
+        '500':
+          description: Error submitting feedback
+
+  /feedback/course/{course_id}:
+    get:
+      tags:
+        - feedback
+      summary: Get feedback for a course
+      description: Fetch all feedback given for a specific course.
+      parameters:
+        - name: course_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier for the course
+      responses:
+        '200':
+          description: List of feedback for the course
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Feedback'
+        '404':
+          description: No feedback found for the course
+        '500':
+          description: Error fetching feedback
+
+
+
+
+
+  /gd/deadlines:
+    get:
+      summary: Get Deadlines for Assignments
+      description: Fetch upcoming assignment deadlines and program assignments.
+      tags:
+        - Deadlines
+      parameters:
+        - name: course_id
+          in: query
+          description: Optional filter for the course ID to fetch deadlines for a specific course.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of assignments and program assignments.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  assignments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Assignment'
+                  progAssignments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProgAssignment'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+
+
+
+  /rs/recent_submissions/{user_id}:
+    get:
+      summary: Get Recent Submissions
+      description: Fetch recent submissions for a specific user based on user ID.
+      tags:
+        - Submissions
+      parameters:
+        - name: user_id
+          in: path
+          description: The ID of the user whose recent submissions are to be fetched.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of recent submissions for the user.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  assignmentSubmissions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AssignmentResponse'
+                  progAssignmentSubmissions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProgAssignmentResponse'
+        '400':
+          description: User ID is missing.
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+
+
+
+
+  /tn/take_note:
+    post:
+      summary: Add a Note
+      description: Allow users to add notes related to a lecture for a specific course.
+      tags:
+        - Notes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                lecture_id:
+                  type: string
+                course_id:
+                  type: string
+                note:
+                  type: string
+      responses:
+        '201':
+          description: Note added successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  note:
+                    $ref: '#/components/schemas/Note'
+        '400':
+          description: Missing required fields in the request body.
+        '500':
+          description: Internal Server Error.
+  /tn/lecture/{lecture_id}:
+    get:
+      summary: Get Notes for a Specific Lecture
+      description: Fetch all notes for a specific lecture.
+      tags:
+        - Notes
+      parameters:
+        - name: lecture_id
+          in: path
+          description: The ID of the lecture to fetch notes for.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of notes for the specified lecture.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Note'
+        '400':
+          description: Missing lecture ID.
+        '500':
+          description: Internal Server Error.
+  /tn/course/{course_id}:
+    get:
+      summary: Get Notes for a Specific Course
+      description: Fetch all notes for a specific course.
+      tags:
+        - Notes
+      parameters:
+        - name: course_id
+          in: path
+          description: The ID of the course to fetch notes for.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of notes for the specified course.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Note'
+        '400':
+          description: Missing course ID.
+        '500':
+          description: Internal Server Error.
+  /tn/user/{user_id}:
+    get:
+      summary: Get Notes for a Specific User
+      description: Fetch all notes for a specific user.
+      tags:
+        - Notes
+      parameters:
+        - name: user_id
+          in: path
+          description: The ID of the user to fetch notes for.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of notes for the specified user.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Note'
+        '400':
+          description: Missing user ID.
+        '500':
+          description: Internal Server Error.
+
+    
+
+
+
+  /summary/{assignmentId}:
+    get:
+      summary: Get assignment summary
+      description: Returns a summary report for a specific assignment, including total students, average score, score distribution, and question performance.
+      parameters:
+        - name: assignmentId
+          in: path
+          required: true
+          description: The ID of the assignment to fetch the summary for.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A summary report for the assignment.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  assignment_id:
+                    type: string
+                    example: "67c9b351eadaa5ea8ea30988"
+                  title:
+                    type: string
+                    example: "Math Assignment 1"
+                  total_students:
+                    type: integer
+                    example: 50
+                  average_score:
+                    type: number
+                    format: float
+                    example: 75.5
+                  score_distribution:
+                    type: object
+                    properties:
+                      '0-20':
+                        type: integer
+                        example: 2
+                      '21-40':
+                        type: integer
+                        example: 5
+                      '41-60':
+                        type: integer
+                        example: 10
+                      '61-80':
+                        type: integer
+                        example: 20
+                      '81-100':
+                        type: integer
+                        example: 13
+                  question_performance:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        question_id:
+                          type: string
+                          example: "67890"
+                        question:
+                          type: string
+                          example: "What is 2 + 2?"
+                        average_marks:
+                          type: number
+                          format: float
+                          example: 4.5
+        '404':
+          description: Assignment not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Assignment not found"
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error generating summary report"
+
+
+
+
+components:
+  schemas:
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the course
+        title:
+          type: string
+          description: Title of the course
+        description:
+          type: string
+          description: Brief course description
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags associated with the course
+        professor:
+          type: string
+          description: Name of the professor teaching the course
+        image:
+          type: string
+          description: URL of the course image
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp of course creation
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp of last update
+
+    CourseInput:
+      type: object
+      required:
+        - title
+        - description
+        - professor
+        - image
+      properties:
+        title:
+          type: string
+          description: Title of the course
+        description:
+          type: string
+          description: Brief course description
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags associated with the course
+        professor:
+          type: string
+          description: Name of the professor teaching the course
+        image:
+          type: string
+          description: URL of the course image
+
+
+
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the task
+        name:
+          type: string
+          description: Name of the task
+        subject:
+          type: string
+          description: Subject of the task
+        deadline:
+          type: string
+          format: date-time
+          description: Deadline for the task
+        priority:
+          type: string
+          enum: [High, Medium, Low]
+          description: Priority level of the task
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp of task creation
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp of last update
+
+    TaskInput:
+      type: object
+      required:
+        - name
+        - subject
+        - deadline
+      properties:
+        name:
+          type: string
+          description: Name of the task
+        subject:
+          type: string
+          description: Subject of the task
+        deadline:
+          type: string
+          format: date-time
+          description: Deadline for the task
+        priority:
+          type: string
+          enum: [High, Medium, Low]
+          description: Priority level of the task
+
+
+
+
+
+    Lecture:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the lecture
+        course:
+          type: string
+          description: Name of the course
+        week:
+          type: integer
+          description: Week number
+        lectureNumber:
+          type: integer
+          description: Lecture number within the week
+        title:
+          type: string
+          description: Title of the lecture
+        description:
+          type: string
+          description: Brief description of the lecture
+        videoUrl:
+          type: string
+          description: URL of the lecture video
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp of lecture creation
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp of last update
+
+    LectureInput:
+      type: object
+      required:
+        - course
+        - week
+        - lectureNumber
+        - title
+        - description
+      properties:
+        course:
+          type: string
+          description: Name of the course
+        week:
+          type: integer
+          description: Week number
+        lectureNumber:
+          type: integer
+          description: Lecture number within the week
+        title:
+          type: string
+          description: Title of the lecture
+        description:
+          type: string
+          description: Brief description of the lecture
+        videoUrl:
+          type: string
+          description: URL of the lecture video (optional)
+
+
+
+
+
+
+    Week:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the week
+        courseId:
+          type: string
+          description: ID of the course this week belongs to
+        weekNumber:
+          type: number
+          description: The week number within the course
+        title:
+          type: string
+          description: Title of the week
+        description:
+          type: string
+          description: Description of the week
+        lecture:
+          type: array
+          items:
+            type: string
+          description: List of lecture IDs associated with the week
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp of week creation
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp of last update
+
+    WeekInput:
+      type: object
+      required:
+        - courseId
+        - weekNumber
+        - title
+      properties:
+        courseId:
+          type: string
+          description: ID of the course this week belongs to
+        weekNumber:
+          type: number
+          description: The week number within the course
+        title:
+          type: string
+          description: Title of the week
+        description:
+          type: string
+          description: Description of the week
+        lecture:
+          type: array
+          items:
+            type: string
+          description: List of lecture IDs associated with the week
+
+
+
+    Feedback:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the user
+        course_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the course
+        feedback_string:
+          type: string
+          description: Feedback text provided by the user
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Rating given by the user (1-5)
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when feedback was submitted
+
+    FeedbackInput:
+      type: object
+      required:
+        - user_id
+        - course_id
+        - feedback_string
+        - rating
+      properties:
+        user_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the user
+        course_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the course
+        feedback_string:
+          type: string
+          description: Feedback text provided by the user
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Rating given by the user (1-5)
+
+
+    Assignment:
+      type: object
+      properties:
+        course_id:
+          type: string
+        week:
+          type: integer
+        title:
+          type: string
+        type:
+          type: string
+        due_date:
+          type: string
+          format: date-time
+        total_marks:
+          type: integer
+
+
+    ProgAssignment:
+      type: object
+      properties:
+        course_id:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        question:
+          type: string
+        due_date:
+          type: string
+          format: date-time
+        total_marks:
+          type: integer
+
+          
+    AssignmentResponse:
+      type: object
+      properties:
+        user_id:
+          type: string
+        assignment_id:
+          type: string
+        responses:
+          type: array
+          items:
+            type: object
+            properties:
+              question_id:
+                type: string
+              response:
+                type: array
+                items:
+                  type: string
+        submitted_on:
+          type: string
+          format: date-time
+
+
+    ProgAssignmentResponse:
+      type: object
+      properties:
+        user_id:
+          type: string
+        assignment_id:
+          type: string
+        course_id:
+          type: string
+        response:
+          type: string
+        actual_output:
+          type: string
+        submitted_on:
+          type: string
+          format: date-time
+
+
+    Note:
+      type: object
+      properties:
+        user_id:
+          type: string
+        lecture_id:
+          type: string
+        course_id:
+          type: string
+        note:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+
+
+
+
+
+
