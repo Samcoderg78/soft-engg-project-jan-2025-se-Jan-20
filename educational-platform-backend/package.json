@@ -13,8 +13,7 @@
     "tn_test": "jest takeNotes/test_cases/tn.test.js",
     "week_test": "jest weeks/test_cases/week.test.js",
     "feedback_test": "jest feedback/test_cases/feedback.test.js",
-    "assignment-test": "jest ./assignment/tests/assignment.test.js",
-    "pa_test": "jest ./programming_assignment/tests/prog_assignment.test.js"
+    "assignment-test": "jest ./assignment/tests/assignment.test.js"
   },
   "keywords": [],
   "author": "",
