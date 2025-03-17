@@ -15,7 +15,9 @@
     "feedback_test": "jest feedback/test_cases/feedback.test.js",
     "assignment-test": "jest ./assignment/tests/assignment.test.js",
     "programming-assistance": "jest /ai_agent/programming_assistance/tests/programmingAPI.test.js",
-    "instructor-test": "jest /ai_agent/instructor_assistant/tests/instructor.test.js"
+    "instructor-test": "jest /ai_agent/instructor_assistant/tests/instructor.test.js",
+    "ass_summary": "jest /ai_agent/assignment_summary/tests/ass_summary.test.js",
+    "topic_simp": "jest /ai_agent/topic_simplification/tests/topic_sim.test.js"
   },
   "keywords": [],
   "author": "",
