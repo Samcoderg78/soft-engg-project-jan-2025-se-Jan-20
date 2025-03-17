@@ -11,7 +11,11 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 let embeddingPipeline;
 const initializeEmbeddingModel = async () => {
     try {
-        embeddingPipeline = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+        const pipelineFunction = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+        embeddingPipeline = async (text) => {
+            const tensor = await pipelineFunction(text, { pooling: 'mean', normalize: true });
+            return Array.from(tensor.data); // Convert tensor to plain array
+        };
         console.log('✅ Hugging Face embedding model loaded');
     } catch (error) {
         console.error('Error loading Hugging Face embedding model:', error.message);
@@ -24,7 +28,6 @@ initializeEmbeddingModel();
 // Function to generate embeddings using Hugging Face
 const generateEmbedding = async (text) => {
     try {
-        // Add input validation
         if (!text) {
             console.error('Empty text provided for embedding generation');
             return null;
@@ -34,9 +37,14 @@ const generateEmbedding = async (text) => {
             await initializeEmbeddingModel();
         }
 
-        const output = await embeddingPipeline(text, { pooling: 'mean', normalize: true });
+        if (!embeddingPipeline) {
+            console.error('⚠️ Embedding model failed to initialize.');
+            return null;
+        }
+
+        const output = await embeddingPipeline(text);
         console.log('🔍 Generated Embedding for:', text);
-        return Array.from(output.data);
+        return output; // This is already a plain array
     } catch (error) {
         console.error('Error generating embedding:', error.message);
         return null;
@@ -56,12 +64,11 @@ const findExactMatch = async (query) => {
         console.error('Error finding exact match:', error.message);
         return null;
     }
-}
+};
 
 // Function to handle general instructor queries using Gemini
 const handleInstructorQuery = async (query) => {
     try {
-        // Basic validation
         if (!query || typeof query !== 'string' || query.trim() === '') {
             throw new Error('Invalid query provided');
         }
@@ -81,8 +88,6 @@ const handleInstructorQuery = async (query) => {
         if (queryEmbedding) {
             try {
                 console.log('🔍 Performing vector search...');
-                
-                // Check if any documents exist in the collection before attempting vector search
                 const count = await Instructor.countDocuments();
                 console.log(`📊 Total documents in collection: ${count}`);
                 
@@ -102,14 +107,12 @@ const handleInstructorQuery = async (query) => {
 
                         if (documents && documents.length > 0) {
                             console.log('✅ Found similar documents via vector search:', documents.length);
-                            // You could implement a threshold here to ensure only sufficiently similar results are returned
                             return documents[0].response;
                         } else {
                             console.log('❌ No similar documents found via vector search');
                         }
                     } catch (vectorSearchError) {
                         console.error('Vector search error:', vectorSearchError.message);
-                        // Continue to Gemini generation
                     }
                 } else {
                     console.log('⚠️ No documents in collection to search');
@@ -122,26 +125,21 @@ const handleInstructorQuery = async (query) => {
         }
 
         console.log('🤖 Generating new response with Gemini...');
-
-        // Generate response with Gemini
         const prompt = `You are an AI assistant for instructors. Answer the following query. Be concise and clear.\n\nQuery: ${query}`;
         const result = await model.generateContent(prompt);
 
         if (result && result.response) {
             const generatedText = result.response.text();
             
-            // Store the response
             try {
-                // Save with both the original query and the embedding for future retrieval
                 await Instructor.create({ 
                     query: query, 
                     response: generatedText,
-                    embedding: queryEmbedding || [] // Store empty array if embedding failed
+                    embedding: queryEmbedding || [] // Ensure this is a plain array
                 });
                 console.log('✅ Successfully stored new response in database');
             } catch (dbError) {
                 console.error('Error storing in database:', dbError.message);
-                // Still return the generated text even if DB storage fails
             }
             
             return generatedText;

@@ -1947,6 +1947,8 @@ components:
           format: date-time
         total_marks:
           type: integer
+
+
     ProgAssignment:
       type: object
       properties:
@@ -1963,6 +1965,8 @@ components:
           format: date-time
         total_marks:
           type: integer
+
+          
     AssignmentResponse:
       type: object
       properties:
@@ -1984,6 +1988,8 @@ components:
         submitted_on:
           type: string
           format: date-time
+
+
     ProgAssignmentResponse:
       type: object
       properties:
@@ -2000,6 +2006,8 @@ components:
         submitted_on:
           type: string
           format: date-time
+
+
     Note:
       type: object
       properties:
@@ -2021,354 +2029,3 @@ components:
 
 
 
-
-  /add:
-    post:
-      summary: Add a new task
-      description: Creates a new task if it does not already exist with the same name and subject.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - name
-                - subject
-                - deadline
-              properties:
-                name:
-                  type: string
-                  example: "Math Assignment"
-                subject:
-                  type: string
-                  example: "Mathematics"
-                deadline:
-                  type: string
-                  format: date
-                  example: "2025-03-10"
-                priority:
-                  type: string
-                  enum: ["High", "Medium", "Low"]
-                  example: "High"
-      responses:
-        "201":
-          description: Task created successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  _id:
-                    type: string
-                    example: "65c9d10f4a5f24d2b8d8a61c"
-                  name:
-                    type: string
-                    example: "Math Assignment"
-                  subject:
-                    type: string
-                    example: "Mathematics"
-                  deadline:
-                    type: string
-                    format: date
-                    example: "2025-03-10"
-                  priority:
-                    type: string
-                    example: "High"
-        "400":
-          description: Task with the same name and subject already exists
-        "500":
-          description: Server error
-
-  /:
-    get:
-      summary: Get all tasks
-      description: Retrieves a list of all tasks in the database.
-      responses:
-        "200":
-          description: A list of tasks
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    _id:
-                      type: string
-                      example: "65c9d10f4a5f24d2b8d8a61c"
-                    name:
-                      type: string
-                      example: "Math Assignment"
-                    subject:
-                      type: string
-                      example: "Mathematics"
-                    deadline:
-                      type: string
-                      format: date
-                      example: "2025-03-10"
-                    priority:
-                      type: string
-                      example: "High"
-        "500":
-          description: Server error
-
-  /{id}:
-    delete:
-      summary: Delete a task
-      description: Deletes a task by its ID.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: The ID of the task to delete
-          schema:
-            type: string
-            example: "65c9d10f4a5f24d2b8d8a61c"
-      responses:
-        "200":
-          description: Task deleted successfully
-        "404":
-          description: Task not found
-        "500":
-          description: Server error
-
-
-paths:
-  /summary-report:
-    post:
-      summary: Generate a summary report for an assignment
-      description: Generates and retrieves a summary report for a given assignment based on students' scores and responses.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - assignmentId
-              properties:
-                assignmentId:
-                  type: string
-                  format: uuid
-                  example: "65c9d10f4a5f24d2b8d8a61c"
-      responses:
-        "200":
-          description: Successfully generated summary report
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  summaryReport:
-                    type: object
-                    properties:
-                      assignmentId:
-                        type: string
-                        example: "65c9d10f4a5f24d2b8d8a61c"
-                      totalStudents:
-                        type: integer
-                        example: 50
-                      averageScore:
-                        type: number
-                        example: 78.5
-                      highestScore:
-                        type: number
-                        example: 98
-                      lowestScore:
-                        type: number
-                        example: 45
-                      commonMistakes:
-                        type: array
-                        items:
-                          type: string
-                        example: ["Incorrect answer for question 101", "Incorrect answer for question 205"]
-                      difficultyStats:
-                        type: object
-                        properties:
-                          easy:
-                            type: object
-                            properties:
-                              totalQuestions:
-                                type: integer
-                                example: 10
-                              correctAnswers:
-                                type: integer
-                                example: 8
-                              averageScore:
-                                type: number
-                                example: 80.0
-                          medium:
-                            type: object
-                            properties:
-                              totalQuestions:
-                                type: integer
-                                example: 15
-                              correctAnswers:
-                                type: integer
-                                example: 10
-                              averageScore:
-                                type: number
-                                example: 66.7
-                          hard:
-                            type: object
-                            properties:
-                              totalQuestions:
-                                type: integer
-                                example: 5
-                              correctAnswers:
-                                type: integer
-                                example: 2
-                              averageScore:
-                                type: number
-                                example: 40.0
-        "400":
-          description: Assignment ID is missing in the request
-        "500":
-          description: Error generating summary report
-
-
-paths:
-  /programming-hint:
-    post:
-      summary: Get a programming hint
-      description: Provides a hint or explanation for a given programming query.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - query
-              properties:
-                query:
-                  type: string
-                  example: "How do I reverse a linked list in Python?"
-                context:
-                  type: string
-                  example: "Data Structures Assignment"
-      responses:
-        "200":
-          description: Successfully retrieved a programming hint
-          content:
-            application/json:
-              schema:
-              
-
-paths:
-  /ask-ai:
-    post:
-      summary: Get a simplified explanation
-      description: AI provides a simplified response to a complex topic.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - query
-              properties:
-                query:
-                  type: string
-                  example: "Explain recursion in simple terms."
-                videoContext:
-                  type: string
-                  example: "Lecture on recursion"
-      responses:
-        "200":
-          description: Successfully generated a simplified response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  response:
-                    type: string
-                    example: "Recursion is when a function calls itself to break a problem into smaller parts."
-        "500":
-          description: Error processing AI request
-
-  /ask-resources:
-    post:
-      summary: Get educational resources
-      description: AI retrieves useful resources for a given topic.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - query
-              properties:
-                query:
-                  type: string
-                  example: "Best Python tutorials for beginners"
-                videoContext:
-                  type: string
-                  example: "Python basics class"
-      responses:
-        "200":
-          description: Successfully retrieved resources
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    type:
-                      type: string
-                      example: "Tutorial"
-                    url:
-                      type: string
-                      example: "https://realpython.com/python-basics/"
-                    description:
-                      type: string
-                      example: "A complete Python beginner guide."
-        "500":
-          description: Error processing AI request
-
-  /ask:
-    post:
-      summary: Get assignment help
-      description: AI provides hints and guidance for assignments.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - query
-              properties:
-                query:
-                  type: string
-                  example: "How to implement a binary search tree in Python?"
-                videoContext:
-                  type: string
-                  example: "Binary Search Tree lecture"
-      responses:
-        "200":
-          description: Successfully provided assignment guidance
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    type:
-                      type: string
-                      example: "General"
-                    response:
-                      type: string
-                      example: "To implement a BST in Python, define a class with insert and search functions."
-                    resourceType:
-                      type: string
-                      example: "Documentation"
-                    resourceUrl:
-                      type: string
-                      example: "https://docs.python.org/3/library/bisect.html"
