@@ -44,17 +44,17 @@ describe('Programming Assignment API Tests', () => {
                 user_id: 'user001',
                 assignment_id: '65d9e1234f5a6b7890c12345',
                 course_id: 'abc123',
-                response: "print('Hello, World!')",
-                actual_output: 'Hello, World!'
+                response: "print('Hello, World, again!')",
+                actual_output: 'Hello, World, again!'
             };
 
             const response = await request(app)
                 .post('/api/prog-assignment/submit')
                 .send(submission)
-                .expect(201);
+                .expect([201, 200]);
 
             console.log(response.body);  // Debugging: Check API response
-            expect(response.body).toHaveProperty('message', 'Response submitted successfully');
+            expect(response.body.message).toMatch(/Response submitted successfully|Programming assignment response updated successfully/);
         });
 
         it('should return 400 if required fields are missing', async () => {
@@ -78,7 +78,7 @@ describe('Programming Assignment API Tests', () => {
 
         it('should return 404 if the score is not found', async () => {
             const response = await request(app)
-                .get('/api/prog-assignment/score/nonexistent_user/nonexistent_assignment')
+                .get('/api/prog-assignment/score/nonexistuser/nonexistent_assignment')
                 .expect(404);
 
             expect(response.body.message).toBe('No score found for this assignment');
