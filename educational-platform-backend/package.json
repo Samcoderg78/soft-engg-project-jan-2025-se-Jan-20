@@ -19,7 +19,6 @@
     "ass_summary": "jest /ai_agent/assignment_summary/tests/ass_summary.test.js",
     "topic_simp": "jest /ai_agent/topic_simplification/tests/topic_sim.test.js",
     "pa_test": "jest ./programming_assignment/tests/prog_assignment.test.js"
-
   },
   "keywords": [],
   "author": "",
