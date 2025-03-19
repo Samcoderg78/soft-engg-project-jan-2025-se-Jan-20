@@ -130,7 +130,7 @@ describe('Deadlines & Reminders API', () => {
 
       const response = await request(app).delete(`/api/dr/${invalidId}`);
 
-      expect(response.status).toBe(500);  // Expecting a 500 due to lack of validation in the controller
+      expect(response.status).toBe(500); 
       expect(response.body.message).toBe('Error deleting task');
     });
   });

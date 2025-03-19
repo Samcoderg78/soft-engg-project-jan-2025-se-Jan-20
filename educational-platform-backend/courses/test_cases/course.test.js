@@ -82,7 +82,7 @@ describe('Courses API', () => {
 
     it('should return error if required fields are missing', async () => {
       const invalidCourse = {
-        description: 'Description without a title', // Missing title
+        description: 'Description without a title', 
         tags: ['invalid'],
         professor: 'Test Professor',
         image: 'http://example.com/test.jpg',
@@ -92,7 +92,7 @@ describe('Courses API', () => {
         .post('/api/course/add')
         .send(invalidCourse);
 
-      expect(response.status).toBe(500);  // Expect 500 since the controller is not handling it with 400
+      expect(response.status).toBe(500);  
       expect(response.body.message).toBe('Error adding course');
     });
   });
@@ -121,7 +121,7 @@ describe('Courses API', () => {
 
       const response = await request(app).delete(`/api/course/${invalidCourseId}`);
 
-      expect(response.status).toBe(404);  // Expect 404 since the course doesn't exist
+      expect(response.status).toBe(404); 
       expect(response.body.message).toBe('Course not found');
     });
 
@@ -130,7 +130,7 @@ describe('Courses API', () => {
 
       const response = await request(app).delete(`/api/course/${invalidId}`);
 
-      expect(response.status).toBe(500);  // Expecting a 500 due to lack of validation in the controller
+      expect(response.status).toBe(500);  
       expect(response.body.message).toBe('Error deleting course');
     });
   });

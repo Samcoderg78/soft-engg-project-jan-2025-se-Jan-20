@@ -96,7 +96,6 @@ describe("Notes API", () => {
     expect(response.body.notes).toEqual([]);
   });
 
-  // Mocking invalid ObjectId format handling
   it("should return 400 if lecture_id format is invalid", async () => {
     const invalidLectureId = "invalidLectureIdFormat";
     const response = await request(app)
@@ -124,9 +123,9 @@ describe("Notes API", () => {
     expect(response.body).toHaveProperty("message", "Invalid User ID format");
   });
 
-  // Mocking a database error
+  
   it("should handle errors gracefully and return a 500 status on failure", async () => {
-    // Mock console.error to suppress the error log
+    
     const originalConsoleError = console.error;
     console.error = jest.fn();
 
@@ -138,7 +137,6 @@ describe("Notes API", () => {
 
     expect(response.body).toHaveProperty("message", "Internal Server Error");
 
-    // Restore console.error
     console.error = originalConsoleError;
   });
 });
