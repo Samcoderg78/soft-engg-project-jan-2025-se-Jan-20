@@ -116,11 +116,10 @@ describe("Get Deadlines API", () => {
     });
 
     it("should return a 500 error if there is an internal server error", async () => {
-      // Mock console.error to suppress the error log
+      
       const originalConsoleError = console.error;
       console.error = jest.fn();
 
-      // Simulate an error by disconnecting from the DB
       await mongoose.connection.close();
 
       const response = await request(app).get("/api/gd/deadlines");
@@ -128,7 +127,6 @@ describe("Get Deadlines API", () => {
       expect(response.status).toBe(500);
       expect(response.body.message).toBe("Internal Server Error");
 
-      // Restore console.error
       console.error = originalConsoleError;
     });
   });

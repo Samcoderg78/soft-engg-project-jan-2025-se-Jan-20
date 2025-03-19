@@ -26,7 +26,6 @@ describe("Feedback API", () => {
     await mongoose.connection.close();
   });
 
-  // ✅ TEST: Submit feedback (POST /submit)
   describe("POST /api/feedback/submit", () => {
     it("should successfully submit feedback", async () => {
       const feedbackData = {
@@ -63,14 +62,11 @@ describe("Feedback API", () => {
 
       const response = await request(app).post("/api/feedback/submit").send(feedbackData);
 
-      // ✅ Fix: Adjust expectation to allow either 400 or 500
-      // expect([400, 500]).toContain(response.status);
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty("message", "Rating is out of range");
     });
   });
 
-  // ✅ TEST: Get feedback for a course (GET /course/:course_id)
   describe("GET /api/feedback/course/:course_id", () => {
     it("should fetch feedback for a valid course", async () => {
       const feedbackData = {
@@ -100,8 +96,6 @@ describe("Feedback API", () => {
     it("should return 400 if course_id format is invalid", async () => {
       const response = await request(app).get(`/api/feedback/course/invalidCourseId`);
 
-      // ✅ Fix: Adjust expectation to allow either 400 or 404
-      // expect([400, 404]).toContain(response.status);
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty("message", "Invalid course_id format");
     });
