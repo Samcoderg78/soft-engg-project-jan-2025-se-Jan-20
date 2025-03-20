@@ -1,4 +1,5 @@
 const Course = require('../model/course');
+const Enrollment = require('../../user/model/enrollment');
 
 exports.getAllCourses = async (req, res) => {
   try {
@@ -50,3 +51,36 @@ exports.deleteCourse = async (req, res) => {
       res.status(500).json({ message: 'Error deleting course', error });
     }
   };
+
+  exports.getEnrolledCourses = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        if (!userId) {
+            return res.status(500).json({ 
+                message: 'Error fetching enrolled courses', 
+                error: 'User ID is required' 
+            });
+        }
+
+        // Get course IDs from enrollments
+        const enrollments = await Enrollment.find({ user_id: userId });
+
+        if (!enrollments.length) {
+            return res.status(200).json([]); // Consistent with getAllCourses empty response
+        }
+
+        // Extract course IDs and get courses
+        const courseIds = enrollments.map(enrollment => enrollment.course_id);
+        const courses = await Course.find({ '_id': { $in: courseIds } });
+
+        res.status(200).json({
+          message: 'Enrolled courses retrieved successfully',
+          data: courses
+      });
+
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching enrolled courses', error });
+    }
+};
+
