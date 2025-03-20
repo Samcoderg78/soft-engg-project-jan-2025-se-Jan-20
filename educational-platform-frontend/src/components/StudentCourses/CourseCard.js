@@ -8,8 +8,7 @@ const CourseCard = ({ title, description, tags, professor, image, handleClick })
 
   const handleCourseClick = () => {
     // alert(`You selected the course: ${title}`);
-    handleClick(title, description, professor);
-    navigate("/my-course"); // Redirect to Course Page
+    handleClick(); // This will now pass the course ID to the parent component
   };
 
   return (
@@ -30,8 +29,5 @@ const CourseCard = ({ title, description, tags, professor, image, handleClick })
     </div>
   );
 };
-
-
-
 
 export default CourseCard;
