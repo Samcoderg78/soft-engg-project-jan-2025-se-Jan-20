@@ -12,8 +12,8 @@
   margin-left: 250px;
   padding: 20px;
   background-color: #f8f9fa;
+  height: calc(100vh - 60px);
   overflow-y: auto;
-  height: calc(100vh - 60px); /* Subtract topbar height */
 }
 
 /* Sidebar */
@@ -23,26 +23,24 @@
   color: white;
   padding: 20px;
   box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
-  position: fixed;
-  height: calc(100vh - 60px);
-  top: 60px;
-  overflow-y: auto;
 }
 
 /* Main Content */
 .main-content-wrapper {
   display: flex;
   flex: 1;
-  margin-top: 60px; /* Height of Topbar */
+  margin-top: 60px;
+  height: calc(100vh - 60px);
+  overflow: hidden;
 }
 
 .main-content {
-  width: 100%;
+  flex: 1;
+  padding: 30px;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 30px;
-  margin-bottom: 20px;
+  margin: 0 20px 20px 20px;
 }
 
 /* Lecture Title */

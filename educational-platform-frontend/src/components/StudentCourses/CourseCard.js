@@ -1,18 +1,9 @@
 import React from "react";
 import "./../../styles/coursecard.css"; // Make sure to style it properly
 
-import { useNavigate } from "react-router-dom";
-
 const CourseCard = ({ title, description, tags, professor, image, handleClick }) => {
-  const navigate = useNavigate();
-
-  const handleCourseClick = () => {
-    // alert(`You selected the course: ${title}`);
-    handleClick(); // This will now pass the course ID to the parent component
-  };
-
   return (
-    <div className="course-card" onClick={handleCourseClick}>
+    <div className="course-card" onClick={handleClick}>
       <img src={image} alt={title} className="course-image" />
       <div className="course-content">
         <h2 className="course-title">{title}</h2>

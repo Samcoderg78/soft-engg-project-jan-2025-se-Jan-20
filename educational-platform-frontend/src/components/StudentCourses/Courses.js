@@ -39,9 +39,69 @@ const Courses = () => {
     fetchCourses();
   }, []);
 
-  const handleCourseClick = (courseId) => {
-    navigate(`/my-course/${courseId}`);
+  const handleCourseClick = async (courseId) => {
+    try {
+      // First, fetch the weeks for the course
+      const weeksResponse = await axios.get(`http://localhost:3009/api/week/course/${courseId}`);
+      console.log("Weeks API Response:", weeksResponse.data);
+      console.log("Weeks Response Type:", typeof weeksResponse.data);
+      console.log("Is Weeks Response Array?", Array.isArray(weeksResponse.data));
+      
+      if (weeksResponse.data && weeksResponse.data.length > 0) {
+        // Get the first week
+        const firstWeek = weeksResponse.data[0];
+        console.log("First Week:", firstWeek);
+        console.log("First Week Type:", typeof firstWeek);
+        console.log("Week Number:", firstWeek.weekNumber);
+        
+        // Then, fetch the lectures for the first week using the weekNumber from the response
+        const lecturesResponse = await axios.get(`http://localhost:3009/api/lecture/${courseId}/${firstWeek.weekNumber}`);
+        console.log("Lectures API Response:", lecturesResponse.data);
+        console.log("Lectures Response Type:", typeof lecturesResponse.data);
+        console.log("Is Lectures Response Array?", Array.isArray(lecturesResponse.data));
+        
+        if (lecturesResponse.data && lecturesResponse.data.length > 0) {
+          // Get the first lecture
+          const firstLecture = lecturesResponse.data[0];
+          console.log("First Lecture:", firstLecture);
+          console.log("First Lecture ID:", firstLecture._id);
+          // Navigate directly to the first lecture using the weekNumber from the response
+          navigate(`/my-course/${courseId}/${firstWeek.weekNumber}/${firstLecture._id}`, { replace: true });
+          return; // Exit early after navigation
+        } else {
+          console.log("No lectures found in response");
+        }
+      } else {
+        console.log("No weeks found in response");
+      }
+      
+      // If we get here, something went wrong, navigate to course overview
+      console.log("No lecture found, navigating to course overview");
+      navigate(`/my-course/${courseId}`, { replace: true });
+    } catch (err) {
+      console.error("Error fetching course details:", err);
+      // If there's an error, navigate to course overview
+      navigate(`/my-course/${courseId}`, { replace: true });
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="courses-container">
+        <Header />
+        <div className="loading-spinner">Loading courses...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="courses-container">
+        <Header />
+        <div className="error-message">Error: {error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen flex flex-col">
@@ -56,29 +116,19 @@ const Courses = () => {
             </p>
           </section>
 
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-            </div>
-          ) : error ? (
-            <div className="text-center text-red-500 p-4">
-              {error}
-            </div>
-          ) : (
-            <section className="courses-container">
-              {courses.map((course) => (
-                <CourseCard
-                  key={course._id}
-                  title={course.title}
-                  description={course.description}
-                  tags={course.tags || []}
-                  professor={course.instructor || 'Not Assigned'}
-                  image={course.image || 'https://via.placeholder.com/300x200'}
-                  handleClick={() => handleCourseClick(course._id)}
-                />
-              ))}
-            </section>
-          )}
+          <section className="courses-container">
+            {courses.map((course) => (
+              <CourseCard
+                key={course._id}
+                title={course.title}
+                description={course.description}
+                tags={course.tags || []}
+                professor={course.instructor || 'Not Assigned'}
+                image={course.image || 'https://via.placeholder.com/300x200'}
+                handleClick={() => handleCourseClick(course._id)}
+              />
+            ))}
+          </section>
         </main>
       </div>
     </div>

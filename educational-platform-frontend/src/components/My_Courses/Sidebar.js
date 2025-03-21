@@ -52,7 +52,7 @@ const Sidebar = () => {
                 const lecturesResponse = await api.get(`/api/lecture/${courseId}/${firstWeek.weekNumber}`);
                 if (lecturesResponse.data.data && lecturesResponse.data.data.length > 0) {
                   const firstLecture = lecturesResponse.data.data[0];
-                  navigate(`/my-course/${courseId}/week/${firstWeek.weekNumber}/lecture/${firstLecture._id}`);
+                  navigate(`/my-course/${courseId}/1/${firstLecture._id}`, { replace: true });
                 }
               }
             }
@@ -155,44 +155,48 @@ const Sidebar = () => {
                   <span className={`toggle-icon ${openWeeks[week.weekNumber] ? 'open' : ''}`}>
                     ▼
                   </span>
-                </div>
+            </div>
                 {openWeeks[week.weekNumber] && (
-                  <ul className="custom-sidebar-submenu">
+              <ul className="custom-sidebar-submenu">
                     {lectures[week.weekNumber]?.map((lecture, index) => (
                       <li key={lecture._id || index}>
-                        <NavLink
-                          to={`/my-course/${courseId}/week/${week.weekNumber}/lecture/${lecture._id || index + 1}`}
-                          className={({ isActive }) =>
-                            isActive ? "custom-nav-link active" : "custom-nav-link"
-                          }
-                        >
+                  <NavLink
+                          to={`/my-course/${courseId}/1/${lecture._id}`}
+                    className={({ isActive }) =>
+                      isActive ? "custom-nav-link active" : "custom-nav-link"
+                    }
+                          onClick={(e) => {
+                            e.preventDefault();
+                            navigate(`/my-course/${courseId}/1/${lecture._id}`, { replace: true });
+                          }}
+                  >
                           {lecture.title || `Lecture ${index + 1}`}
-                        </NavLink>
-                      </li>
+                  </NavLink>
+                </li>
                     ))}
-                    <li>
-                      <NavLink
+                <li>
+                  <NavLink
                         to={`/my-course/${courseId}/week/${week.weekNumber}/programming-assignment`}
-                        className={({ isActive }) =>
-                          isActive ? "custom-nav-link active" : "custom-nav-link"
-                        }
-                      >
-                        Programming Assignment
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink
+                    className={({ isActive }) =>
+                      isActive ? "custom-nav-link active" : "custom-nav-link"
+                    }
+                  >
+                    Programming Assignment
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
                         to={`/my-course/${courseId}/week/${week.weekNumber}/graded-assignment`}
-                        className={({ isActive }) =>
-                          isActive ? "custom-nav-link active" : "custom-nav-link"
-                        }
-                      >
-                        Graded Assignment
-                      </NavLink>
-                    </li>
-                  </ul>
-                )}
-              </li>
+                    className={({ isActive }) =>
+                      isActive ? "custom-nav-link active" : "custom-nav-link"
+                    }
+                  >
+                    Graded Assignment
+                  </NavLink>
+                </li>
+              </ul>
+            )}
+          </li>
             ))
           ) : (
             <li className="no-weeks-message">No weeks available</li>
