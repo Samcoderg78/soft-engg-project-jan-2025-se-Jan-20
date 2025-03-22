@@ -42,26 +42,22 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/suggestions" element={<Suggestions />} />
-        <Route path="/difficult-questions" element={<DifficultQuestions />} />
+        <Route path="/difficult-questions/:courseId" element={<DifficultQuestions />} />
         <Route path="/weekly-performance" element={<WeeklyPerformance />} />
 
-        <Route path="/assignment" element={<GradedAssignment />} />
+        <Route path="/assignment/:courseId" element={<GradedAssignment />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-courses" element={<StudentCourses />} />
-        <Route path="/my-course" element={<My_Course />} />
+        
         <Route path="/deadlines-reminders" element={<DeadlinesReminders />} />
-        <Route path="/ProgrammingAssignment" element={<ProgrammingAssignment />} />
+        <Route path="/ProgrammingAssignment/:courseId" element={<ProgrammingAssignment />} />
         <Route path="/ai-assistance" element={<AIAssistancePage />} />
-
-        <Route path="/week1/lecture1" element={<LecturePage />} />
-        <Route path="/week1/lecture2" element={<LecturePage />} />
-        <Route path="/week1/programming-assignment" element={<AssignmentPage />} />
-        <Route path="/week1/graded-assignment" element={<GradedAssignment />} />
-        <Route path="/week2/lecture1" element={<LecturePage />} />
-        <Route path="/week2/lecture2" element={<LecturePage />} />
-        <Route path="/week2/programming-assignment" element={<AssignmentPage />} />
-        <Route path="/week2/graded-assignment" element={<GradedAssignment />} />
-        <Route path="/difficult-questions" element={<DifficultQuestionsPage />} />
+        <Route path="/my-course/:courseId" element={<My_Course />} />
+        <Route path="/my-course/:courseId/week/:weekNumber/lecture/:lectureNumber" element={<LecturePage />} />
+        <Route path="/my-course/:courseId/week/:weekNumber/programming-assignment" element={<AssignmentPage />} />
+        <Route path="/my-course/:courseId/week/:weekNumber/graded-assignment" element={<GradedAssignment />} />
+        <Route path="/suggestions" element={<Suggestions />} />
+        <Route path="/difficult-questions" element={<DifficultQuestions />} />
 
         <Route path="/instructor-dashboard" element={<Dashboard />} />
         <Route path="/instructor/ai-assistance" element={<AIAssistancePageInstructor />} />

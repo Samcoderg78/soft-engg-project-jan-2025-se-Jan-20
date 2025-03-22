@@ -1,17 +1,28 @@
 /* Wrapper to ensure no outer styles affect the sidebar */
 .custom-sidebar-wrapper {
   width: 250px;
-  min-height: 100vh;
-  background-color: #211653 !important; /* Dark background */
-  padding: 10px;
+  height: calc(100vh - 60px); /* Subtract header height */
+  background-color: #1a1a4f; /* Dark purple/indigo background */
+  color: #ffffff;
+  position: fixed;
+  left: 0;
+  top: 60px; /* Start below header */
+  overflow-y: auto;
+  z-index: 100; /* Ensure proper stacking */
+}
+
+/* Main content spacing */
+.content-container {
+  margin-left: 250px; /* Match sidebar width */
+  margin-top: 60px; /* Account for header */
+  padding: 20px;
+  min-height: calc(100vh - 60px);
+  background-color: #ffffff;
 }
 
 /* Sidebar Styles */
 .custom-sidebar {
-  width: 100%;
-  background-color: #211653 !important;
-  padding: 10px 15px;
-  color: white;
+  padding: 1rem 0;
 }
 
 /* Sidebar Menu */
@@ -23,30 +34,32 @@
 
 /* Sidebar Items */
 .custom-sidebar-item {
-  padding: 10px;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   cursor: pointer;
-  color: white !important;
-  text-decoration: none;
-  display: block;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s;
+  color: #ffffff;
 }
 
 /* Hover Effect */
 .custom-sidebar-item:hover {
-  background-color: #3a2a80 !important; /* Darker shade for hover */
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Active Sidebar Item */
 .custom-sidebar-item.active {
-  background-color: #007bff !important;
-  color: white !important;
+  background-color: #0066ff; /* Bright blue for active state */
+  color: #ffffff;
 }
 
 /* Sidebar Submenu */
 .custom-sidebar-submenu {
   list-style: none;
-  padding-left: 20px;
+  padding: 0;
+  margin: 0;
+  background-color: rgba(0, 0, 0, 0.2); /* Slightly darker background for submenu */
 }
 
 /* Sidebar Submenu Items */
@@ -54,56 +67,131 @@
   font-size: 14px;
   padding: 8px 15px;
   display: block;
-  color: white !important;
-  background-color: #2a1b5f; /* Slightly lighter than sidebar */
-  border-radius: 5px;
+  color: #6c757d;
   text-decoration: none;
+  transition: all 0.2s;
 }
 
 /* Hover Effect for Submenu */
 .custom-sidebar-submenu .custom-nav-link:hover {
-  background-color: #3a2a80 !important;
+  color: #495057;
+  background-color: #f8f9fa;
 }
 
-/* Override Bootstrap Defaults */
+/* Navigation Links */
 .custom-nav-link {
-  color: white !important;
-  text-decoration: none;
-  padding: 10px;
   display: block;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+  padding: 0.75rem 2rem;
+  color: #ffffff;
+  text-decoration: none;
+  transition: background-color 0.2s;
 }
 
 .custom-nav-link:hover {
-  background-color: #3a2a80 !important;
-}
-
-/* Scrollable Sidebar */
-@media (max-height: 600px) {
-  .custom-sidebar {
-    overflow-y: auto;
-  }
-}
-
-/* Ensure the active submenu item is highlighted */
-.custom-sidebar-submenu .custom-nav-link.active {
-  background-color: #007bff !important; /* Highlight active item */
-  color: white !important;
-  font-weight: bold;
-}
-
-.custom-nav-link {
-  text-decoration: none;
-  color: #333;
-  padding: 5px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .custom-nav-link.active {
-  font-weight: bold;
-  color: #007bff; /* Bootstrap primary color */
-  border-left: 3px solid #007bff;
-  padding-left: 8px;
+  background-color: #0066ff; /* Bright blue for active state */
+  color: #ffffff;
+}
+
+/* Toggle Icon */
+.toggle-icon {
+  font-size: 0.8rem;
+  transition: transform 0.2s;
+}
+
+.toggle-icon.open {
+  transform: rotate(180deg);
+}
+
+/* Loading and Error States */
+.loading-spinner {
+  padding: 1rem;
+  text-align: center;
+  color: #6c757d;
+}
+
+.error-message {
+  padding: 1rem;
+  text-align: center;
+  color: #dc3545;
+}
+
+.no-weeks-message {
+  padding: 1rem;
+  text-align: center;
+  color: #ffffff;
+  font-style: italic;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .custom-sidebar-wrapper {
+    width: 100%;
+    min-height: auto;
+    position: relative;
+    top: 0;
+    border-right: none;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .content-container {
+    margin-left: 0;
+    padding: 15px;
+  }
+}
+
+.active-lecture-info {
+  padding: 15px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 10px;
+}
+
+.active-lecture-info h4 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.lecture-details {
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+}
+
+.lecture-details h5 {
+  color: #34495e;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.lecture-description {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Scrollbar customization */
+.custom-sidebar-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-sidebar-wrapper::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.custom-sidebar-wrapper::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.custom-sidebar-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.4);
 }
 
 

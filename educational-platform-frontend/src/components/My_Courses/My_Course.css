@@ -1,0 +1,161 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.content-container {
+  display: flex;
+  flex: 1;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.course-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.course-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.course-header h1 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+}
+
+.course-description {
+  color: #6c757d;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.course-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.course-meta p {
+  margin: 0;
+  color: #495057;
+}
+
+.course-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background-color: #e9ecef;
+  color: #495057;
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+}
+
+.course-overview,
+.course-objectives {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.course-overview h2,
+.course-objectives h2 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.course-objectives ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.course-objectives li {
+  color: #495057;
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.course-objectives li:before {
+  content: "•";
+  color: #6c757d;
+  position: absolute;
+  left: 0;
+}
+
+@media (max-width: 768px) {
+  .course-content {
+    padding: 1rem;
+  }
+
+  .course-header h1 {
+    font-size: 2rem;
+  }
+
+  .course-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.lecture-content {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.lecture-header {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.lecture-header h1 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 2rem;
+}
+
+.lecture-meta {
+  display: flex;
+  gap: 20px;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.lecture-body {
+  line-height: 1.6;
+}
+
+.lecture-description {
+  margin-bottom: 30px;
+  color: #495057;
+}
+
+.lecture-main-content {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+} 
