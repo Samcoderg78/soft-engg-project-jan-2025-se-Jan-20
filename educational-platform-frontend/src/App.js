@@ -42,15 +42,15 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/suggestions" element={<Suggestions />} />
-        <Route path="/difficult-questions" element={<DifficultQuestions />} />
+        <Route path="/difficult-questions/:courseId" element={<DifficultQuestions />} />
         <Route path="/weekly-performance" element={<WeeklyPerformance />} />
 
-        <Route path="/assignment" element={<GradedAssignment />} />
+        <Route path="/assignment/:courseId" element={<GradedAssignment />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-courses" element={<StudentCourses />} />
         
         <Route path="/deadlines-reminders" element={<DeadlinesReminders />} />
-        <Route path="/ProgrammingAssignment" element={<ProgrammingAssignment />} />
+        <Route path="/ProgrammingAssignment/:courseId" element={<ProgrammingAssignment />} />
         <Route path="/ai-assistance" element={<AIAssistancePage />} />
         <Route path="/my-course/:courseId" element={<My_Course />} />
         <Route path="/my-course/:courseId/week/:weekNumber/lecture/:lectureNumber" element={<LecturePage />} />

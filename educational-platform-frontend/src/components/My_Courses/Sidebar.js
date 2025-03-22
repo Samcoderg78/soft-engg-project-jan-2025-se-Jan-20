@@ -5,7 +5,7 @@ import "./Sidebar.css";
 import axios from "axios";
 
 const Sidebar = () => {
-  const { courseId, weekNumber, lectureId } = useParams();
+  const { courseId, weekNumber, lectureNumber } = useParams();
   const navigate = useNavigate();
   const [weeks, setWeeks] = useState([]);
   const [lectures, setLectures] = useState({});
@@ -22,122 +22,80 @@ const Sidebar = () => {
       }
 
       try {
-        const api = axios.create({
-          baseURL: 'http://localhost:3009',
-          timeout: 5000,
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          }
-        });
-
-        const response = await api.get(`/api/week/course/${courseId}`);
+        const response = await axios.get(`http://localhost:3009/api/week/course/${courseId}`);
         
         if (response.data) {
-          const weeksData = response.data.data || response.data;
-          if (Array.isArray(weeksData)) {
-            setWeeks(weeksData);
-            const initialOpenWeeks = {};
-            weeksData.forEach(week => {
-              if (week.weekNumber) {
-                initialOpenWeeks[week.weekNumber] = false;
-              }
-            });
-            setOpenWeeks(initialOpenWeeks);
-
-            // If no week or lecture is selected, navigate to first lecture
-            if (!weekNumber || !lectureId) {
-              const firstWeek = weeksData[0];
-              if (firstWeek) {
-                const lecturesResponse = await api.get(`/api/lecture/${courseId}/${firstWeek.weekNumber}`);
-                if (lecturesResponse.data.data && lecturesResponse.data.data.length > 0) {
-                  const firstLecture = lecturesResponse.data.data[0];
-                  navigate(`/my-course/${courseId}/week/${firstWeek.weekNumber}/lecture/${firstLecture._id}`);
-                }
-              }
+          const weeksData = response.data;
+          setWeeks(weeksData);
+          
+          // Set initial open state for weeks
+          const initialOpenWeeks = {};
+          weeksData.forEach(week => {
+            // Open the week that matches the current weekNumber param
+            if (weekNumber) {
+              initialOpenWeeks[week._id] = week.weekNumber.toString() === weekNumber.toString();
+            } else {
+              // If no weekNumber in URL, open first week
+              initialOpenWeeks[week._id] = week === weeksData[0];
             }
-          } else {
-            setError('Invalid weeks data format');
-            setWeeks([]);
+          });
+          setOpenWeeks(initialOpenWeeks);
+
+          // Fetch lectures for the open week
+          const targetWeek = weekNumber 
+            ? weeksData.find(w => w.weekNumber.toString() === weekNumber.toString())
+            : weeksData[0];
+            
+          if (targetWeek) {
+            fetchLectures(targetWeek._id, targetWeek.weekNumber);
           }
-        } else {
-          setError('No data received from server');
-          setWeeks([]);
         }
       } catch (err) {
-        console.error('API Error:', err);
-        if (err.code === 'ECONNREFUSED') {
-          setError('Could not connect to server. Please ensure the backend server is running.');
-        } else if (err.response) {
-          setError(err.response.data.message || `Server error: ${err.response.status}`);
-        } else if (err.request) {
-          setError('No response received from server. Please check your network connection.');
-        } else {
-          setError(`Error: ${err.message}`);
-        }
-        setWeeks([]);
+        console.error("Error fetching weeks:", err);
+        setError(err.response?.data?.message || 'Failed to fetch weeks');
       } finally {
         setLoading(false);
       }
     };
 
     fetchWeeks();
-  }, [courseId, weekNumber, lectureId, navigate]);
+  }, [courseId, weekNumber]);
 
-  useEffect(() => {
-    const fetchLectures = async () => {
-      if (!weeks.length) return;
-
-      const api = axios.create({
-        baseURL: 'http://localhost:3009',
-        timeout: 5000,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        }
-      });
-
-      const lecturesData = {};
-      
-      for (const week of weeks) {
-        try {
-          const response = await api.get(`/api/lecture/${courseId}/${week.weekNumber}`);
-          if (response.data) {
-            lecturesData[week.weekNumber] = response.data.data || response.data;
-          }
-        } catch (err) {
-          console.error(`Error fetching lectures for week ${week.weekNumber}:`, err);
-          lecturesData[week.weekNumber] = [];
-        }
+  const fetchLectures = async (weekId, weekNumber) => {
+    try {
+      const response = await axios.get(`http://localhost:3009/api/lecture/${courseId}/${weekNumber}`);
+      if (response.data) {
+        setLectures(prev => ({
+          ...prev,
+          [weekId]: response.data
+        }));
       }
+    } catch (err) {
+      console.error("Error fetching lectures:", err);
+      setError(err.response?.data?.message || 'Failed to fetch lectures');
+    }
+  };
 
-      setLectures(lecturesData);
-    };
+  const toggleWeek = async (weekId, weekNumber) => {
+    // Close all other weeks
+    const newOpenWeeks = {};
+    Object.keys(openWeeks).forEach(key => {
+      newOpenWeeks[key] = key === weekId ? !openWeeks[weekId] : false;
+    });
+    setOpenWeeks(newOpenWeeks);
 
-    fetchLectures();
-  }, [weeks, courseId]);
-
-  const toggleWeek = (weekNumber) => {
-    setOpenWeeks(prev => ({
-      ...prev,
-      [weekNumber]: !prev[weekNumber]
-    }));
+    // Fetch lectures if week is being opened and lectures haven't been loaded
+    if (!openWeeks[weekId] && !lectures[weekId]) {
+      await fetchLectures(weekId, weekNumber);
+    }
   };
 
   if (loading) {
-    return (
-      <div className="custom-sidebar-wrapper">
-        <div className="loading-spinner">Loading weeks...</div>
-      </div>
-    );
+    return <div className="custom-sidebar-wrapper">Loading weeks...</div>;
   }
 
   if (error) {
-    return (
-      <div className="custom-sidebar-wrapper">
-        <div className="error-message">Error: {error}</div>
-      </div>
-    );
+    return <div className="custom-sidebar-wrapper">Error: {error}</div>;
   }
 
   return (
@@ -146,33 +104,33 @@ const Sidebar = () => {
         <ul className="custom-sidebar-menu">
           {weeks && weeks.length > 0 ? (
             weeks.map((week) => (
-              <li key={week.weekNumber}>
+              <li key={week._id}>
                 <div 
-                  onClick={() => toggleWeek(week.weekNumber)} 
-                  className="custom-sidebar-item"
+                  onClick={() => toggleWeek(week._id, week.weekNumber)} 
+                  className={`custom-sidebar-item ${openWeeks[week._id] ? 'active' : ''}`}
                 >
-                  Week {week.weekNumber}
-                  <span className={`toggle-icon ${openWeeks[week.weekNumber] ? 'open' : ''}`}>
+                  <span>Week {week.weekNumber}</span>
+                  <span className={`toggle-icon ${openWeeks[week._id] ? 'open' : ''}`}>
                     ▼
                   </span>
                 </div>
-                {openWeeks[week.weekNumber] && (
+                {openWeeks[week._id] && (
                   <ul className="custom-sidebar-submenu">
-                    {lectures[week.weekNumber]?.map((lecture, index) => (
-                      <li key={lecture._id || index}>
+                    {lectures[week._id]?.map((lecture) => (
+                      <li key={lecture._id}>
                         <NavLink
-                          to={`/my-course/${courseId}/week/${week.weekNumber}/lecture/${lecture._id || index + 1}`}
+                          to={`/my-course/${courseId}/week/${week.weekNumber}/lecture/${lecture._id}`}
                           className={({ isActive }) =>
                             isActive ? "custom-nav-link active" : "custom-nav-link"
                           }
                         >
-                          {lecture.title || `Lecture ${index + 1}`}
+                          {lecture.title}
                         </NavLink>
                       </li>
                     ))}
                     <li>
                       <NavLink
-                        to={`/my-course/${courseId}/week/${week.weekNumber}/programming-assignment`}
+                        to={`/ProgrammingAssignment/${courseId}`}
                         className={({ isActive }) =>
                           isActive ? "custom-nav-link active" : "custom-nav-link"
                         }
@@ -182,7 +140,7 @@ const Sidebar = () => {
                     </li>
                     <li>
                       <NavLink
-                        to={`/my-course/${courseId}/week/${week.weekNumber}/graded-assignment`}
+                        to={`/assignment/${courseId}`}
                         className={({ isActive }) =>
                           isActive ? "custom-nav-link active" : "custom-nav-link"
                         }
@@ -199,7 +157,7 @@ const Sidebar = () => {
           )}
           <li>
             <NavLink
-              to="/difficult-questions"
+              to={`/difficult-questions/${courseId}`}
               className={({ isActive }) =>
                 isActive ? "custom-nav-link active" : "custom-nav-link"
               }
