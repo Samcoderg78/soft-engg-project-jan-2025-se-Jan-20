@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, useParams, useNavigate } from "react-router-dom";
+import { NavLink, useParams, useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Sidebar.css";
 import axios from "axios";
@@ -7,6 +7,7 @@ import axios from "axios";
 const Sidebar = () => {
   const { courseId, weekNumber, lectureNumber } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [weeks, setWeeks] = useState([]);
   const [lectures, setLectures] = useState({});
   const [loading, setLoading] = useState(true);
@@ -23,31 +24,18 @@ const Sidebar = () => {
 
       try {
         const response = await axios.get(`http://localhost:3009/api/week/course/${courseId}`);
-        
         if (response.data) {
-          const weeksData = response.data;
-          setWeeks(weeksData);
-          
-          // Set initial open state for weeks
+          setWeeks(response.data);
+          // Set initial open state based on current week
           const initialOpenWeeks = {};
-          weeksData.forEach(week => {
-            // Open the week that matches the current weekNumber param
-            if (weekNumber) {
-              initialOpenWeeks[week._id] = week.weekNumber.toString() === weekNumber.toString();
-            } else {
-              // If no weekNumber in URL, open first week
-              initialOpenWeeks[week._id] = week === weeksData[0];
-            }
+          response.data.forEach(week => {
+            initialOpenWeeks[week.weekNumber] = week.weekNumber === parseInt(weekNumber);
           });
           setOpenWeeks(initialOpenWeeks);
 
-          // Fetch lectures for the open week
-          const targetWeek = weekNumber 
-            ? weeksData.find(w => w.weekNumber.toString() === weekNumber.toString())
-            : weeksData[0];
-            
-          if (targetWeek) {
-            fetchLectures(targetWeek._id, targetWeek.weekNumber);
+          // Fetch lectures for the current week
+          if (weekNumber) {
+            fetchLectures(weekNumber);
           }
         }
       } catch (err) {
@@ -61,13 +49,13 @@ const Sidebar = () => {
     fetchWeeks();
   }, [courseId, weekNumber]);
 
-  const fetchLectures = async (weekId, weekNumber) => {
+  const fetchLectures = async (weekNum) => {
     try {
-      const response = await axios.get(`http://localhost:3009/api/lecture/${courseId}/${weekNumber}`);
+      const response = await axios.get(`http://localhost:3009/api/lecture/${courseId}/${weekNum}`);
       if (response.data) {
         setLectures(prev => ({
           ...prev,
-          [weekId]: response.data
+          [weekNum]: response.data
         }));
       }
     } catch (err) {
@@ -76,17 +64,17 @@ const Sidebar = () => {
     }
   };
 
-  const toggleWeek = async (weekId, weekNumber) => {
+  const toggleWeek = async (weekNum) => {
     // Close all other weeks
     const newOpenWeeks = {};
     Object.keys(openWeeks).forEach(key => {
-      newOpenWeeks[key] = key === weekId ? !openWeeks[weekId] : false;
+      newOpenWeeks[key] = parseInt(key) === weekNum;
     });
     setOpenWeeks(newOpenWeeks);
 
-    // Fetch lectures if week is being opened and lectures haven't been loaded
-    if (!openWeeks[weekId] && !lectures[weekId]) {
-      await fetchLectures(weekId, weekNumber);
+    // Fetch lectures if not already loaded
+    if (!lectures[weekNum]) {
+      await fetchLectures(weekNum);
     }
   };
 
@@ -106,17 +94,17 @@ const Sidebar = () => {
             weeks.map((week) => (
               <li key={week._id}>
                 <div 
-                  onClick={() => toggleWeek(week._id, week.weekNumber)} 
-                  className={`custom-sidebar-item ${openWeeks[week._id] ? 'active' : ''}`}
+                  onClick={() => toggleWeek(week.weekNumber)} 
+                  className={`custom-sidebar-item ${openWeeks[week.weekNumber] ? 'active' : ''}`}
                 >
                   <span>Week {week.weekNumber}</span>
-                  <span className={`toggle-icon ${openWeeks[week._id] ? 'open' : ''}`}>
+                  <span className={`toggle-icon ${openWeeks[week.weekNumber] ? 'open' : ''}`}>
                     ▼
                   </span>
                 </div>
-                {openWeeks[week._id] && (
+                {openWeeks[week.weekNumber] && (
                   <ul className="custom-sidebar-submenu">
-                    {lectures[week._id]?.map((lecture) => (
+                    {lectures[week.weekNumber]?.map((lecture) => (
                       <li key={lecture._id}>
                         <NavLink
                           to={`/my-course/${courseId}/week/${week.weekNumber}/lecture/${lecture._id}`}

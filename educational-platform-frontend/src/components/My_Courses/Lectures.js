@@ -15,35 +15,27 @@ const Lectures = () => {
 
   useEffect(() => {
     const fetchLectureDetails = async () => {
-      if (!courseId) return;
-
       try {
         setLoading(true);
-        setError(null);
-
-        // If we have a specific lecture number, fetch that lecture
+        // If we have specific lecture parameters, fetch that lecture
         if (lectureNumber) {
           const response = await axios.get(`http://localhost:3009/api/lecture/${lectureNumber}`);
           if (response.data && response.data.data) {
             setLecture(response.data.data);
-            return;
+            setError(null);
           }
-        }
-
-        // If no specific lecture or fetch failed, get the first lecture of the first week
-        const weeksResponse = await axios.get(`http://localhost:3009/api/week/course/${courseId}`);
-        if (weeksResponse.data && weeksResponse.data.length > 0) {
-          const targetWeek = weekNumber 
-            ? weeksResponse.data.find(w => w.weekNumber.toString() === weekNumber.toString())
-            : weeksResponse.data[0];
-
-          if (targetWeek) {
-            const lecturesResponse = await axios.get(`http://localhost:3009/api/lecture/${courseId}/${targetWeek.weekNumber}`);
+        } else {
+          // If no specific lecture, fetch the first lecture of the first week
+          const weeksResponse = await axios.get(`http://localhost:3009/api/week/course/${courseId}`);
+          if (weeksResponse.data && weeksResponse.data.length > 0) {
+            const firstWeek = weeksResponse.data[0];
+            const lecturesResponse = await axios.get(`http://localhost:3009/api/lecture/${courseId}/${firstWeek.weekNumber}`);
             if (lecturesResponse.data && lecturesResponse.data.length > 0) {
-              const targetLecture = lecturesResponse.data[0];
-              const lectureResponse = await axios.get(`http://localhost:3009/api/lecture/${targetLecture._id}`);
+              const firstLecture = lecturesResponse.data[0];
+              const lectureResponse = await axios.get(`http://localhost:3009/api/lecture/${firstLecture._id}`);
               if (lectureResponse.data && lectureResponse.data.data) {
                 setLecture(lectureResponse.data.data);
+                setError(null);
               }
             }
           }
@@ -57,7 +49,7 @@ const Lectures = () => {
     };
 
     fetchLectureDetails();
-  }, [courseId, weekNumber, lectureNumber]);
+  }, [courseId, weekNumber, lectureNumber]); // Dependencies include all URL parameters
 
   const handleTakeNotes = () => {
     if (currentNote.trim()) {
