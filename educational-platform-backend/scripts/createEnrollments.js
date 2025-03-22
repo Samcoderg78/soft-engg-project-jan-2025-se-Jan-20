@@ -8,7 +8,7 @@ const createEnrollments = async () => {
         console.log('Connected to MongoDB');
 
         // User and Course IDs from your data
-        const userId = "67dc54ca6f3671ca32c6e452";
+        const userId = "67dc59dc10abfeb1e84850c2";
         const courseIds = [
             "67daa3763295e7e667a5ea6b",  // Test Course
             "67dc543933038a94558d676b"   // Test Course 2
