@@ -1,18 +1,20 @@
 /* Wrapper to ensure no outer styles affect the sidebar */
 .custom-sidebar-wrapper {
   width: 250px;
-  height: 100vh;
+  height: calc(100vh - 60px); /* Subtract header height */
   background-color: #1a1a4f; /* Dark purple/indigo background */
   color: #ffffff;
   position: fixed;
   left: 0;
-  top: 0;
+  top: 60px; /* Start below header */
   overflow-y: auto;
+  z-index: 100; /* Ensure proper stacking */
 }
 
 /* Main content spacing */
 .content-container {
   margin-left: 250px; /* Match sidebar width */
+  margin-top: 60px; /* Account for header */
   padding: 20px;
   min-height: calc(100vh - 60px);
   background-color: #ffffff;

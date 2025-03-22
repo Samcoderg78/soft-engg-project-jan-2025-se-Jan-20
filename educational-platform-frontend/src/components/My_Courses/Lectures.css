@@ -9,6 +9,7 @@
 /* Content Layout */
 .content-container {
   flex: 1;
+  margin-top: -20px;
   margin-left: 250px;
   padding: 20px;
   background-color: #f8f9fa;
