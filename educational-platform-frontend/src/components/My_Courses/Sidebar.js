@@ -117,15 +117,14 @@ const Sidebar = () => {
                       </li>
                     ))}
                     <li>
-                      <NavLink
-                        to={`/ProgrammingAssignment/${courseId}`}
-                        className={({ isActive }) =>
-                          isActive ? "custom-nav-link active" : "custom-nav-link"
-                        }
-                      >
-                        Programming Assignment
-                      </NavLink>
-                    </li>
+                    <NavLink
+                      to={`/ProgrammingAssignment/${courseId}/week/${week.weekNumber}`}
+                      className={({ isActive }) => (isActive ? "custom-nav-link active" : "custom-nav-link")}
+                    >
+                      Programming Assignment
+                    </NavLink>
+                  </li>
+
                     <li>
                       <NavLink
                         to={`/assignment/${courseId}`}
