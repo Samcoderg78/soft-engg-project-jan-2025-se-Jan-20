@@ -45,7 +45,7 @@ function App() {
         <Route path="/difficult-questions/:courseId" element={<DifficultQuestions />} />
         <Route path="/weekly-performance" element={<WeeklyPerformance />} />
 
-        <Route path="/assignment/:courseId" element={<GradedAssignment />} />
+        <Route path="/assignment/:courseId/:assignmentId" element={<GradedAssignment />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-courses" element={<StudentCourses />} />
         
@@ -56,7 +56,7 @@ function App() {
         <Route path="/my-course/:courseId/week/:weekNumber/lecture/:lectureNumber" element={<LecturePage />} />
         <Route path="/my-course/:courseId/week/:weekNumber/programming-assignment" element={<AssignmentPage />} />
         <Route path="/my-course/:courseId/week/:weekNumber/graded-assignment" element={<GradedAssignment />} />
-        <Route path="/suggestions" element={<Suggestions />} />
+        <Route path=":courseId/suggestions" element={<Suggestions />} />
         <Route path="/difficult-questions" element={<DifficultQuestions />} />
 
         <Route path="/instructor-dashboard" element={<Dashboard />} />
