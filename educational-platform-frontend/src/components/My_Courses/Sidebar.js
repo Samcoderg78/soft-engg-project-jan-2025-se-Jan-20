@@ -10,6 +10,7 @@ const Sidebar = () => {
   const location = useLocation();
   const [weeks, setWeeks] = useState([]);
   const [lectures, setLectures] = useState({});
+  const [assignments, setAssignments] =useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openWeeks, setOpenWeeks] = useState({});
@@ -47,6 +48,24 @@ const Sidebar = () => {
     };
 
     fetchWeeks();
+
+    const fetchAssignments = async() => {
+      try {
+        const response = await axios.get(`http://localhost:3009/api/assignment/${courseId}`);
+        if (response.data) {
+          const arrengeAssignmentByWeek = response.data.reduce((acc,assignment) => {
+            acc[assignment.week] = assignment._id;
+            return acc;
+          },{})
+          setAssignments(arrengeAssignmentByWeek)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    fetchAssignments()
+
   }, [courseId, weekNumber]);
 
   const fetchLectures = async (weekNum) => {
@@ -126,9 +145,10 @@ const Sidebar = () => {
                         Programming Assignment
                       </NavLink>
                     </li>
+                    { assignments[week.weekNumber] && (
                     <li>
                       <NavLink
-                        to={`/assignment/${courseId}`}
+                        to={`/assignment/${courseId}/${assignments[week.weekNumber]}`}
                         className={({ isActive }) =>
                           isActive ? "custom-nav-link active" : "custom-nav-link"
                         }
@@ -136,6 +156,7 @@ const Sidebar = () => {
                         Graded Assignment
                       </NavLink>
                     </li>
+                    )}
                   </ul>
                 )}
               </li>
