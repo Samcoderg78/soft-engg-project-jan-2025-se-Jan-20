@@ -1,13 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
+import ReactMarkdown from 'react-markdown';
 
 const Suggestions = () => {
   const [activeLecture, setActiveLecture] = useState(null);
-  const courseName = "Software Engineering"; // Course name for TopBar
+  const [ai_resources, setResources] = useState(null);
+  const [ai_hints, setHints] = useState(null);
   const location = useLocation();
-  const data = location.state;
+  const questionData = location.state;
+
+useEffect(() => {
+    const fetchResources = async () => {
+      try {
+        const searchQuery = {
+          query : questionData.q
+        }
+        const response = await fetch(`http://localhost:3009/api/topic_simplification/ask-resources`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(searchQuery),
+        });
+        if (!response.ok) throw new Error("Error fetching suggestions");
+        const data = await response.json();
+        setResources(data);
+        console.log(data,ai_resources)
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const fetchHints = async () => {
+      try {
+        const searchQuery = {
+          query : questionData.q
+        }
+        const response = await fetch(`http://localhost:3009/api/topic_simplification/ask`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(searchQuery),
+        });
+        if (!response.ok) throw new Error("Error fetching suggestions");
+        const data = await response.json();
+        setHints(data.hints);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+
+    fetchResources();
+    fetchHints();
+  }, [questionData]);
 
   return (
     <div className="suggestions-page" style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
@@ -24,30 +69,31 @@ const Suggestions = () => {
               <h2>Suggestions Page</h2>
             </div>
             <div className="container p-0 mb-3 mt-5">
-              <h5>{data.q}</h5>
+              <h5>{questionData.q}</h5>
               <h5>Here are some suggestions based on this question :- </h5>
             </div>
-            <div className="container p-2 mb-3 border rounded">
+            {/* <div className="container p-2 mb-3 border rounded">
               <h6 className="text-center">Watch the following lecture</h6>
               <p className="text-center"><a href="/link">Video link</a></p>
-            </div>
+            </div> */}
+            {ai_hints?.slice(1).map((hint, index) => (
+              <div key={index} className="container p-2 mb-3 border rounded">
+                <h6 className="text-center"><b>Step {index+1}</b></h6>
+                <h6 className="text-center"><ReactMarkdown>{hint}</ReactMarkdown></h6>
+              </div>
+            ))}
+            {ai_resources && ai_resources[0].description !== "No resources generated." && (
             <div className="container p-2 mb-3 border rounded">
-              <h6 className="text-center">Step 1 : Read this</h6>
-              <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry...</p>
+              <h5 className="text-center">Important Links</h5>
+              {ai_resources?.map((res, index) => (
+                <div key={res._id}>
+                  <a href={res.url} target="_blank" rel="noopener noreferrer">
+                  <ReactMarkdown>{res.description}</ReactMarkdown>
+                  </a>
+                </div>
+              ))}
             </div>
-            <div className="container p-2 mb-3 border rounded">
-              <h6 className="text-center">Step 2 : Read this</h6>
-              <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry...</p>
-            </div>
-            <div className="container p-2 mb-3 border rounded">
-              <h6 className="text-center">Relevant Formulas</h6>
-              <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry...</p>
-            </div>
-            <div className="container p-2 mb-3 border rounded">
-              <h6 className="text-center">Important Links</h6>
-              <p><a href="/link">Default link</a></p>
-              <p><a href="/link">Default link</a></p>
-            </div>
+            )}
           </div>
         </div>
       </div>
