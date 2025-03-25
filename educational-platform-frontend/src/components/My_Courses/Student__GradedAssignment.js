@@ -1,33 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import "../../styles/assignment.css";
 
 const GradedAssignment = () => {
-  const ga = {
-    ga_id: '67c182ddc180c2f5d4d4e99c',
-    deadline: "26 Jan, 2025",
-  };
-  const user_id = "67bcc0decdfd7ab3b0ed24a0";
+
+  const { assignmentId,courseId } = useParams();
 
   const [Questions, setQuestions] = useState([]);
+  const [assignmentDetails, setAssignmentDetails] = useState({})
   const [responses, setResponses] = useState({});
 
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await fetch(`http://localhost:3011/api/assignment/questions/${ga.ga_id}`);
+        const response = await fetch(`http://localhost:3009/api/assignment/questions/${assignmentId}`);
         if (!response.ok) throw new Error("Error fetching questions");
         const data = await response.json();
         setQuestions(data.questions);
+        setAssignmentDetails(data.assignment)
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchQuestions();
-  }, [ga.ga_id]);
+  }, [assignmentId]);
   
   const handleResponseChange = (question_id, answer, isMulti) => {
     setResponses((prevResponses) => {
@@ -49,16 +48,22 @@ const GradedAssignment = () => {
 
   const submitAssignment = async () => {
     try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user._id) {
+        console.error("user not found")
+        return;
+      }
+
       const assignmentData = {
-        user_id,
-        assignment_id : ga.ga_id,
+        user_id : user._id,
+        assignment_id : assignmentId,
         responses: Object.entries(responses).map(([question_id, response]) => ({
           question_id,
           response: response // Store as an array
         })),
       };
 
-      const response = await fetch(`http://localhost:3011/api/assignment/submit`, {
+      const response = await fetch(`http://localhost:3009/api/assignment/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(assignmentData),
@@ -74,13 +79,19 @@ const GradedAssignment = () => {
 
   const handleMarkAsDifficult = async (question_id) => {
     try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user._id) {
+        console.error("user not found")
+        return;
+      }
+      
       const assignmentData = {
-        user_id,
-        assignment_id : ga.ga_id,
+        user_id : user._id,
+        assignment_id : assignmentId,
         question : question_id
       };
   
-      const response = await fetch(`http://localhost:3011/api/difficultquestions/markasdifficult`, {
+      const response = await fetch(`http://localhost:3009/api/difficultquestions/markasdifficult`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(assignmentData),
@@ -104,11 +115,11 @@ const GradedAssignment = () => {
         <Sidebar />
         <div
           className="main-content"
-          style={{ flex: 1, padding: "20px", overflowY: "auto" }}
+          style={{ flex: 1, padding: "20px", overflowY: "auto", marginLeft: "250px" }}
         >
           <div className="container mt-5 text-center">
-            <h2>Graded Assignment {ga.ga_id}</h2>
-            <p>Deadline : {ga.deadline}</p>
+            <h2>{assignmentDetails.title}</h2>
+            <p>Deadline : {assignmentDetails.due_date}</p>
           </div>
           <div className="container mt-5">
             <form>
@@ -121,7 +132,7 @@ const GradedAssignment = () => {
                   <div className="mb-2">
                     {q.options.map((a, i) => (
                       <div key={i} className="form-check">
-                        {q.category === "medium" ? (
+                        {q.type === "single" ? (
                           <input
                             className="form-check-input"
                             type="radio"
@@ -146,7 +157,7 @@ const GradedAssignment = () => {
                   </div>
                   <div className="d-flex justify-content-between w-100">
                     <Link
-                      to="/suggestions"
+                      to={`/${courseId}/suggestions`}
                       state={{ q: q.question }}
                       className="text-primary"
                     >

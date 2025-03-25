@@ -37,7 +37,7 @@ describe("Week API", () => {
 
     it("should add a new week", async () => {
         const response = await request(app)
-            .post("/api/week/add") // Updated route to match the mounted route
+            .post("/api/week/add") 
             .send(weekData)
             .expect(201);
 
@@ -50,10 +50,9 @@ describe("Week API", () => {
     });
 
     it("should return 400 if week already exists for the course", async () => {
-        // Add the same week first
+        
         await request(app).post("/api/week/add").send(weekData).expect(201);
 
-        // Try to add the same week again
         const response = await request(app)
             .post("/api/week/add")
             .send(weekData)
@@ -63,12 +62,11 @@ describe("Week API", () => {
     });
 
     it("should fetch weeks for a specific course", async () => {
-        // Add a week first
+        
         await request(app).post("/api/week/add").send(weekData).expect(201);
 
-        // Fetch weeks for the course
         const response = await request(app)
-            .get(`/api/week/course/${weekData.courseId}`) // Updated route to match the mounted route
+            .get(`/api/week/course/${weekData.courseId}`) 
             .expect(200);
 
         expect(response.body).toBeInstanceOf(Array);
@@ -77,7 +75,7 @@ describe("Week API", () => {
     });
 
     it("should fetch a specific week by ID", async () => {
-        // First, add a week to get its ID
+        
         const addResponse = await request(app)
             .post("/api/week/add")
             .send(weekData)
@@ -85,9 +83,8 @@ describe("Week API", () => {
 
         const weekId = addResponse.body._id;
 
-        // Fetch the week by ID
         const response = await request(app)
-            .get(`/api/week/${weekId}`) // Updated route to match the mounted route
+            .get(`/api/week/${weekId}`) 
             .expect(200);
 
         expect(response.body).toHaveProperty("_id", weekId);
@@ -101,20 +98,20 @@ describe("Week API", () => {
     it("should return 404 if week is not found by ID", async () => {
         const invalidWeekId = new mongoose.Types.ObjectId();
         const response = await request(app)
-            .get(`/api/week/${invalidWeekId}`) // Updated route to match the mounted route
+            .get(`/api/week/${invalidWeekId}`)
             .expect(404);
 
         expect(response.body).toHaveProperty("message", "Week not found");
     });
 
     it("should return 500 if there is a server error", async () => {
-        // Mock the Week.find method to throw an error
+      
         jest.spyOn(Week, 'find').mockImplementationOnce(() => {
             throw new Error("Database error");
         });
 
         const response = await request(app)
-            .get(`/api/week/course/${weekData.courseId}`) // Updated route to match the mounted route
+            .get(`/api/week/course/${weekData.courseId}`) 
             .expect(500);
 
         expect(response.body).toHaveProperty("message", "Error fetching weeks for the course");

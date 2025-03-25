@@ -4,6 +4,7 @@ const courseController = require('../controller/course');
 
 
 router.get('/', courseController.getAllCourses);  
+router.get('/:userId', courseController.getEnrolledCourses);  
 router.post('/add', courseController.addCourse);  
 router.delete('/:id', courseController.deleteCourse);
 

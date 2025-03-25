@@ -1,142 +1,168 @@
-// import React, { useState } from "react";
-// import { useParams } from "react-router-dom";
-// import Sidebar from "./Sidebar";
-// import Topbar from "./Topbar";
-// import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
-
-// const LecturePage = () => {
-//   const { week, lecture } = useParams();
-//   const [notes, setNotes] = useState([]);
-//   const [currentNote, setCurrentNote] = useState("");
-
-//   const handleTakeNotes = () => {
-//     const timestamp = new Date().toLocaleTimeString();
-//     setNotes([...notes, { timestamp, note: currentNote }]);
-//     setCurrentNote("");
-//   };
-
-//   return (
-//     <div className="container-fluid p-0">
-//       {/* Topbar */}
-//       <div className="row">
-//         <div className="col-12">
-//           <Topbar />
-//         </div>
-//       </div>
-
-//       {/* Main Content Area */}
-//       <div className="row">
-//         {/* Sidebar */}
-//         <div className="col-md-2 p-0">
-//           <Sidebar />
-//         </div>
-
-//         {/* Main Content */}
-//         <div className="col-md-10 p-4">
-//           <div className="lecture-page">
-//             <h2>{`Week ${week} - ${lecture}`}</h2>
-//             <video controls width="50%">
-//               <source src={'#'} type="video/mp4" />
-//               Your browser does not support the video tag.
-//             </video>
-//             <div className="mt-3">
-//               <textarea
-//                 value={currentNote}
-//                 onChange={(e) => setCurrentNote(e.target.value)}
-//                 placeholder="Take notes..."
-//                 className="form-control mb-2"
-//                 rows="4"
-//               />
-//               <button onClick={handleTakeNotes} className="btn btn-primary">
-//                 Take Notes
-//               </button>
-//             </div>
-//             <div className="mt-3">
-//               <h3>Notes:</h3>
-//               {notes.map((note, index) => (
-//                 <div key={index} className="mb-2">
-//                   <strong>{note.timestamp}:</strong> {note.note}
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default LecturePage;
-
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./Lectures.css"; // Import the new CSS file
+import "./Lectures.css";
 
-const LecturePage = () => {
-  const { week, lecture } = useParams();
+const Lectures = () => {
+  const { courseId, weekNumber, lectureNumber } = useParams();
+  const [lecture, setLecture] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [notes, setNotes] = useState([]);
   const [currentNote, setCurrentNote] = useState("");
 
+  useEffect(() => {
+    const fetchLectureDetails = async () => {
+      try {
+        setLoading(true);
+        // If we have specific lecture parameters, fetch that lecture
+        if (lectureNumber) {
+          const response = await axios.get(`http://localhost:3009/api/lecture/${lectureNumber}`);
+          if (response.data && response.data.data) {
+            setLecture(response.data.data);
+            setError(null);
+          }
+        } else {
+          // If no specific lecture, fetch the first lecture of the first week
+          const weeksResponse = await axios.get(`http://localhost:3009/api/week/course/${courseId}`);
+          if (weeksResponse.data && weeksResponse.data.length > 0) {
+            const firstWeek = weeksResponse.data[0];
+            const lecturesResponse = await axios.get(`http://localhost:3009/api/lecture/${courseId}/${firstWeek.weekNumber}`);
+            if (lecturesResponse.data && lecturesResponse.data.length > 0) {
+              const firstLecture = lecturesResponse.data[0];
+              const lectureResponse = await axios.get(`http://localhost:3009/api/lecture/${firstLecture._id}`);
+              if (lectureResponse.data && lectureResponse.data.data) {
+                setLecture(lectureResponse.data.data);
+                setError(null);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching lecture:", err);
+        setError(err.response?.data?.message || 'Failed to fetch lecture');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLectureDetails();
+  }, [courseId, weekNumber, lectureNumber]); // Dependencies include all URL parameters
+
   const handleTakeNotes = () => {
-    const timestamp = new Date().toLocaleTimeString();
-    setNotes([...notes, { timestamp, note: currentNote }]);
-    setCurrentNote("");
+    if (currentNote.trim()) {
+      const timestamp = new Date().toLocaleTimeString();
+      setNotes([...notes, { timestamp, note: currentNote }]);
+      setCurrentNote("");
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="app-container">
+        <Topbar />
+        <div className="main-content-wrapper">
+          <Sidebar />
+          <div className="content-container">
+            <div className="loading-spinner">Loading lecture...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="app-container">
+        <Topbar />
+        <div className="main-content-wrapper">
+          <Sidebar />
+          <div className="content-container">
+            <div className="error-message">{error}</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="app-container">
-      {/* Topbar */}
       <Topbar />
-
-      {/* Main Content Container */}
-      <div className="content-container">
-        {/* Sidebar */}
+      <div className="main-content-wrapper">
         <Sidebar />
+        <div className="content-container">
+          {lecture && (
+            <div className="main-content">
+              <h2 className="lecture-title">
+                {lecture.title || `Lecture ${lectureNumber}`}
+              </h2>
 
-        {/* Main Content */}
-        <div className="main-content">
-          <div className="lecture-page">
-            <h2 className="lecture-title">{`Week ${week} - ${lecture}`}</h2>
-            <div className="video-container">
-              <video controls>
-                <source src={"#"} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-
-            {/* Notes Section */}
-            <div className="notes-section">
-              <textarea
-                value={currentNote}
-                onChange={(e) => setCurrentNote(e.target.value)}
-                placeholder="Take notes here..."
-                className="notes-textarea"
-              />
-              <button onClick={handleTakeNotes} className="notes-button">
-                Save Note
-              </button>
-            </div>
-
-            {/* Display Notes */}
-            <div className="notes-display">
-              <h3>Your Notes</h3>
-              <div className="notes-list">
-                {notes.map((note, index) => (
-                  <div key={index} className="note-item">
-                    <strong>{note.timestamp}:</strong> {note.note}
-                  </div>
-                ))}
+              {/* Video Section */}
+              <div className="video-container">
+                <video controls>
+                  <source src={lecture.videoUrl || "#"} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
               </div>
+
+              {/* Lecture Content */}
+              <div className="lecture-description">
+                <p>{lecture.description || "No description available"}</p>
+              </div>
+              {lecture.content && (
+                <div className="lecture-main-content" dangerouslySetInnerHTML={{ __html: lecture.content }} />
+              )}
+
+              {/* Notes Section */}
+              <div className="notes-section">
+                <textarea
+                  value={currentNote}
+                  onChange={(e) => setCurrentNote(e.target.value)}
+                  placeholder="Take notes here..."
+                  className="notes-textarea"
+                />
+                <button onClick={handleTakeNotes} className="notes-button">
+                  Save Note
+                </button>
+              </div>
+
+              {/* Display Notes */}
+              <div className="notes-display">
+                <h3>Your Notes</h3>
+                <div className="notes-list">
+                  {notes.map((note, index) => (
+                    <div key={index} className="note-item">
+                      <strong>{note.timestamp}:</strong> {note.note}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Graded Assignment Section */}
+              {lecture.assignment && (
+                <div className="assignment-section">
+                  <h3>Graded Assignment</h3>
+                  <div className="assignment-content">
+                    <h4>{lecture.assignment.title}</h4>
+                    <p>{lecture.assignment.description}</p>
+                    <div className="assignment-meta">
+                      <span>Due Date: {lecture.assignment.dueDate}</span>
+                      <span>Points: {lecture.assignment.points}</span>
+                    </div>
+                    <button className="submit-assignment-btn">
+                      Submit Assignment
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default LecturePage;
+export default Lectures;

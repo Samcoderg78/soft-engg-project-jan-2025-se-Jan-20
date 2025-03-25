@@ -102,6 +102,13 @@
     transition: background 0.3s ease;
   }
   
+  .pa-btn:disabled, 
+.pa-btn[disabled] {
+  background-color: #ccc !important;
+  cursor: not-allowed !important;
+  opacity: 0.6;
+}
+
   .pa-test-run {
     background-color: #343a40;
     color: white;

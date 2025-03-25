@@ -1,6 +1,7 @@
 const Lecture = require('../model/lecture');  
 // const Week = require('../weeks/model/week');
 // const Course = require('../courses/model/course');
+const mongoose = require('mongoose');
 
 exports.addLecture = async (req, res) => {
   try {
@@ -52,4 +53,36 @@ exports.getLecturesByCourseAndWeek = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Error fetching lectures', error });
   }
+};
+
+exports.getLectureById = async (req, res) => {
+    try {
+        const { lectureId } = req.params;
+
+        // Validate lecture ID format
+        if (!mongoose.Types.ObjectId.isValid(lectureId)) {
+            return res.status(400).json({ 
+                message: 'Invalid lecture ID format' 
+            });
+        }
+
+        const lecture = await Lecture.findById(lectureId);
+        
+        if (!lecture) {
+            return res.status(404).json({ 
+                message: 'Lecture not found' 
+            });
+        }
+
+        res.status(200).json({
+            message: 'Lecture retrieved successfully',
+            data: lecture
+        });
+
+    } catch (error) {
+        res.status(500).json({ 
+            message: 'Error fetching lecture', 
+            error: error.message 
+        });
+    }
 };

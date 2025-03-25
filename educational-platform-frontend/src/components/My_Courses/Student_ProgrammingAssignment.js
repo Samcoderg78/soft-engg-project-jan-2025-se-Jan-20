@@ -1,280 +1,237 @@
-// import React, { useState } from "react";
-// import { Link } from "react-router-dom";
-// import Sidebar from "./Sidebar";
-// import Topbar from "./Topbar";
-// import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
-
-// const Question = "This is the question and you have to solve it.";
-
-// const ProgrammingAssignment = () => {
-//   const [language, setLanguage] = useState("");
-//   const [code, setCode] = useState("");
-//   const [testResult, setTestResult] = useState({
-//     passed: 5,
-//     total: 10,
-//     publicTestCases: [
-//       {
-//         input: "Input 1",
-//         expectedOutput: "Expected Output 1",
-//         actualOutput: "Actual Output 1",
-//       },
-//     ],
-//   });
-
-//   const handleTestRun = () => {
-//     alert("Test Run successful");
-//   };
-
-//   const handleSubmit = () => {
-//     alert("Assignment submission successful");
-//   };
-
-//   return (
-//     <div className="container-fluid p-0 vh-100">
-//       {/* Topbar */}
-//       <Topbar />
-
-//       {/* Sidebar */}
-//       <div style={{ position: "fixed", top: "60px", left: "0", bottom: "0", width: "250px" }}>
-//         <Sidebar />
-//       </div>
-
-//       {/* Fixed Header */}
-//       <div
-//         className="fixed-top bg-white shadow-sm py-3 text-center"
-//         style={{ top: "60px", left: "250px", right: "0" }}
-//       >
-//         <h2>Programming Assignment</h2>
-//         <p>Deadline: 09 Feb, 2025</p>
-//       </div>
-
-//       {/* Main Content Area */}
-//       <div
-//         className="p-4"
-//         style={{
-//           marginLeft: "250px",
-//           marginTop: "120px",
-//           overflowY: "auto",
-//           height: "calc(100vh - 120px)",
-//         }}
-//       >
-//         <div className="problem-section border p-4 rounded mb-4">
-//           <h4>Problem</h4>
-//           <p>{Question}</p>
-//           <select
-//             className="form-select mb-3"
-//             value={language}
-//             onChange={(e) => setLanguage(e.target.value)}
-//           >
-//             <option value="" disabled>
-//               Select Language
-//             </option>
-//             <option value="python">Python</option>
-//             <option value="javascript">JavaScript</option>
-//             <option value="java">Java</option>
-//           </select>
-//           <textarea
-//             className="form-control mb-3"
-//             rows="6"
-//             placeholder="Write your response"
-//             value={code}
-//             onChange={(e) => setCode(e.target.value)}
-//           ></textarea>
-//           <div className="d-flex gap-2">
-//             <button className="btn btn-dark" onClick={handleTestRun}>
-//               Test Run
-//             </button>
-//             <button className="btn btn-dark" onClick={handleSubmit}>
-//               Submit
-//             </button>
-//           </div>
-//         </div>
-
-//         <div className="test-result-section border p-4 rounded mb-4">
-//           <h4>Test Run Result</h4>
-//           <p>
-//             {testResult.passed}/{testResult.total} private cases passed
-//           </p>
-//           <h5>Public Test Cases</h5>
-//           <div className="border rounded p-3 mb-3">
-//             <div className="d-flex font-weight-bold mb-2">
-//               <div className="col">
-//                 <h5>Input</h5>
-//               </div>
-//               <div className="col">
-//                 <h5>Expected Output</h5>
-//               </div>
-//               <div className="col">
-//                 <h5>Actual Output</h5>
-//               </div>
-//             </div>
-//             {testResult.publicTestCases.map((test, index) => (
-//               <div key={index} className="d-flex mb-2">
-//                 <div className="col">{test.input}</div>
-//                 <div className="col">{test.expectedOutput}</div>
-//                 <div className="col">{test.actualOutput}</div>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-
-//         <div className="additional-options d-flex justify-content-between mb-4">
-//           <Link to="/suggestions" state={{ Question }} className="text-primary">
-//             Click here to get suggestions
-//           </Link>
-//           <div className="form-check">
-//             <input className="form-check-input" type="checkbox" id="mark-as-difficult" />
-//             <label className="form-check-label ms-2" htmlFor="mark-as-difficult">
-//               Mark as difficult
-//             </label>
-//           </div>
-//         </div>
-
-//         <div className="feedback-section border p-4 rounded">
-//           <h5>Coding Feedback (powered by AI)</h5>
-//           <p>
-//             Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
-//             has been the industry's standard dummy text ever since the 1500s.
-//           </p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ProgrammingAssignment;
-
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./ProgrammingAssignment.css"; // Import the new CSS file
-
-const Question = "This is the question and you have to solve it.";
+import "./ProgrammingAssignment.css";
 
 const ProgrammingAssignment = () => {
-  const [language, setLanguage] = useState("");
+  const { courseId, weekNumber } = useParams();
+  const [language, setLanguage] = useState("python");
   const [code, setCode] = useState("");
-  const [testResult, setTestResult] = useState({
-    passed: 5,
-    total: 10,
-    publicTestCases: [
-      {
-        input: "Input 1",
-        expectedOutput: "Expected Output 1",
-        actualOutput: "Actual Output 1",
-      },
-    ],
-  });
+  const [loading, setLoading] = useState(false);
+  const [assignment, setAssignment] = useState(null);
+  const [publicTestCases, setPublicTestCases] = useState([]);
+  const [privateTestCases, setPrivateTestCases] = useState([]);
+  const [testResult, setTestResult] = useState({ passed: 0, total: 0, cases: [] });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [score, setScore] = useState(null);
 
-  const handleTestRun = () => {
-    alert("Test Run successful");
+
+  useEffect(() => {
+    setAssignment(null);
+    setCode("");
+    setTestResult({ passed: 0, total: 0, cases: [] });
+    setIsSubmitted(false);
+    setScore(null);
+
+    const fetchAssignment = async () => {
+      try {
+        const response = await fetch(`http://localhost:3009/api/prog-assignment/course/${courseId}`);
+        const data = await response.json();
+        const gradedAssignment = data.find(item => item.title === weekNumber);
+        if (gradedAssignment) {
+          setAssignment(gradedAssignment);
+          setPublicTestCases(getPublicTestCases(gradedAssignment.question));
+          setPrivateTestCases(getPrivateTestCases(gradedAssignment.question));
+          checkSubmissionStatus(gradedAssignment._id);
+        }
+      } catch (error) {
+        console.error("Error fetching assignment:", error);
+      }
+    };
+
+    const checkSubmissionStatus = async (assignmentId) => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user || !user._id || !assignmentId) return;
+      
+      try {
+        const response = await fetch(`http://localhost:3009/api/prog-assignment/score/${user._id}/${assignmentId}`);
+        const data = await response.json();
+        
+        if (data.score !== undefined) {
+          setIsSubmitted(true);
+          setScore(data.score);
+        } else {
+          setIsSubmitted(false);
+          setScore(null);
+        }
+      } catch (error) {
+        console.error("Error fetching score:", error);
+      }
+    };
+
+    fetchAssignment();
+  }, [courseId, weekNumber]);
+
+
+  const getPublicTestCases = (question) => {
+    if (question.includes("adds two numbers")) {
+      return [
+        { input: "3 5", expectedOutput: "8" },
+        { input: "10 20", expectedOutput: "30" },
+      ];
+    } else if (question.includes("first n prime numbers")) {
+      return [
+        { input: "5", expectedOutput: "2 3 5 7 11" },
+        { input: "3", expectedOutput: "2 3 5" },
+      ];
+    }
+    return [];
   };
 
-  const handleSubmit = () => {
-    alert("Assignment submission successful");
+  const getPrivateTestCases = (question) => {
+    if (question.includes("adds two numbers")) {
+      return [
+        { input: "50 50", expectedOutput: "100" },
+        { input: "-10 30", expectedOutput: "20" },
+      ];
+    } else if (question.includes("first n prime numbers")) {
+      return [
+        { input: "10", expectedOutput: "2 3 5 7 11 13 17 19 23 29" },
+        { input: "7", expectedOutput: "2 3 5 7 11 13 17" },
+      ];
+    }
+    return [];
+  };
+
+  const runCode = async (testCases, isPublic = true) => {
+    if (!language || !code) {
+      alert("Please select a language and enter code.");
+      return;
+    }
+    
+    if (assignment?.question.includes("adds two numbers") && !/def\s+add_numbers\s*\(\s*a\s*,\s*b\s*\)\s*:/.test(code)) {
+      alert("Your function must be named 'add_numbers' with two parameters (a, b)." );
+      return;
+    }
+    if (assignment?.question.includes("first n prime numbers") && !/def\s+first_n_primes\s*\(\s*n\s*\)\s*:/.test(code)) {
+      alert("Your function must be named 'first_n_primes' with one parameter (n)." );
+      return;
+    }
+    
+    setLoading(true);
+    let passedCount = 0;
+    let results = [];
+
+    const wrappedCode = `${code}
+
+if __name__ == "__main__":
+    import sys
+    def is_function_defined(name):
+        return name in globals()
+
+    for line in sys.stdin:
+        input_value = line.strip()
+        if is_function_defined("first_n_primes"):
+            print(first_n_primes(int(input_value)))
+        elif is_function_defined("add_numbers"):
+            print(add_numbers(*map(int, input_value.split())))
+        else:
+            print("Error: Required function is not defined")
+    `;
+
+    for (const testCase of testCases) {
+      try {
+        const response = await fetch("https://emkc.org/api/v2/piston/execute", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            language,
+            version: "3.10.0",
+            files: [{ content: wrappedCode }],
+            stdin: testCase.input,
+          }),
+        });
+        const data = await response.json();
+        let actualOutput = data.run?.stderr ? `Error: ${data.run.stderr.trim()}` : data.run.stdout.trim();
+        if (actualOutput === testCase.expectedOutput) passedCount++;
+        results.push({ input: testCase.input, expectedOutput: testCase.expectedOutput, actualOutput });
+      } catch (error) {
+        results.push({ input: testCase.input, expectedOutput: "N/A", actualOutput: `Error: ${error.message}` });
+      }
+    }
+    setTestResult({ passed: passedCount, total: testCases.length, cases: results, isPublic });
+    setLoading(false);
+
+    if (!isPublic) {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user._id) {
+        alert('User not found');
+        return;
+      }
+    
+      let score = passedCount === testCases.length ? 100 : passedCount > 0 ? 50 : 0;
+    
+      try {
+        const response = await fetch("http://localhost:3009/api/prog-assignment/score/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: user._id,
+            assignment_id: assignment?._id,
+            score: score,
+          }),
+        });
+    
+        const result = await response.json();
+        console.log("Score Update Response:", result);
+    
+        if (!response.ok) {
+          throw new Error(`Server Error: ${response.status} - ${result.message}`);
+        }
+      } catch (error) {
+        console.error("Error updating score:", error);
+        alert("Failed to update score: " + error.message);
+      }
+    }
   };
 
   return (
     <div className="pa-container">
-      {/* Topbar */}
       <Topbar />
-
-      {/* Sidebar */}
       <div className="pa-sidebar">
         <Sidebar />
       </div>
-
-      {/* Fixed Header */}
       <div className="pa-header">
-        <h2>Programming Assignment</h2>
-        <p>Deadline: 09 Feb, 2025</p>
-      </div>
+  <h2>Programming Assignment</h2>
+  {assignment && <p>Deadline: {new Date(assignment.due_date).toLocaleDateString()}</p>}
+  {isSubmitted && score !== null && <p style={{ color: "blue" }}>🎯 Your Score: {score}</p>}
+</div>
 
-      {/* Main Content Area */}
       <div className="pa-main">
         <div className="pa-problem-section">
           <h4>Problem</h4>
-          <p>{Question}</p>
-          <select
-            className="pa-select-language"
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-          >
-            <option value="" disabled>
-              Select Language
-            </option>
+          <p>{assignment ? assignment.question : "Loading question..."}</p>
+          {isSubmitted && <p style={{ color: "green" }}>✅ Assignment already submitted.</p>}
+          <select className="pa-select-language" value={language} onChange={(e) => setLanguage(e.target.value)}>
             <option value="python">Python</option>
-            <option value="javascript">JavaScript</option>
-            <option value="java">Java</option>
           </select>
-          <textarea
-            className="pa-code-editor"
-            rows="6"
-            placeholder="Write your response..."
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-          ></textarea>
+          <textarea className="pa-code-editor" rows="6" placeholder="Write your response..." value={code} onChange={(e) => setCode(e.target.value)}></textarea>
           <div className="pa-buttons">
-            <button className="pa-btn pa-test-run" onClick={handleTestRun}>
-              Test Run
-            </button>
-            <button className="pa-btn pa-submit" onClick={handleSubmit}>
-              Submit
-            </button>
+            <button className="pa-btn pa-test-run" onClick={() => runCode(publicTestCases, true)} disabled={loading}>{loading ? "Running..." : "Test Run"}</button>
+            <button className="pa-btn pa-submit" onClick={() => runCode(privateTestCases, false)} disabled={isSubmitted}>
+  Submit
+</button>
           </div>
         </div>
-
         <div className="pa-test-result-section">
           <h4>Test Run Result</h4>
-          <p>
-            {testResult.passed}/{testResult.total} private cases passed
-          </p>
-          <h5>Public Test Cases</h5>
+          <p>{testResult.passed}/{testResult.total} {testResult.isPublic ? "public" : "private"} test cases passed</p>
+          <h5>{testResult.isPublic ? "Public" : "Private"} Test Cases</h5>
+
           <div className="pa-test-case-table">
-            <div className="pa-test-case-header">
-              <div>Input</div>
-              <div>Expected Output</div>
-              <div>Actual Output</div>
-            </div>
-            {testResult.publicTestCases.map((test, index) => (
+            {testResult.cases.map((test, index) => (
               <div key={index} className="pa-test-case-row">
                 <div>{test.input}</div>
                 <div>{test.expectedOutput}</div>
-                <div>{test.actualOutput}</div>
+                <div style={{ color: test.actualOutput.startsWith("Error") ? "red" : "black" }}>{test.actualOutput}</div>
               </div>
             ))}
           </div>
         </div>
-
-        <div className="pa-additional-options">
-          <Link
-            to="/suggestions"
-            state={{ Question }}
-            className="pa-suggestions-link"
-          >
-            Click here to get suggestions
-          </Link>
-          {/* <div className="pa-checkbox">
-            <input type="checkbox" id="mark-as-difficult" />
-            <label htmlFor="mark-as-difficult">Mark as difficult</label>
-          </div> */}
-        </div>
-
-        <button
-          className="pa-feedback-section"
-          onClick={() => console.log("Clicked!")}
-        >
-          <h5>Coding Feedback (powered by AI)</h5>
-          <p>
-            Lorem ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s.
-          </p>
-        </button>
       </div>
-    </div>
+     </div>
   );
 };
 
