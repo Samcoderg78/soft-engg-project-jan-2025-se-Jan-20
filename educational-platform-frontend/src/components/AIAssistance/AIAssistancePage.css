@@ -35,110 +35,104 @@
 /* Main heading */
 .ai-assistance-container h1 {
   font-size: 2.4rem;
-  color: #e9e9ee; /* Dark navy for strong contrast */
+  color: #000000; /* Dark navy for strong contrast */
   font-weight: 700;
   margin-bottom: 12px;
 }
 
-/* User email styling */
-.user-email {
-  font-size: 1rem;
-  color: #f7f4f4; /* Deep gray for clear readability */
-  margin-bottom: 25px;
-  background: rgba(0, 0, 0, 0.07); /* Soft gray background */
-  padding: 10px 14px;
-  border-radius: 8px;
-  display: inline-block;
-  font-weight: 500;
+.ai-assistance-container h5 {
+  color: #2d0202;
+  margin-bottom: 50px;
 }
 
-/* Section styles */
-.recommended-section,
-.ai-help-section {
+.ai-query-form {
+  display: flex;
+  gap: 10px;
   margin-bottom: 30px;
 }
 
-.recommended-section h2,
-.ai-help-section h2 {
-  font-size: 1.5rem;
-  color: #cce8f7; /* Deep blue for an elegant touch */
-  font-weight: 600;
+.search-input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.submit-button {
+  padding: 12px 24px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+.submit-button:hover {
+  background-color: #3e8e41;
+}
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.response-container {
+  min-height: 200px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.ai-response {
+  margin-top: 20px;
+}
+
+.ai-response h3 {
+  color: #333;
   margin-bottom: 15px;
 }
 
-/* Search input */
-.search-input {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #bbb;
-  border-radius: 10px;
-  background: #ffffff;
-  color: #1a1a2e;
-  font-size: 1.1rem;
-  outline: none;
-  transition: all 0.3s ease;
+.response-content {
+  background-color: rgb(0, 0, 0);
+  padding: 15px;
+  border-radius: 6px;
+  border-left: 4px solid #4CAF50;
 }
 
-/* Placeholder text */
-.search-input::placeholder {
-  color: #888;
+.response-content p {
+  margin: 8px 0;
+  line-height: 1.6;
 }
 
-/* Input focus effect */
-.search-input:focus {
-  border-color: #0077b6;
-  background: white;
-  box-shadow: 0 0 8px rgba(0, 119, 182, 0.4);
-}
-
-/* AI Help button */
-.ai-help-button {
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 10px;
-  background: #0077b6; /* Deep blue for a premium feel */
-  color: white;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 10px;
-}
-
-/* Button hover effect */
-.ai-help-button:hover {
-  background: #005f91;
-  box-shadow: 0 5px 15px rgba(0, 119, 182, 0.3);
-  transform: translateY(-3px);
-}
-
-/* Button active click effect */
-.ai-help-button:active {
-  transform: scale(0.95);
-}
-
-/* Dashboard layout adjustments */
-.ai-assistance-page .dashboard-content {
+.loading-state {
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: 100%;
-  width: 100%;
+  gap: 10px;
+  color: #666;
 }
 
-/* Responsive tweaks */
-@media (max-width: 768px) {
-  .ai-assistance-container {
-      padding: 30px;
-  }
+.spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #4CAF50;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
 
-  .ai-assistance-container h1 {
-      font-size: 1.9rem;
-  }
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
-  .search-input,
-  .ai-help-button {
-      font-size: 1rem;
-  }
+.error-state {
+  color: #d32f2f;
+  background-color: #fde0e0;
+  padding: 15px;
+  border-radius: 6px;
+  border-left: 4px solid #d32f2f;
 }
