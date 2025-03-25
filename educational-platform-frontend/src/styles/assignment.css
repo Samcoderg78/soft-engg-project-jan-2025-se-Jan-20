@@ -6,7 +6,10 @@
 
 .difficultqus, .suggestion  {
   margin-left: 250px; /* Align with sidebar width */
-  margin-top: 70px; /* Align below top bar */
   padding: 20px;
   width: calc(100% - 250px); /* Full width minus sidebar */
+}
+
+.a-question {
+  white-space: pre-wrap;
 }
