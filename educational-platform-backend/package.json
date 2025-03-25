@@ -34,6 +34,7 @@
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "educational-platform-backend": "file:",
     "express": "^4.21.2",
     "gpt-3-encoder": "^1.1.4",
     "helmet": "^8.0.0",
