@@ -128,7 +128,7 @@ const GradedAssignment = () => {
                   key={index}
                   className="p-3 mb-3 border rounded d-flex flex-column align-items-start"
                 >
-                  {index + 1} .{q.question}
+                  <p className="a-question">{index + 1} .{q.question}</p>
                   <div className="mb-2">
                     {q.options.map((a, i) => (
                       <div key={i} className="form-check">

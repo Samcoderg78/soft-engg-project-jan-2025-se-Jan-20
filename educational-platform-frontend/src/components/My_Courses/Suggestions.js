@@ -62,14 +62,12 @@ useEffect(() => {
       <div className="content" style={{ display: "flex", flex: 1 }}>
         {/* Sidebar with setActiveLecture passed as prop */}
         <Sidebar />
-        
-        <div className="main-content" style={{ flex: 1, padding: "20px" }}>
-          <div className="suggestion">
+          <div className="suggestion main-content" style={{ flex: 1, padding: "20px" }}>
             <div className="container mt-5 text-center">
               <h2>Suggestions Page</h2>
             </div>
             <div className="container p-0 mb-3 mt-5">
-              <h5>{questionData.q}</h5>
+              <h5><p className="a-question">Question : {questionData.q}</p></h5>
               <h5>Here are some suggestions based on this question :- </h5>
             </div>
             {/* <div className="container p-2 mb-3 border rounded">
@@ -97,7 +95,6 @@ useEffect(() => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

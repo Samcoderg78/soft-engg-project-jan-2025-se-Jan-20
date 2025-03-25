@@ -33,24 +33,44 @@ const DifficultQuestions = () => {
     fetchDifficultQuestions();
   }, [courseId]);
 
+  const handleRemoveFromDifficult = async (question_id) => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user._id) {
+        console.error("user not found")
+        return;
+      };
+  
+      const response = await fetch(`http://localhost:3009/api/difficultquestions/remove/${user._id}/${question_id}`, {
+        method: "DELETE",
+      });
+  
+      if (!response.ok) throw new Error("Error marking question as difficult");
+  
+      alert("Question removed from difficult!");
+    } catch (error) {
+      console.error(error);
+    }
+  }; 
+
   return (
     <>
       <Topbar courseName={courseName} />
       <div className="content">
         <Sidebar setActiveLecture={setActiveLecture} />
-        
           <div className="assignment" style={{ flex: 1, padding: "20px", overflowY: "auto", marginLeft: "250px" }}>
-            <h2 className="container-title">Difficult Questions</h2>
+            <h2 className="container-title mt-5">Difficult Questions</h2>
             {/* {difficultsQuestions.map((w, wIndex) => (
               <div key={wIndex} className="week-container">
                 <div className="week-title">Week {w.week}</div> */}
+                <div className="container mt-5">
                 <form>
                   {difficultQuestions.map((q, index) => (
                                   <div
                                     key={index}
                                     className="p-3 mb-3 border rounded d-flex flex-column align-items-start"
                                   >
-                                    {index + 1} .{q.question.question}
+                                    <p className="a-question">{index + 1} .{q.question.question}</p>
                                     <div className="mb-2">
                                       {q.question.options.map((a, i) => (
                                         <div key={i} className="form-check">
@@ -88,6 +108,7 @@ const DifficultQuestions = () => {
                                           className="form-check-input"
                                           type="checkbox"
                                           id={`difficult-${index}`}
+                                          onChange={() => handleRemoveFromDifficult(q.question._id)}
                                         />
                                         <label
                                           className="form-check-label ms-2"
@@ -100,6 +121,7 @@ const DifficultQuestions = () => {
                                   </div>
                                 ))}
                 </form>
+                </div>
               {/* </div> */}
             {/* ))} */}
           </div>
