@@ -155,7 +155,7 @@ const Sidebar = () => {
                         Graded Assignment
                       </NavLink>
                     </li>
-                    )}
+                    
                   </ul>
                 )}
               </li>

@@ -6,14 +6,40 @@ import "./../../styles/dashboard.css";
 const Dashboard = () => {
   const [feedback, setFeedback] = useState("");
 
-  const handleFeedbackSubmit = () => {
+  const handleFeedbackSubmit = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+
     if (feedback.trim()) {
-      alert(`Feedback submitted: ${feedback}`);
-      setFeedback(""); // Clear the input field after submission
+      try {
+        const response = await fetch("http://localhost:3009/api/feedback/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: user._id, 
+            course_id: "COURSE_ID", 
+            feedback_string: feedback,
+            rating: 5, // Replace with dynamic rating if available
+          }),
+        });
+  
+        const data = await response.json();
+        if (response.ok) {
+          alert("Feedback submitted successfully!");
+          setFeedback(""); // Clear input field after submission
+        } else {
+          alert(`Error: ${data.message}`);
+        }
+      } catch (error) {
+        console.error("Error submitting feedback:", error);
+        alert("Failed to submit feedback. Please try again.");
+      }
     } else {
       alert("Please enter your feedback before submitting.");
     }
   };
+  
 
   const aiHandleClick = () => {
     alert("AI Assistance Clicked!");

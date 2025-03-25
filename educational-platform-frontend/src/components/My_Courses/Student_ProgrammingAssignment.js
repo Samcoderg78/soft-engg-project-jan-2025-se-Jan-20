@@ -19,6 +19,12 @@ const ProgrammingAssignment = () => {
 
 
   useEffect(() => {
+    setAssignment(null);
+    setCode("");
+    setTestResult({ passed: 0, total: 0, cases: [] });
+    setIsSubmitted(false);
+    setScore(null);
+
     const fetchAssignment = async () => {
       try {
         const response = await fetch(`http://localhost:3009/api/prog-assignment/course/${courseId}`);
@@ -28,41 +34,36 @@ const ProgrammingAssignment = () => {
           setAssignment(gradedAssignment);
           setPublicTestCases(getPublicTestCases(gradedAssignment.question));
           setPrivateTestCases(getPrivateTestCases(gradedAssignment.question));
+          checkSubmissionStatus(gradedAssignment._id);
         }
       } catch (error) {
         console.error("Error fetching assignment:", error);
       }
     };
 
-    const checkSubmissionStatus = async () => {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user || !user._id || !assignment?._id) return;
-    
+    const checkSubmissionStatus = async (assignmentId) => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user || !user._id || !assignmentId) return;
+      
       try {
-        const response = await fetch(`http://localhost:3009/api/prog-assignment/score/${user._id}/${assignment._id}`);
+        const response = await fetch(`http://localhost:3009/api/prog-assignment/score/${user._id}/${assignmentId}`);
         const data = await response.json();
-    
+        
         if (data.score !== undefined) {
           setIsSubmitted(true);
           setScore(data.score);
+        } else {
+          setIsSubmitted(false);
+          setScore(null);
         }
-        
       } catch (error) {
         console.error("Error fetching score:", error);
       }
     };
-    
-    
 
     fetchAssignment();
-    checkSubmissionStatus();
-  }, [courseId, weekNumber, assignment?._id]);
+  }, [courseId, weekNumber]);
 
-  useEffect(() => {
-    setAssignment(null);
-    setCode("");
-    setTestResult({ passed: 0, total: 0, cases: [] });
-  }, [weekNumber]);
 
   const getPublicTestCases = (question) => {
     if (question.includes("adds two numbers")) {
@@ -230,7 +231,7 @@ if __name__ == "__main__":
           </div>
         </div>
       </div>
-    </div>
+     </div>
   );
 };
 
