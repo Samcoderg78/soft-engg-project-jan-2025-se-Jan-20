@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -20,10 +20,12 @@ const ProgrammingAssignment = () => {
 
   useEffect(() => {
     setAssignment(null);
-    setCode("");
+    // setCode("");
     setTestResult({ passed: 0, total: 0, cases: [] });
     setIsSubmitted(false);
     setScore(null);
+    setPublicTestCases([]);
+    setPrivateTestCases([]);
 
     const fetchAssignment = async () => {
       try {
@@ -67,33 +69,70 @@ const ProgrammingAssignment = () => {
 
   const getPublicTestCases = (question) => {
     if (question.includes("adds two numbers")) {
-      return [
-        { input: "3 5", expectedOutput: "8" },
-        { input: "10 20", expectedOutput: "30" },
-      ];
+        return [
+            { input: "3 5", expectedOutput: "8" },
+            { input: "10 20", expectedOutput: "30" },
+            { input: "-5 15", expectedOutput: "10" },
+            { input: "100 200", expectedOutput: "300" },
+            { input: "0 0", expectedOutput: "0" },
+        ];
     } else if (question.includes("first n prime numbers")) {
-      return [
-        { input: "5", expectedOutput: "2 3 5 7 11" },
-        { input: "3", expectedOutput: "2 3 5" },
-      ];
+        return [
+            { input: "5", expectedOutput: "2 3 5 7 11" },
+            { input: "3", expectedOutput: "2 3 5" },
+            { input: "7", expectedOutput: "2 3 5 7 11 13 17" },
+            { input: "10", expectedOutput: "2 3 5 7 11 13 17 19 23 29" },
+            { input: "1", expectedOutput: "2" },
+        ];
+    } else if (question.includes("binary search")) {
+        return [
+            { input: "[1, 3, 5, 7, 9, 11] 5", expectedOutput: "2" },
+            { input: "[2, 4, 6, 8, 10] 10", expectedOutput: "4" },
+            { input: "[10, 20, 30, 40, 50] 30", expectedOutput: "2" },
+            { input: "[1, 2, 3, 4, 5, 6, 7, 8, 9] 8", expectedOutput: "7" },
+            { input: "[15, 25, 35, 45, 55] 60", expectedOutput: "-1" },
+        ];
+    } else if (question.includes("the maximum element")) {
+        return [
+            { input: "[10, 20, 30, 40, 50]", expectedOutput: "50" },
+            { input: "[-100, -50, -25, -1]", expectedOutput: "-1" },
+            { input: "[11, 22, 33, 44, 55]", expectedOutput: "55" },
+            { input: "[0, -1, -2, -3, -4]", expectedOutput: "0" },
+            { input: "[5, 15, 25, 35, 45]", expectedOutput: "45" },
+        ];
     }
     return [];
-  };
+};
+
 
   const getPrivateTestCases = (question) => {
     if (question.includes("adds two numbers")) {
-      return [
-        { input: "50 50", expectedOutput: "100" },
-        { input: "-10 30", expectedOutput: "20" },
-      ];
+        return [
+            { input: "50 50", expectedOutput: "100" },
+            { input: "-10 30", expectedOutput: "20" },
+        ];
     } else if (question.includes("first n prime numbers")) {
-      return [
-        { input: "10", expectedOutput: "2 3 5 7 11 13 17 19 23 29" },
-        { input: "7", expectedOutput: "2 3 5 7 11 13 17" },
-      ];
+        return [
+            { input: "10", expectedOutput: "2 3 5 7 11 13 17 19 23 29" },
+            { input: "7", expectedOutput: "2 3 5 7 11 13 17" },
+        ];
+    } else if (question.includes("binary search")) {
+        return [
+            { input: "[1, 2, 3, 4, 5, 6, 7, 8, 9] 8", expectedOutput: "7" },
+            { input: "[10, 20, 30, 40, 50] 25", expectedOutput: "-1" },
+        ];
+    } else if (question.includes("maximum element")) {
+        return [
+            { input: "[1, 3, 5, 7, 9]", expectedOutput: "9" },
+            { input: "[-5, -1, -10, -3]", expectedOutput: "-1" },
+            { input: "[100]", expectedOutput: "100" },
+            { input: "[2, 8, 6, 4, 10]", expectedOutput: "10" },
+            { input: "[99, 77, 88, 66]", expectedOutput: "99" },
+        ];
     }
     return [];
-  };
+    };
+
 
   const runCode = async (testCases, isPublic = true) => {
     if (!language || !code) {
@@ -109,27 +148,56 @@ const ProgrammingAssignment = () => {
       alert("Your function must be named 'first_n_primes' with one parameter (n)." );
       return;
     }
+    if (assignment?.question.includes("binary search") && !/def\s+binary_search\s*\(\s*arr\s*,\s*target\s*\)\s*:/.test(code)) {
+      alert("Your function must be named 'binary_search' with two parameters (arr, target).");
+      return;
+    }
+    if (assignment?.question.includes("maximum element") && !/def\s+find_maximum\s*\(\s*arr\s*\)\s*:/.test(code)) {
+      alert("Your function must be named 'find_maximum' with one parameter (arr).");
+      return;
+    }
+  
     
     setLoading(true);
     let passedCount = 0;
     let results = [];
 
-    const wrappedCode = `${code}
+    const wrappedCode = `
+    
+${code}
 
 if __name__ == "__main__":
     import sys
+    import json
+
     def is_function_defined(name):
         return name in globals()
 
     for line in sys.stdin:
         input_value = line.strip()
+        
         if is_function_defined("first_n_primes"):
             print(first_n_primes(int(input_value)))
         elif is_function_defined("add_numbers"):
             print(add_numbers(*map(int, input_value.split())))
+        elif is_function_defined("binary_search"):
+            try:
+                arr_str, target_str = input_value.rsplit(" ", 1)
+                arr = eval(arr_str)  # Convert input string to list
+                target = int(target_str)  # Convert target to integer
+                print(binary_search(arr, target))  # Call and print result
+            except:
+                print("Error: Invalid input format for binary search")
+        elif is_function_defined("find_maximum"):
+            try:
+                arr = json.loads(input_value)  # Convert string to list
+                print(find_maximum(arr))  # Pass the list directly
+            except:
+                print("Error: Invalid input format for find_maximum")
         else:
             print("Error: Required function is not defined")
-    `;
+`;
+
 
     for (const testCase of testCases) {
       try {
@@ -211,8 +279,11 @@ if __name__ == "__main__":
           <div className="pa-buttons">
             <button className="pa-btn pa-test-run" onClick={() => runCode(publicTestCases, true)} disabled={loading}>{loading ? "Running..." : "Test Run"}</button>
             <button className="pa-btn pa-submit" onClick={() => runCode(privateTestCases, false)} disabled={isSubmitted}>
-  Submit
-</button>
+              Submit
+            </button>
+            <Link to={assignment ? `/${courseId}/suggestions` : "#"} state={{ q: assignment?.question }} className="text-primary">
+              Click here to get suggestions
+            </Link>
           </div>
         </div>
         <div className="pa-test-result-section">
