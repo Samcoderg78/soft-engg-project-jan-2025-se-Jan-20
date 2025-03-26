@@ -46,6 +46,10 @@ const DifficultQuestions = () => {
       });
   
       if (!response.ok) throw new Error("Error marking question as difficult");
+
+      setDifficultQuestions(prevQuestions => 
+        prevQuestions.filter(q => q.question._id !== question_id)
+      );
   
       alert("Question removed from difficult!");
     } catch (error) {

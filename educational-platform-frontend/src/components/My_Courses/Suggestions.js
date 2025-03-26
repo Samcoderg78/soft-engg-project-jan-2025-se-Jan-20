@@ -67,8 +67,8 @@ useEffect(() => {
               <h2>Suggestions Page</h2>
             </div>
             <div className="container p-0 mb-3 mt-5">
-              <h5><p className="a-question">Question : {questionData.q}</p></h5>
-              <h5>Here are some suggestions based on this question :- </h5>
+              <h5><p className="a-question"><b>Question</b> : {questionData.q}</p></h5>
+              <h5><b>Here are some suggestions based on this question :- </b></h5>
             </div>
             {/* <div className="container p-2 mb-3 border rounded">
               <h6 className="text-center">Watch the following lecture</h6>
