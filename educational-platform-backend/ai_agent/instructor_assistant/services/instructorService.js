@@ -125,7 +125,7 @@ const handleInstructorQuery = async (query) => {
         }
 
         console.log('🤖 Generating new response with Gemini...');
-        const prompt = `You are an AI assistant for instructors. Answer the following query. Be concise and clear.\n\nQuery: ${query}`;
+        const prompt = `You are an AI assistant for instructors. Answer the following query. Also, guide them with the best teaching methods to teach the topic. Be concise and clear.\n\nQuery: ${query}`;
         const result = await model.generateContent(prompt);
 
         if (result && result.response) {
