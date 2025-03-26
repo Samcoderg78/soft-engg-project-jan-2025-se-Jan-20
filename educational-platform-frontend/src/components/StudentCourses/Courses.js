@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import Sidebar from "./../StudentDashboard/Sidebar";
 import Header from "./../StudentDashboard/Header";
 import CourseCard from "./CourseCard";
@@ -7,7 +7,7 @@ import axios from "axios";
 import "./../../styles/courses.css";
 
 const Courses = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,7 +36,7 @@ const Courses = () => {
     };
 
     fetchCourses();
-  }, []);
+  }, [user]);
 
   const handleCourseClick = (courseId) => {
     // Open in new tab
