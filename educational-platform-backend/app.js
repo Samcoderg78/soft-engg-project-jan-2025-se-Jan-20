@@ -74,6 +74,9 @@ app.use("/api/tn", noteRoute);
 const feedbackRoutes = require("./feedback/routes/feedbackRoutes"); 
 app.use("/api/feedback", feedbackRoutes);
 
+const enrollmentRoutes = require("./user/route/enrollmentRoutes")
+app.use('/api/enrollments', enrollmentRoutes);
+
 // Swagger
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJSDocs));
 

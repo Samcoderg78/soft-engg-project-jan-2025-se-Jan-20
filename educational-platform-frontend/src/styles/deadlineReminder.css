@@ -154,4 +154,13 @@
 
   
   
+  .task-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
   
