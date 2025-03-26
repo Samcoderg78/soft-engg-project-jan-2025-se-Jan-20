@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import Sidebar from "./../StudentDashboard/Sidebar";
 import Header from "./../StudentDashboard/Header";
 import CourseCard from "./CourseCard";
 import axios from "axios";
-// import "./../../styles/dashboard.css";
-import "./../../styles/courses.css"; // New CSS file for styling
+import "./../../styles/courses.css";
 
 const Courses = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const user = JSON.parse(localStorage.getItem('user'));
         if (!user || !user._id) {
           setError('User not found');
           setLoading(false);
@@ -37,10 +36,12 @@ const Courses = () => {
     };
 
     fetchCourses();
-  }, []);
+  }, [user]);
 
   const handleCourseClick = (courseId) => {
-    navigate(`/my-course/${courseId}`);
+    // Open in new tab
+    const newWindow = window.open(`/my-course/${courseId}`, '_blank', 'noopener,noreferrer');
+    if (newWindow) newWindow.opener = null;
   };
 
   return (
@@ -50,7 +51,7 @@ const Courses = () => {
         <Sidebar />
         <main className="flex-1 bg-gray-100 p-6 overflow-auto">
           <section className="welcome-section">
-            <h1 className="welcome-text">Welcome 23fxxxxxx</h1>
+            <h1 className="welcome-text">Welcome {user.name}</h1>
             <p className="sub-text">
               Stay organized and on track with your courses and assignments.
             </p>

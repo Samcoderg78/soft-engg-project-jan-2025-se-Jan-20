@@ -12,6 +12,7 @@ const Lectures = () => {
   const [error, setError] = useState(null);
   const [notes, setNotes] = useState([]);
   const [currentNote, setCurrentNote] = useState("");
+  const userId = JSON.parse(localStorage.getItem("user")); // Replace with actual user ID from your auth system
 
   useEffect(() => {
     const fetchLectureDetails = async () => {
@@ -23,6 +24,9 @@ const Lectures = () => {
           if (response.data && response.data.data) {
             setLecture(response.data.data);
             setError(null);
+            
+            // Fetch notes for this lecture after lecture is loaded
+            await fetchNotes(response.data.data._id);
           }
         } else {
           // If no specific lecture, fetch the first lecture of the first week
@@ -36,6 +40,9 @@ const Lectures = () => {
               if (lectureResponse.data && lectureResponse.data.data) {
                 setLecture(lectureResponse.data.data);
                 setError(null);
+                
+                // Fetch notes for this lecture after lecture is loaded
+                await fetchNotes(lectureResponse.data.data._id);
               }
             }
           }
@@ -48,14 +55,53 @@ const Lectures = () => {
       }
     };
 
-    fetchLectureDetails();
-  }, [courseId, weekNumber, lectureNumber]); // Dependencies include all URL parameters
+    const fetchNotes = async (lectureId) => {
+      try {
+        const response = await axios.get(`http://localhost:3009/api/tn/lecture/${lectureId}`);
+        if (response.data && response.data.notes) {
+          // Format notes with timestamp and note content
+          const formattedNotes = response.data.notes.map(note => ({
+            timestamp: new Date(note.timestamp).toLocaleTimeString(),
+            note: note.note
+          }));
+          setNotes(formattedNotes);
+        }
+      } catch (err) {
+        console.error("Error fetching notes:", err);
+        // Don't show error to user for notes as it's secondary functionality
+      }
+    };
 
-  const handleTakeNotes = () => {
-    if (currentNote.trim()) {
-      const timestamp = new Date().toLocaleTimeString();
-      setNotes([...notes, { timestamp, note: currentNote }]);
-      setCurrentNote("");
+    fetchLectureDetails();
+  }, [courseId, weekNumber, lectureNumber, userId._id]);
+
+  const handleTakeNotes = async () => {
+    if (currentNote.trim() && lecture) {
+      try {
+        const timestamp = new Date();
+        
+        // Save note to database
+        await axios.post("http://localhost:3009/api/tn/take_note", {
+          user_id: userId._id,
+          lecture_id: lecture._id,
+          course_id: courseId,
+          note: currentNote
+        });
+
+        // Update local state with the new note
+        setNotes(prevNotes => [
+          {
+            timestamp: timestamp.toLocaleTimeString(),
+            note: currentNote
+          },
+          ...prevNotes
+        ]);
+        
+        setCurrentNote("");
+      } catch (err) {
+        console.error("Error saving note:", err);
+        // Optionally show error to user
+      }
     }
   };
 
@@ -132,11 +178,15 @@ const Lectures = () => {
               <div className="notes-display">
                 <h3>Your Notes</h3>
                 <div className="notes-list">
-                  {notes.map((note, index) => (
-                    <div key={index} className="note-item">
-                      <strong>{note.timestamp}:</strong> {note.note}
-                    </div>
-                  ))}
+                  {notes.length > 0 ? (
+                    notes.map((note, index) => (
+                      <div key={index} className="note-item">
+                        <strong>{note.timestamp}:</strong> {note.note}
+                      </div>
+                    ))
+                  ) : (
+                    <p>No notes yet. Add your first note above!</p>
+                  )}
                 </div>
               </div>
 

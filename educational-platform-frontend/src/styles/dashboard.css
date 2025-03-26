@@ -348,6 +348,7 @@ main {
   background-color: #f9fafb;
   padding: 10px 0; /* Reduced padding */
   box-sizing: border-box;
+  margin-top: 25px;
 }
 
 .notes-marked-container h2 {
@@ -356,6 +357,11 @@ main {
   color: #1f2937;
   margin-bottom: 15px; /* Reduced space below heading */
   text-align: center;
+}
+
+.notes-marked-container h3 {
+  font-weight: bold;
+  margin-bottom: 15px;
 }
 
 .notes-card,
@@ -397,6 +403,16 @@ main {
   margin-top: 8px;
   font-size: 14px;
   color: #007bff;
+  font-weight: bold;
+}
+
+.detailed-text {
+  font-size: 16px;
+  color: #555;
+}
+
+.notes-heading {
+  font-size: 24px;
   font-weight: bold;
 }
 
@@ -451,9 +467,17 @@ main {
   gap: 10px;
 }
 
+.feedback-subtitle {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #555;
+}
+
 /* Label */
 .feedback-label {
   font-weight: bold;
+  font-size: 20px;
 }
 
 /* Input Field */
