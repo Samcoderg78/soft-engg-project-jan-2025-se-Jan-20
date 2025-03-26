@@ -37,6 +37,7 @@ app.use('/api/summary', assignmentSummaryRoutes);
 // routes
 const userRoute = require('./user/route/user');
 app.use("/api/user", userRoute);
+app.use("/api/user", userRoute);
 
 const drRoute = require('./deadlines_&_reminders/route/dr');
 app.use("/api/dr", drRoute);
