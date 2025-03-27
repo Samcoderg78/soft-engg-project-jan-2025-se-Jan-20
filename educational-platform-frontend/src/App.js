@@ -32,6 +32,7 @@ import AssignmentPage from "./components/My_Courses/Student_ProgrammingAssignmen
 import DifficultQuestionsPage from "./components/My_Courses/DifficultQuestions";
 import Dashboard from "./components/Instructor/Dashboard";
 import AIAssistancePageInstructor from "./components/Instructor/AIAssistancePage";
+import ProgSuggestions from "./components/My_Courses/ProgSuggestions";
 
 
 function App() {
@@ -57,6 +58,8 @@ function App() {
         <Route path="/my-course/:courseId/week/:weekNumber/programming-assignment" element={<AssignmentPage />} />
         <Route path="/my-course/:courseId/week/:weekNumber/graded-assignment" element={<GradedAssignment />} />
         <Route path=":courseId/suggestions" element={<Suggestions />} />
+        <Route path=":courseId/prog-suggestions" element={<ProgSuggestions />} />
+
         <Route path="/difficult-questions" element={<DifficultQuestions />} />
 
         <Route path="/instructor-dashboard" element={<Dashboard />} />

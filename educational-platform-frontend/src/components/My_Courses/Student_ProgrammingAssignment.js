@@ -9,24 +9,21 @@ const ProgrammingAssignment = () => {
   const { courseId, weekNumber } = useParams();
   const [language, setLanguage] = useState("python");
   const [code, setCode] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [testRunLoading, setTestRunLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [assignment, setAssignment] = useState(null);
   const [publicTestCases, setPublicTestCases] = useState([]);
   const [privateTestCases, setPrivateTestCases] = useState([]);
   const [testResult, setTestResult] = useState({ passed: 0, total: 0, cases: [] });
+  const [privateTestResult, setPrivateTestResult] = useState({ passed: 0, total: 0 });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(null);
-
+  const [lastSubmissionDate, setLastSubmissionDate] = useState(null);
+  const [actualSolution, setActualSolution] = useState("");
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [codeReview, setCodeReview] = useState("");
 
   useEffect(() => {
-    setAssignment(null);
-    // setCode("");
-    setTestResult({ passed: 0, total: 0, cases: [] });
-    setIsSubmitted(false);
-    setScore(null);
-    setPublicTestCases([]);
-    setPrivateTestCases([]);
-
     const fetchAssignment = async () => {
       try {
         const response = await fetch(`http://localhost:3009/api/prog-assignment/course/${courseId}`);
@@ -36,7 +33,7 @@ const ProgrammingAssignment = () => {
           setAssignment(gradedAssignment);
           setPublicTestCases(getPublicTestCases(gradedAssignment.question));
           setPrivateTestCases(getPrivateTestCases(gradedAssignment.question));
-          checkSubmissionStatus(gradedAssignment._id);
+          await checkSubmissionStatus(gradedAssignment._id);
         }
       } catch (error) {
         console.error("Error fetching assignment:", error);
@@ -48,24 +45,31 @@ const ProgrammingAssignment = () => {
       if (!user || !user._id || !assignmentId) return;
       
       try {
+        // Check for existing submission
         const response = await fetch(`http://localhost:3009/api/prog-assignment/score/${user._id}/${assignmentId}`);
         const data = await response.json();
         
         if (data.score !== undefined) {
           setIsSubmitted(true);
           setScore(data.score);
-        } else {
-          setIsSubmitted(false);
-          setScore(null);
+          setLastSubmissionDate(data.submitted_on || new Date());
+        }
+
+        // Fetch the latest submitted code
+        const resResponse = await fetch(`http://localhost:3009/api/prog-assignment/responses/course/${courseId}`);
+        const responses = await resResponse.json();
+        const userResponse = responses.find(r => r.user_id === user._id && r.assignment_id === assignmentId);
+        if (userResponse) {
+          setCode(userResponse.response);
+          setActualSolution(userResponse.actual_solution || "");
         }
       } catch (error) {
-        console.error("Error fetching score:", error);
+        console.error("Error fetching submission data:", error);
       }
     };
 
     fetchAssignment();
   }, [courseId, weekNumber]);
-
 
   const getPublicTestCases = (question) => {
     if (question.includes("adds two numbers")) {
@@ -102,8 +106,7 @@ const ProgrammingAssignment = () => {
         ];
     }
     return [];
-};
-
+  };
 
   const getPrivateTestCases = (question) => {
     if (question.includes("adds two numbers")) {
@@ -131,74 +134,44 @@ const ProgrammingAssignment = () => {
         ];
     }
     return [];
-    };
+  };
 
+  const validateFunction = () => {
+    if (!assignment) return false;
+    
+    if (assignment.question.includes("adds two numbers") && !/def\s+add_numbers\s*\(\s*a\s*,\s*b\s*\)\s*:/.test(code)) {
+      alert("Your function must be named 'add_numbers' with two parameters (a, b).");
+      return false;
+    }
+    if (assignment.question.includes("first n prime numbers") && !/def\s+first_n_primes\s*\(\s*n\s*\)\s*:/.test(code)) {
+      alert("Your function must be named 'first_n_primes' with one parameter (n).");
+      return false;
+    }
+    if (assignment.question.includes("binary search") && !/def\s+binary_search\s*\(\s*arr\s*,\s*target\s*\)\s*:/.test(code)) {
+      alert("Your function must be named 'binary_search' with two parameters (arr, target).");
+      return false;
+    }
+    if (assignment.question.includes("maximum element") && !/def\s+find_maximum\s*\(\s*arr\s*\)\s*:/.test(code)) {
+      alert("Your function must be named 'find_maximum' with one parameter (arr).");
+      return false;
+    }
+    return true;
+  };
 
-  const runCode = async (testCases, isPublic = true) => {
+  const runTestCases = async (testCases) => {
     if (!language || !code) {
       alert("Please select a language and enter code.");
-      return;
-    }
-    
-
-    // Validate function name and extract actual solution
-    let actualSolution = "";
-    if (assignment?.question.includes("adds two numbers")) {
-      if (!/def\s+add_numbers\s*\(\s*a\s*,\s*b\s*\)\s*:/.test(code)) {
-        alert("Your function must be named 'add_numbers' with two parameters (a, b).");
-        return;
-      }
-      actualSolution = `def add_numbers(a,b):\n   return a+b`;
-    }
-    if (assignment?.question.includes("first n prime numbers") && !/def\s+first_n_primes\s*\(\s*n\s*\)\s*:/.test(code)) {
-      alert("Your function must be named 'first_n_primes' with one parameter (n)." );
-      return;
-    }
-    if (assignment?.question.includes("binary search") && !/def\s+binary_search\s*\(\s*arr\s*,\s*target\s*\)\s*:/.test(code)) {
-      alert("Your function must be named 'binary_search' with two parameters (arr, target).");
-      return;
-    }
-    if (assignment?.question.includes("maximum element") && !/def\s+find_maximum\s*\(\s*arr\s*\)\s*:/.test(code)) {
-      alert("Your function must be named 'find_maximum' with one parameter (arr).");
-      return;
+      return { passed: 0, total: 0, cases: [] };
     }
 
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  try {
-    const response = await fetch("http://localhost:3009/api/prog-assignment/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        "user_id": user._id,
-        "course_id": courseId,
-        "response": code,
-        "actual_solution": actualSolution
-      })
-    });
-
-    const data = await response.json();
-    if (response.ok) {
-      alert("Response submitted successfully!");
-    } else {
-      alert(`Error: ${data.message}`);
+    if (!validateFunction()) {
+      return { passed: 0, total: 0, cases: [] };
     }
-  } catch (error) {
-    alert("Failed to submit response. Please try again.");
-    console.error("Submit error:", error);
-  }
 
-
-  
-    
-    setLoading(true);
     let passedCount = 0;
     let results = [];
 
     const wrappedCode = `
-    
 ${code}
 
 if __name__ == "__main__":
@@ -212,27 +185,26 @@ if __name__ == "__main__":
         input_value = line.strip()
         
         if is_function_defined("first_n_primes"):
-            print(first_n_primes(int(input_value)))
+            print(' '.join(map(str, first_n_primes(int(input_value)))))
         elif is_function_defined("add_numbers"):
             print(add_numbers(*map(int, input_value.split())))
         elif is_function_defined("binary_search"):
             try:
                 arr_str, target_str = input_value.rsplit(" ", 1)
-                arr = eval(arr_str)  # Convert input string to list
-                target = int(target_str)  # Convert target to integer
-                print(binary_search(arr, target))  # Call and print result
+                arr = eval(arr_str)
+                target = int(target_str)
+                print(binary_search(arr, target))
             except:
                 print("Error: Invalid input format for binary search")
         elif is_function_defined("find_maximum"):
             try:
-                arr = json.loads(input_value)  # Convert string to list
-                print(find_maximum(arr))  # Pass the list directly
+                arr = json.loads(input_value)
+                print(find_maximum(arr))
             except:
                 print("Error: Invalid input format for find_maximum")
         else:
             print("Error: Required function is not defined")
 `;
-
 
     for (const testCase of testCases) {
       try {
@@ -249,45 +221,200 @@ if __name__ == "__main__":
         const data = await response.json();
         let actualOutput = data.run?.stderr ? `Error: ${data.run.stderr.trim()}` : data.run.stdout.trim();
         if (actualOutput === testCase.expectedOutput) passedCount++;
-        results.push({ input: testCase.input, expectedOutput: testCase.expectedOutput, actualOutput });
-      } catch (error) {
-        results.push({ input: testCase.input, expectedOutput: "N/A", actualOutput: `Error: ${error.message}` });
-      }
-    }
-    setTestResult({ passed: passedCount, total: testCases.length, cases: results, isPublic });
-    setLoading(false);
-
-    if (!isPublic) {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user || !user._id) {
-        alert('User not found');
-        return;
-      }
-    
-      let score = passedCount === testCases.length ? 100 : passedCount > 0 ? 50 : 0;
-    
-      try {
-        const response = await fetch("http://localhost:3009/api/prog-assignment/score/update", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_id: user._id,
-            assignment_id: assignment?._id,
-            score: score,
-          }),
+        results.push({ 
+          input: testCase.input, 
+          expectedOutput: testCase.expectedOutput, 
+          actualOutput,
+          passed: actualOutput === testCase.expectedOutput
         });
-    
-        const result = await response.json();
-        console.log("Score Update Response:", result);
-    
-        if (!response.ok) {
-          throw new Error(`Server Error: ${response.status} - ${result.message}`);
-        }
       } catch (error) {
-        console.error("Error updating score:", error);
-        alert("Failed to update score: " + error.message);
+        results.push({ 
+          input: testCase.input, 
+          expectedOutput: testCase.expectedOutput, 
+          actualOutput: `Error: ${error.message}`,
+          passed: false
+        });
       }
     }
+
+    return { passed: passedCount, total: testCases.length, cases: results };
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    
+    return `${day} ${month} ${year}, ${hours}:${minutes}`;
+  };
+
+  const isPastDeadline = assignment && new Date() > new Date(assignment.due_date);
+
+  const handleTestRun = async () => {
+    setTestRunLoading(true);
+    const result = await runTestCases(publicTestCases);
+    setTestResult(result);
+    setTestRunLoading(false);
+  };
+
+  const handleSubmit = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || !user._id || !assignment) {
+      console.error("Submission failed - missing user or assignment data");
+      return;
+    }
+  
+    setSubmitLoading(true);
+  
+    try {
+      // First run private test cases
+      const privateResult = await runTestCases(privateTestCases);
+      
+      // Calculate score
+      const publicResult = await runTestCases(publicTestCases);
+      const totalPassed = privateResult.passed + publicResult.passed;
+      const totalCases = privateTestCases.length + publicTestCases.length;
+      const calculatedScore = Math.round((totalPassed / totalCases) * 100);
+
+      // Prepare submission data
+      const submissionData = {
+        user_id: user._id,
+        assignment_id: assignment._id,
+        course_id: courseId,
+        response: code,
+        actual_solution: getActualSolutionCode(assignment.question)
+      };
+
+      // Submit to backend
+      const response = await fetch("http://localhost:3009/api/prog-assignment/submit", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify(submissionData),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.message || "Failed to submit assignment");
+      }
+
+      // Update score
+      const scoreResponse = await fetch("http://localhost:3009/api/prog-assignment/score/update", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({
+          user_id: user._id,
+          assignment_id: assignment._id,
+          score: calculatedScore,
+        }),
+      });
+
+      const scoreData = await scoreResponse.json();
+
+      if (!scoreResponse.ok) {
+        throw new Error(scoreData.message || "Failed to update score");
+      }
+
+      // Update UI state
+      setIsSubmitted(true);
+      setScore(calculatedScore);
+      setTestResult(publicResult);
+      setPrivateTestResult({
+        passed: privateResult.passed,
+        total: privateResult.total
+      });
+      setLastSubmissionDate(new Date());
+      setActualSolution(submissionData.actual_solution);
+
+      alert("Assignment submitted successfully!");
+    } catch (error) {
+      console.error("Full submission error:", error);
+      alert(`Submission failed: ${error.message}`);
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  const handleCodeReview = async () => {
+    if (!code.trim()) {
+      alert("Please write some code before requesting a review");
+      return;
+    }
+
+    setReviewLoading(true);
+    try {
+      const response = await fetch("http://localhost:3009/api/programming/code-review", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json"},
+        body: JSON.stringify({
+          code: code,
+          context: "Programming Assignment"
+        }),
+      });
+      // console.log(code);
+
+      const data = await response.json();
+      console.log(data);
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to get code review");
+      }
+      setCodeReview(data.feedback || "No review available");
+    } catch (error) {
+      console.error("Code review error:", error);
+      alert(`Failed to get code review: ${error.message}`);
+      setCodeReview("");
+    } finally {
+      setReviewLoading(false);
+    }
+  };
+
+  const getActualSolutionCode = (question) => {
+    if (question.includes("adds two numbers")) {
+      return "def add_numbers(a, b):\n    return a + b";
+    } else if (question.includes("first n prime numbers")) {
+      return `def first_n_primes(n):
+    primes = []
+    num = 2
+    while len(primes) < n:
+        is_prime = True
+        for p in primes:
+            if p*p > num:
+                break
+            if num % p == 0:
+                is_prime = False
+                break
+        if is_prime:
+            primes.append(num)
+        num += 1
+    return primes`;
+    } else if (question.includes("binary search")) {
+      return `def binary_search(arr, target):
+    low = 0
+    high = len(arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1`;
+    } else if (question.includes("maximum element")) {
+      return `def find_maximum(arr):
+    return max(arr)`;
+    }
+    return "No solution available";
   };
 
   return (
@@ -298,22 +425,17 @@ if __name__ == "__main__":
       </div>
       <div className="pa-header">
         <h2>Programming Assignment</h2>
-
-        {/* Check if assignment is loaded before displaying deadline */}
         {assignment ? (
           <>
-            {/* Improved Deadline Format */}
             <p>
-              Deadline:{" "}
-              {new Date(assignment.due_date).toLocaleDateString("en-GB", {
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-              })}
+              Deadline: {formatDate(assignment.due_date)}
             </p>
-
-            {/* Show score only after the due date has passed */}
-            {isSubmitted && score !== null && new Date() > new Date(assignment.due_date) && (
+            {isSubmitted && (
+              <p>
+                Last Submission: {formatDate(lastSubmissionDate)}
+              </p>
+            )}
+            {isSubmitted && score !== null && isPastDeadline && (
               <p style={{ color: "blue" }}>🎯 Your Score: {score}</p>
             )}
           </>
@@ -322,78 +444,121 @@ if __name__ == "__main__":
         )}
       </div>
 
-
-
       <div className="pa-main">
         <div className="pa-problem-section">
           <h4>Problem</h4>
           <p>{assignment ? assignment.question : "Loading question..."}</p>
-          {isSubmitted && <p style={{ color: "green" }}>✅ Assignment already submitted.</p>}
+          {isSubmitted && !isPastDeadline && (
+            <p style={{ color: "green" }}>✅ Assignment already submitted.</p>
+          )}
           <select className="pa-select-language" value={language} onChange={(e) => setLanguage(e.target.value)}>
             <option value="python">Python</option>
           </select>
-          <textarea className="pa-code-editor" rows="6" placeholder="Write your response..." value={code} onChange={(e) => setCode(e.target.value)}></textarea>
+          <textarea 
+            className="pa-code-editor" 
+            rows="6" 
+            placeholder="Write your response..." 
+            value={code} 
+            onChange={(e) => setCode(e.target.value)}
+            disabled={isPastDeadline}
+          ></textarea>
           <div className="pa-buttons">
-            <button className="pa-btn pa-test-run" onClick={() => runCode(publicTestCases, true)} disabled={loading}>{loading ? "Running..." : "Test Run"}</button>
-            <button 
-              className="pa-btn pa-submit" 
-              onClick={() => runCode(privateTestCases, false)} 
-              disabled={!assignment || !assignment.due_date || new Date() > new Date(assignment.due_date)}
-            >
-              {!assignment || !assignment.due_date 
-                ? "Loading..." 
-                : new Date() > new Date(assignment.due_date) 
-                  ? "Submission Closed" 
-                  : "Submit"}
-            </button>
+  <button 
+    className="pa-btn pa-test-run" 
+    onClick={handleTestRun} 
+    disabled={testRunLoading || submitLoading || reviewLoading || !assignment || isPastDeadline}
+  >
+    {testRunLoading ? "Running..." : "Test Run"}
+  </button>
+  <button 
+    className="pa-btn pa-submit" 
+    onClick={handleSubmit} 
+    disabled={submitLoading || testRunLoading || reviewLoading || !assignment || isPastDeadline}
+  >
+    {!assignment ? "Loading..." : 
+     isPastDeadline ? "Submission Closed" : 
+     submitLoading ? "Submitting..." : "Submit"}
+  </button>
+  <button
+    className="pa-btn pa-review"
+    onClick={handleCodeReview}
+    disabled={reviewLoading || submitLoading || testRunLoading || !assignment || !code.trim()}
+  >
+    {reviewLoading ? "Reviewing..." : "Code Review"}
+  </button>
+  <Link 
+    to={assignment ? `/${courseId}/prog-suggestions` : "#"} 
+    state={{ q: assignment?.question }} 
+    className="text-primary"
+  >
+    Click here to get suggestions
+  </Link>
+</div>
 
-
-            <Link to={assignment ? `/${courseId}/suggestions` : "#"} state={{ q: assignment?.question }} className="text-primary">
-              Click here to get suggestions
-            </Link>
+{codeReview && (
+  <div className="pa-code-review">
+    <h4>Code Review</h4>
+    <div className="pa-review-content">
+      {codeReview.split('\n').map((line, index) => {
+        // Handle bullet points
+        if (line.trim().startsWith('*') && line.includes(' ')) {
+          const bulletContent = line.trim().substring(1).trim();
+          return (
+            <div key={index} style={{ marginLeft: '20px', marginBottom: '8px' }}>
+              • {bulletContent}
+            </div>
+          );
+        }
+        // Handle regular lines
+        return (
+          <div key={index} style={{ marginBottom: '8px' }}>
+            {line}
           </div>
+        );
+      })}
+    </div>
+  </div>
+)}
+
+          {isPastDeadline && (
+            <div className="pa-actual-solution">
+              <h4>Actual Solution</h4>
+              <textarea 
+                className="pa-code-editor" 
+                rows="6" 
+                value={actualSolution || getActualSolutionCode(assignment?.question)} 
+                readOnly
+              ></textarea>
+            </div>
+          )}
         </div>
+        
         <div className="pa-test-result-section">
-          <h4>Test Run Result</h4>
+          <h4>Test Results</h4>
+          <p>Public Test Cases Passed: {testResult.passed}/{publicTestCases.length}</p>
           
-          {/* Separate counts for public and private test cases */}
-          <p>
-            Public Test Cases Passed:{" "}
-            {testResult.cases.filter((test) =>
-              publicTestCases.some((ptc) => ptc.input === test.input && ptc.expectedOutput === test.expectedOutput && test.actualOutput === test.expectedOutput)
-            ).length}
-            /{publicTestCases.length}
-          </p>
-
-          <p>
-            Private Test Cases Passed:{" "}
-            {isSubmitted
-              ? testResult.cases.filter((test) =>
-                  privateTestCases.some((ptc) => ptc.input === test.input && ptc.expectedOutput === test.expectedOutput && test.actualOutput === test.expectedOutput)
-                ).length
-              : "Not Available"}
-            /{privateTestCases.length}
-          </p>
-
-          <h5>Public Test Cases</h5>
+          <h5>Test Case Details</h5>
           <div className="pa-test-case-table">
-            {testResult.cases
-              .filter((test) => publicTestCases.some(ptc => ptc.input === test.input && ptc.expectedOutput === test.expectedOutput)) // Match only public cases
-              .map((test, index) => (
-                <div key={index} className="pa-test-case-row">
-                  <div>{test.input}</div>
-                  <div>{test.expectedOutput}</div>
-                  <div style={{ color: test.actualOutput.startsWith("Error") ? "red" : "black" }}>
-                    {test.actualOutput}
-                  </div>
+            {testResult.cases.map((test, index) => (
+              <div key={index} className="pa-test-case-row">
+                <div>Input: {test.input}</div>
+                <div>Expected: {test.expectedOutput}</div>
+                <div style={{ color: test.passed ? "green" : "red" }}>
+                  Actual: {test.actualOutput}
                 </div>
+                <div>{test.passed ? "✓ Passed" : "✗ Failed"}</div>
+              </div>
             ))}
           </div>
 
+          {isSubmitted && (
+            <p style={{ marginTop: '20px' }}>
+              Private Test Cases Passed: {privateTestResult.passed}/{privateTestCases.length}
+            </p>
+          )}
         </div>
-
       </div>
-     </div>
+    </div>
   );
 };
 
