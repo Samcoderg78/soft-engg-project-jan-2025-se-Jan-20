@@ -39,27 +39,28 @@ const generateResponse = async (query) => {
     try {
         const existingDocument = await AIAgent.findOne({ userQuery: query });
         if (existingDocument) {
-            console.log('✅ Exact match found in database for query:', query);
+            // console.log('✅ Exact match found in database for query:', query);
             return existingDocument.response;
         }
 
         const documents = await retrieveDocuments(query, 0.5);
 
         if (documents.length > 0) {
-            console.log('✅ Found relevant documents in database for query:', query);
+            // console.log('✅ Found relevant documents in database for query:', query);
             return documents[0].response;
         }
 
-        console.log('❌ No documents found for query:', query);
+        // console.log('❌ No documents found for query:', query);
         console.log('Generating with Gemini...');
 
-        const inputText = `Question: ${query}\nAnswer:`;
+        const inputText = `Question: ${query}\nIf the question is related to code or numerical type, then don't give the complete solution or answer or code, just provide the hint in that case or just give the direction to solve that. You have to solve the doubt to clarify the concept of the student and clear the theory behind that.
+        Answer:`;
         const result = await model.generateContent(inputText);
 
         if (result && result.response) {
             const generatedResponse = result.response.text();
             await createDocument(query, generatedResponse);
-            console.log('✅ Successfully stored new response in database');
+            // console.log('✅ Successfully stored new response in database');
             return generatedResponse;
         }
 
@@ -92,7 +93,7 @@ const retrieveDocuments = async (query, similarityThreshold = 0.8) => {
         ]);
 
         const relevantDocs = documents.filter(doc => doc.similarity >= similarityThreshold);
-        console.log('📂 Retrieved Documents:', relevantDocs.map(doc => ({response: doc.response, similarity: doc.similarity})));
+        // console.log('📂 Retrieved Documents:', relevantDocs.map(doc => ({response: doc.response, similarity: doc.similarity})));
         return relevantDocs;
     } catch (error) {
         console.error('Error retrieving documents:', error.message);
@@ -120,7 +121,7 @@ const generateHint = async (query) => {
     try {
         const existingAssignment = await AssignmentHint.findOne({ userQuery: query });
         if (existingAssignment) {
-            console.log('✅ Exact match found in database for assignment query:', query);
+            // console.log('✅ Exact match found in database for assignment query:', query);
             return existingAssignment.hints;
         }
 
@@ -139,11 +140,11 @@ const generateHint = async (query) => {
 
         const relevantAssignments = assignments.filter(doc => doc.similarity >= 0.8);
         if (relevantAssignments.length > 0) {
-            console.log('✅ Found relevant assignment hints for query:', query);
+            // console.log('✅ Found relevant assignment hints for query:', query);
             return relevantAssignments[0].hints;
         }
 
-        console.log('❌ No relevant hints found. Generating with Gemini...');
+        // console.log('❌ No relevant hints found. Generating with Gemini...');
         const inputText = `Question: ${query}\nProvide hints to solve this problem without revealing the answer:`;
         const result = await model.generateContent(inputText);
 
@@ -154,7 +155,7 @@ const generateHint = async (query) => {
                 hints: generatedHints,
                 embedding: queryEmbedding
             });
-            console.log('✅ Successfully stored new hints in database');
+            // console.log('✅ Successfully stored new hints in database');
             return generatedHints;
         }
 
@@ -170,7 +171,7 @@ const retrieveResources = async (query, similarityThreshold = 0.8) => {
     try {
         const existingResource = await Resource.findOne({ userQuery: query });
         if (existingResource) {
-            console.log('✅ Exact match found in database for resource query:', query);
+            // console.log('✅ Exact match found in database for resource query:', query);
             return existingResource.resources;
         }
 
@@ -189,11 +190,11 @@ const retrieveResources = async (query, similarityThreshold = 0.8) => {
 
         const relevantResources = resources.filter(doc => doc.similarity >= similarityThreshold);
         if (relevantResources.length > 0) {
-            console.log('✅ Found relevant resources in database for query:', query);
+            // console.log('✅ Found relevant resources in database for query:', query);
             return relevantResources[0].resources;
         }
 
-        console.log('❌ No relevant resources found. Generating with Gemini...');
+        // console.log('❌ No relevant resources found. Generating with Gemini...');
         const inputText = `Question: ${query}\nProvide relevant resources (documentation, videos, etc.) for this topic:`;
         const result = await model.generateContent(inputText);
 
@@ -214,7 +215,7 @@ const retrieveResources = async (query, similarityThreshold = 0.8) => {
                     resources: resources,
                     embedding: queryEmbedding
                 });
-                console.log('✅ Successfully stored new resources in database');
+                // console.log('✅ Successfully stored new resources in database');
                 return resources;
             }
         }

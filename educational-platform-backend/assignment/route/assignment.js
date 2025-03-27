@@ -3,6 +3,7 @@ const router = express.Router();
 const assignmentController = require("../controller/assignment");
 
 router.get("/:course_id", assignmentController.getAllAssignments);
+router.get("/single/:assignment_id", assignmentController.getAssignmentById); 
 router.get("/questions/:assignment_id", assignmentController.getAssignmentQuestions);
 router.post("/submit", assignmentController.submitAssignment);
 router.post("/create", assignmentController.createAssignment);
