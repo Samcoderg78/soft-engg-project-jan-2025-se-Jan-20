@@ -2,21 +2,20 @@ const Task = require('../model/dr');
 
 exports.addTask = async (req, res) => {
   try {
-    const { name, subject, deadline, priority } = req.body;
+    const { userId, name, subject, deadline, priority } = req.body;
+    if (!userId) return res.status(400).json({ message: 'User ID is required' });
 
-    const existingTask = await Task.findOne({ name, subject });
+    // ✅ Check if the task already exists
+    const existingTask = await Task.findOne({ userId, name, subject, deadline });
+
     if (existingTask) {
-      return res.status(400).json({ message: 'Task with the same name and subject already exists' });
+      return res.status(400).json({ message: 'Task already exists' });
     }
 
-    const newTask = new Task({
-      name,
-      subject,
-      deadline,
-      priority
-    });
-
+    // If no duplicate, add the new task
+    const newTask = new Task({ userId, name, subject, deadline, priority });
     const savedTask = await newTask.save();
+
     res.status(201).json(savedTask);
   } catch (error) {
     res.status(500).json({ message: 'Error adding task', error });
@@ -24,29 +23,36 @@ exports.addTask = async (req, res) => {
 };
 
 
-
-exports.getAllTasks = async (req, res) => {
+exports.getUserTasks = async (req, res) => {
   try {
-    const tasks = await Task.find();
+    const { userId } = req.params;
+    const tasks = await Task.find({ userId }).sort({ deadline: 1 });
     res.status(200).json(tasks);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching tasks', error });
   }
 };
 
+const Task = require("../models/Task");
 
 exports.deleteTask = async (req, res) => {
   try {
-    const { id } = req.params;  
-
-    const deletedTask = await Task.findByIdAndDelete(id);
-    if (!deletedTask) {
-      return res.status(404).json({ message: 'Task not found' });
+    const { userId, taskId } = req.params;
+    if (!userId || !taskId) {
+      return res.status(400).json({ message: "User ID and Task ID are required" });
     }
 
-    res.status(200).json({ message: 'Task deleted successfully', deletedTask });
+    // Ensure the task belongs to the user before deleting
+    const deletedTask = await Task.findOneAndDelete({ _id: taskId, userId });
 
+    if (!deletedTask) {
+      return res.status(404).json({ message: "Task not found or not authorized to delete" });
+    }
+
+    res.status(200).json({ message: "Task deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting task', error });
+    console.error("Error deleting task:", error);
+    res.status(500).json({ message: "Error deleting task", error });
   }
 };
+
