@@ -56,6 +56,7 @@ exports.getProgAssignmentsByCourse = async (req, res) => {
 // Get a specific programming assignment by ID
 exports.getProgAssignmentById = async (req, res) => {
   try {
+    // console.log("I am here");
     const { assignment_id } = req.params;
     const assignment = await ProgAssignment.findById(assignment_id);
 
@@ -65,16 +66,16 @@ exports.getProgAssignmentById = async (req, res) => {
 
     res.status(200).json(assignment);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching programming assignment", error });
+    res.status(500).json({ message: "Error fetching programming assignment Satyam", error });
   }
 };
 
 exports.submitProgAssignment = async (req, res) => {
   try {
     const { user_id, assignment_id, course_id, response, actual_solution } = req.body;
-
     // Validation
-    if (!user_id || !assignment_id || !course_id || !response || !actual_solution) {
+    // console.log("I am here also");
+    if (!user_id || !assignment_id || !course_id || !response) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -84,7 +85,7 @@ exports.submitProgAssignment = async (req, res) => {
     if (existingResponse) {
       // Update existing
       existingResponse.response = response;
-      existingResponse.actual_solution = actual_solution;
+      // existingResponse.actual_solution = actual_solution;
       existingResponse.submitted_on = new Date(); // Update submission time
       await existingResponse.save();
       return res.status(200).json({ 
@@ -166,6 +167,9 @@ exports.getAllResponsesForCourse = async (req, res) => {
 
     // ✅ Ensure we're querying by string
     const responses = await ProgAssignmentResponse.find({ course_id: course_id });
+
+    console.log(responses);
+    // console.log(course_id);
 
     if (!responses.length) {
       return res.status(404).json({ message: "No responses found for this course" });

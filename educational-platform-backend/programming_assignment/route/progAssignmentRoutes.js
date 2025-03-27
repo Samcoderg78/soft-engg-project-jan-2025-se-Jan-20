@@ -11,11 +11,20 @@ router.get("/all", progAssignmentController.getAllProgAssignments);
 // Get programming assignments for a specific course
 router.get("/course/:course_id", progAssignmentController.getProgAssignmentsByCourse);
 
+
+router.post("/submit", progAssignmentController.submitProgAssignment);
+
+
+
 // Get a specific programming assignment by ID
 router.get("/:assignment_id", progAssignmentController.getProgAssignmentById);
 
 // Submit a programming assignment response
-router.post("/submit", progAssignmentController.submitProgAssignment);
+// router.post("/submit", (req, res) => {
+//     console.log("Submit route hit!");
+//     console.log("Body:", req.body);
+//     res.json({ test: "success" });
+//   });
 
 // Get a programming assignment score
 router.get("/score/:user_id/:assignment_id", progAssignmentController.getProgAssignmentScore);
