@@ -69,43 +69,51 @@ exports.getProgAssignmentById = async (req, res) => {
   }
 };
 
-// Submit a programming assignment response
 exports.submitProgAssignment = async (req, res) => {
   try {
-    console.log("Received Request Body:", req.body); // Debugging log
+    const { user_id, assignment_id, course_id, response, actual_solution } = req.body;
 
-    const { user_id, assignment_id, course_id, response, actual_output } = req.body;
-
-    // Check if all required fields are provided
-    if (!user_id || !assignment_id || !course_id || !response || !actual_output) {
+    // Validation
+    if (!user_id || !assignment_id || !course_id || !response || !actual_solution) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // Check for existing response
     let existingResponse = await ProgAssignmentResponse.findOne({ user_id, assignment_id });
 
     if (existingResponse) {
+      // Update existing
       existingResponse.response = response;
-      existingResponse.actual_output = actual_output;
-      existingResponse.submitted_on = new Date();
+      existingResponse.actual_solution = actual_solution;
+      existingResponse.submitted_on = new Date(); // Update submission time
       await existingResponse.save();
-
-      return res.status(200).json({ message: "Programming assignment response updated successfully", response: existingResponse });
+      return res.status(200).json({ 
+        message: "Response updated successfully",
+        response: existingResponse
+      });
     }
 
+    // Create new (submitted_on will be auto-set by schema)
     const newResponse = new ProgAssignmentResponse({
       user_id,
       assignment_id,
       course_id,
       response,
-      actual_output,
-      submitted_on: new Date(),
+      actual_solution
     });
 
     await newResponse.save();
+    res.status(201).json({ 
+      message: "Response submitted successfully",
+      response: newResponse
+    });
 
-    res.status(201).json({ message: "Response submitted successfully", response: newResponse });
   } catch (error) {
-    res.status(500).json({ message: "Error submitting programming assignment", error });
+    console.error("Submission error:", error);
+    res.status(500).json({ 
+      message: "Error submitting assignment",
+      error: error.message 
+    });
   }
 };
 

@@ -5,7 +5,7 @@ exports.addTask = async (req, res) => {
     const { userId, name, subject, deadline, priority } = req.body;
     if (!userId) return res.status(400).json({ message: 'User ID is required' });
 
-    // ✅ Check if the task already exists
+    // Check if the task already exists
     const existingTask = await Task.findOne({ userId, name, subject, deadline });
 
     if (existingTask) {
@@ -33,7 +33,7 @@ exports.getUserTasks = async (req, res) => {
   }
 };
 
-// const Task = require("../models/Task");
+
 
 exports.deleteTask = async (req, res) => {
   try {

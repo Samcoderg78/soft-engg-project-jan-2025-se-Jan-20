@@ -32,7 +32,7 @@ const ProgrammingAssignment = () => {
         const response = await fetch(`http://localhost:3009/api/prog-assignment/course/${courseId}`);
         const data = await response.json();
         const gradedAssignment = data.find(item => item.title === weekNumber);
-        if (gradedAssignment) {
+        if (gradedAssignment && gradedAssignment.due_date) {
           setAssignment(gradedAssignment);
           setPublicTestCases(getPublicTestCases(gradedAssignment.question));
           setPrivateTestCases(getPrivateTestCases(gradedAssignment.question));
@@ -140,9 +140,15 @@ const ProgrammingAssignment = () => {
       return;
     }
     
-    if (assignment?.question.includes("adds two numbers") && !/def\s+add_numbers\s*\(\s*a\s*,\s*b\s*\)\s*:/.test(code)) {
-      alert("Your function must be named 'add_numbers' with two parameters (a, b)." );
-      return;
+
+    // Validate function name and extract actual solution
+    let actualSolution = "";
+    if (assignment?.question.includes("adds two numbers")) {
+      if (!/def\s+add_numbers\s*\(\s*a\s*,\s*b\s*\)\s*:/.test(code)) {
+        alert("Your function must be named 'add_numbers' with two parameters (a, b).");
+        return;
+      }
+      actualSolution = `def add_numbers(a,b):\n   return a+b`;
     }
     if (assignment?.question.includes("first n prime numbers") && !/def\s+first_n_primes\s*\(\s*n\s*\)\s*:/.test(code)) {
       alert("Your function must be named 'first_n_primes' with one parameter (n)." );
@@ -156,6 +162,35 @@ const ProgrammingAssignment = () => {
       alert("Your function must be named 'find_maximum' with one parameter (arr).");
       return;
     }
+
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  try {
+    const response = await fetch("http://localhost:3009/api/prog-assignment/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        "user_id": user._id,
+        "course_id": courseId,
+        "response": code,
+        "actual_solution": actualSolution
+      })
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      alert("Response submitted successfully!");
+    } else {
+      alert(`Error: ${data.message}`);
+    }
+  } catch (error) {
+    alert("Failed to submit response. Please try again.");
+    console.error("Submit error:", error);
+  }
+
+
   
     
     setLoading(true);
@@ -262,10 +297,32 @@ if __name__ == "__main__":
         <Sidebar />
       </div>
       <div className="pa-header">
-  <h2>Programming Assignment</h2>
-  {assignment && <p>Deadline: {new Date(assignment.due_date).toLocaleDateString()}</p>}
-  {isSubmitted && score !== null && <p style={{ color: "blue" }}>🎯 Your Score: {score}</p>}
-</div>
+        <h2>Programming Assignment</h2>
+
+        {/* Check if assignment is loaded before displaying deadline */}
+        {assignment ? (
+          <>
+            {/* Improved Deadline Format */}
+            <p>
+              Deadline:{" "}
+              {new Date(assignment.due_date).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })}
+            </p>
+
+            {/* Show score only after the due date has passed */}
+            {isSubmitted && score !== null && new Date() > new Date(assignment.due_date) && (
+              <p style={{ color: "blue" }}>🎯 Your Score: {score}</p>
+            )}
+          </>
+        ) : (
+          <p>Loading assignment...</p>
+        )}
+      </div>
+
+
 
       <div className="pa-main">
         <div className="pa-problem-section">
@@ -278,9 +335,19 @@ if __name__ == "__main__":
           <textarea className="pa-code-editor" rows="6" placeholder="Write your response..." value={code} onChange={(e) => setCode(e.target.value)}></textarea>
           <div className="pa-buttons">
             <button className="pa-btn pa-test-run" onClick={() => runCode(publicTestCases, true)} disabled={loading}>{loading ? "Running..." : "Test Run"}</button>
-            <button className="pa-btn pa-submit" onClick={() => runCode(privateTestCases, false)} disabled={isSubmitted}>
-              Submit
+            <button 
+              className="pa-btn pa-submit" 
+              onClick={() => runCode(privateTestCases, false)} 
+              disabled={!assignment || !assignment.due_date || new Date() > new Date(assignment.due_date)}
+            >
+              {!assignment || !assignment.due_date 
+                ? "Loading..." 
+                : new Date() > new Date(assignment.due_date) 
+                  ? "Submission Closed" 
+                  : "Submit"}
             </button>
+
+
             <Link to={assignment ? `/${courseId}/suggestions` : "#"} state={{ q: assignment?.question }} className="text-primary">
               Click here to get suggestions
             </Link>
@@ -288,19 +355,43 @@ if __name__ == "__main__":
         </div>
         <div className="pa-test-result-section">
           <h4>Test Run Result</h4>
-          <p>{testResult.passed}/{testResult.total} {testResult.isPublic ? "public" : "private"} test cases passed</p>
-          <h5>{testResult.isPublic ? "Public" : "Private"} Test Cases</h5>
+          
+          {/* Separate counts for public and private test cases */}
+          <p>
+            Public Test Cases Passed:{" "}
+            {testResult.cases.filter((test) =>
+              publicTestCases.some((ptc) => ptc.input === test.input && ptc.expectedOutput === test.expectedOutput && test.actualOutput === test.expectedOutput)
+            ).length}
+            /{publicTestCases.length}
+          </p>
 
+          <p>
+            Private Test Cases Passed:{" "}
+            {isSubmitted
+              ? testResult.cases.filter((test) =>
+                  privateTestCases.some((ptc) => ptc.input === test.input && ptc.expectedOutput === test.expectedOutput && test.actualOutput === test.expectedOutput)
+                ).length
+              : "Not Available"}
+            /{privateTestCases.length}
+          </p>
+
+          <h5>Public Test Cases</h5>
           <div className="pa-test-case-table">
-            {testResult.cases.map((test, index) => (
-              <div key={index} className="pa-test-case-row">
-                <div>{test.input}</div>
-                <div>{test.expectedOutput}</div>
-                <div style={{ color: test.actualOutput.startsWith("Error") ? "red" : "black" }}>{test.actualOutput}</div>
-              </div>
+            {testResult.cases
+              .filter((test) => publicTestCases.some(ptc => ptc.input === test.input && ptc.expectedOutput === test.expectedOutput)) // Match only public cases
+              .map((test, index) => (
+                <div key={index} className="pa-test-case-row">
+                  <div>{test.input}</div>
+                  <div>{test.expectedOutput}</div>
+                  <div style={{ color: test.actualOutput.startsWith("Error") ? "red" : "black" }}>
+                    {test.actualOutput}
+                  </div>
+                </div>
             ))}
           </div>
+
         </div>
+
       </div>
      </div>
   );
