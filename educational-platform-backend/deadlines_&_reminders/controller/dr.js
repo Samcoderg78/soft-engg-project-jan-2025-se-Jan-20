@@ -33,7 +33,7 @@ exports.getUserTasks = async (req, res) => {
   }
 };
 
-const Task = require("../models/Task");
+// const Task = require("../models/Task");
 
 exports.deleteTask = async (req, res) => {
   try {
