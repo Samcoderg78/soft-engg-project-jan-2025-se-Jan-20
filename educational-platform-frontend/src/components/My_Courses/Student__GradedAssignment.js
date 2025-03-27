@@ -253,8 +253,8 @@ const GradedAssignment = () => {
                       <p style={{ color: "blue", fontWeight: "bold" }}>
                         Score: {scores[q._id] ?? 0}
                       </p>
-                      <p style={{ color: "green" }}>
-                        Correct Answer: {q.correct_options || "Not Available"}
+                      <p style={{ color: "green", whiteSpace: "pre-line" }}>
+                        Correct Answers : {Array.isArray(q.correct_options) ? q.correct_options.join(",\n") : q.correct_options || "Not Available"}
                       </p>
                     </div>
                   )}
