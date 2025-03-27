@@ -229,3 +229,19 @@ exports.getAssignmentScore = async (req, res) => {
       res.status(500).json({ message: "Error retrieving assignment score", error });
   }
 };
+
+// Add this to your controller/assignment.js file
+exports.getAssignmentById = async (req, res) => {
+  try {
+    const { assignment_id } = req.params;
+    
+    const assignment = await Assignment.findById(assignment_id);
+    if (!assignment) {
+      return res.status(404).json({ message: 'Assignment not found' });
+    }
+    
+    res.status(200).json(assignment);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching assignment', error });
+  }
+};

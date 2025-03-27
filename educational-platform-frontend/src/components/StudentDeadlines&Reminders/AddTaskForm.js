@@ -13,41 +13,33 @@ export default function AddTaskForm({ onAdd, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    if (loading) return; // Prevent multiple submissions
+    
+    if (loading) return;
     setLoading(true);
     setError(null);
   
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user || !user._id) {
-      setError("User not found. Please log in.");
-      setLoading(false);
-      return;
-    }
-  
-    const taskWithUser = { ...task, userId: user._id };
-  
     try {
-      const response = await fetch("http://localhost:3009/api/dr/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(taskWithUser),
-      });
-  
-      const data = await response.json();
-  
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to add task");
+      // Validate the form data
+      if (!task.name || !task.subject || !task.deadline) {
+        throw new Error("Please fill all required fields");
       }
   
-      onAdd(data);
+      // Call the parent component's addTask function
+      await onAdd({
+        name: task.name,
+        subject: task.subject,
+        deadline: task.deadline,
+        priority: task.priority
+      });
   
-      // Reset form state only if successfully added
-      setTask({ name: "", subject: "", deadline: "", priority: "Medium" });
+      // Reset form only if successful
+      setTask({
+        name: "",
+        subject: "",
+        deadline: "",
+        priority: "Medium"
+      });
   
-      onClose();
     } catch (err) {
       setError(err.message);
     } finally {
