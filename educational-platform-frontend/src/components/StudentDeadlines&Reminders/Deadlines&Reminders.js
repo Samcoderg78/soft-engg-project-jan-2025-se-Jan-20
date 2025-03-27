@@ -69,69 +69,96 @@ const fetchAssignments = async (courseIds) => {
   }
 };
 
+const fetchRecentSubmissions = async (userId) => {
+  try {
+    const response = await fetch(`http://localhost:3009/api/rs/recent_submissions/${userId}`);
+    const data = await response.json();
+    setRecentSubmissions(data.assignmentSubmissions || []);
+  } catch (error) {
+    console.error("Error fetching recent submissions:", error);
+  }
+};
+
+const fetchTasks = async (userId) => {
+  setLoading(true);
+  try {
+    const response = await fetch(`http://localhost:3009/api/dr/${userId}`);
+    const data = await response.json();
+
+    setTasks(data); // Replace tasks instead of adding duplicates
+
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+  }
+  setLoading(false);
+};
 
 
-  const fetchTasks = async (userId) => {
-    setLoading(true);
-    try {
-      const response = await fetch("http://localhost:3009/api/dr");
-      const data = await response.json();
-      const userTasks = data.filter((task) => task.userId === userId);
-      setTasks(userTasks);
-    } catch (error) {
-      console.error("Error fetching tasks:", error);
+
+const addTask = async (newTask) => {
+  try {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || !user._id) {
+      console.error("User not found");
+      return;
     }
-    setLoading(false);
-  };
 
-  const fetchRecentSubmissions = async (userId) => {
-    try {
-      const response = await fetch(`http://localhost:3009/api/rs/recent_submissions/${userId}`);
-      const data = await response.json();
-      setRecentSubmissions(data.assignmentSubmissions || []);
-    } catch (error) {
-      console.error("Error fetching recent submissions:", error);
-    }
-  };
+    newTask.userId = user._id;
 
-  const addTask = async (newTask) => {
-    try {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (!user || !user._id) return;
-      newTask.userId = user._id;
-      const response = await fetch("http://localhost:3009/api/dr/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newTask),
-      });
-      if (response.ok) {
-        const addedTask = await response.json();
-        setTasks((prevTasks) => [...prevTasks, addedTask].sort(
-          (a, b) => new Date(a.deadline) - new Date(b.deadline)
-        ));
-        setShowForm(false);
-      } else {
-        console.error("Failed to add task");
-      }
-    } catch (error) {
-      console.error("Error adding task:", error);
-    }
-  };
+    const response = await fetch("http://localhost:3009/api/dr/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newTask),
+    });
 
-  const deleteTask = async (taskId) => {
-    try {
-      const response = await fetch(`http://localhost:3009/api/dr/${taskId}`, {
-        method: "DELETE",
-      });
-      if (response.ok) {
-        setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
-      } else {
-        console.error("Failed to delete task");
-      }
-    } catch (error) {
-      console.error("Error deleting task:", error);
+    if (!response.ok) {
+      throw new Error("Failed to add task");
     }
-  };
+
+    const addedTask = await response.json();
+
+    // ✅ Check if task already exists before adding
+    setTasks((prevTasks) => {
+      const taskExists = prevTasks.some((task) => task._id === addedTask._id);
+      return taskExists ? prevTasks : [...prevTasks, addedTask];
+    });
+
+    setShowForm(false);
+  } catch (error) {
+    console.error("Error adding task:", error.message);
+  }
+};
+
+
+
+
+const deleteTask = async (taskId) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user || !user._id) {
+    console.error("User not found");
+    return;
+  }
+
+  console.log("Attempting to delete task:", { userId: user._id, taskId });
+
+  try {
+    const response = await fetch(`http://localhost:3009/api/dr/${user._id}/${taskId}`, {
+      method: "DELETE",
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      console.log("Task deleted successfully:", result);
+      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+    } else {
+      console.error("Failed to delete task:", result.message);
+    }
+  } catch (error) {
+    console.error("Error deleting task:", error);
+  }
+};
+
+
 
   return (
     <div className="dashboard-container deadlines-dashboard">
