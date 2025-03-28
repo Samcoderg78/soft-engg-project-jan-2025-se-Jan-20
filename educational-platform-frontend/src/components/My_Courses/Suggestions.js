@@ -85,7 +85,7 @@ useEffect(() => {
               <h5 className="text-center">Important Links</h5>
               {ai_resources?.map((res, index) => (
                 <div key={res._id}>
-                  <a href={res.url} target="_blank" rel="noopener noreferrer">
+                  <a href={res.url.split('](')[0]} target="_blank" rel="noopener noreferrer"> 
                   <ReactMarkdown>{res.description}</ReactMarkdown>
                   </a>
                 </div>
