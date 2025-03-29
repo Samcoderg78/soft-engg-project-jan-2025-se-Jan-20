@@ -176,8 +176,113 @@ paths:
                   error:
                     type: string
 
+  /user/update/{id}:
+    put:
+      tags:
+        - User
+      summary: Update user information
+      description: Updates user details including name, email, roll number, and password. Password is hashed before storage.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the user to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateInput'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User updated successfully"
+                  data:
+                    $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+        '500':
+          description: Error updating user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error updating user"
+                  error:
+                    type: string
+                    example: "Error details here"
 
 
+  /enrollments/user/{userId}/courses:
+    get:
+      tags:
+        - Enrollment
+      summary: Get course IDs for a user
+      description: Fetches all course IDs that a specific user is enrolled in.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+          description: Valid MongoDB ObjectId of the user
+      responses:
+        '200':
+          description: List of course IDs the user is enrolled in
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: ObjectId
+                  example: "5f8d0d55b54764421b7156da"
+        '400':
+          description: Invalid user ID format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid user ID"
+        '404':
+          description: No enrollments found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No enrollments found for this user"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Server error"
+                  error:
+                    type: string
+                    example: "Error details here"
 
 
 
@@ -287,7 +392,7 @@ paths:
                 - assignment_id
                 - course_id
                 - response
-                - actual_output
+                - actual_solution
               properties:
                 user_id:
                   type: string
@@ -297,7 +402,7 @@ paths:
                   type: string
                 response:
                   type: string
-                actual_output:
+                actual_solution:
                   type: string
       responses:
         '201':
@@ -768,56 +873,6 @@ paths:
         "500":
           description: Error processing request
 
-  /programming/programming-resources:
-    post:
-      summary: Get programming resources
-      description: Retrieves relevant educational resources for a given programming topic.
-      tags:
-       - AI Programming Assistance
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - query
-              properties:
-                query:
-                  type: string
-                  example: "Best resources for learning Python"
-                context:
-                  type: string
-                  example: "Beginner Python tutorials"
-      responses:
-        "200":
-          description: Successfully retrieved resources
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    resourceType:
-                      type: string
-                      example: "Documentation"
-                    resourceUrl:
-                      type: string
-                      example: "https://docs.python.org/3/"
-                    resourceDescription:
-                      type: string
-                      example: "Official Python documentation."
-        "500":
-          description: Error processing request
-
-
-
-
-
-
-
-
 
 
 
@@ -997,41 +1052,12 @@ paths:
 
 
 
-  
-
-  
-
-
-
-
-
-
-
-
-  /dr:
-    get:
-      tags:
-        - deadline
-      summary: Get all deadlines & reminders
-      description: Fetches a list of all available tasks.
-      responses:
-        '200':
-          description: A list of tasks.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Task'
-        '500':
-          description: Error fetching tasks
-
   /dr/add:
     post:
       tags:
         - deadline
       summary: Add a new deadline or reminder
-      description: Adds a new task to the system.
+      description: Adds a new task to the system for a specific user.
       requestBody:
         required: true
         content:
@@ -1046,36 +1072,66 @@ paths:
               schema:
                 $ref: '#/components/schemas/Task'
         '400':
-          description: Task with the same name and subject already exists
+          description: |
+            Bad request. Possible reasons:
+            - User ID is required
+            - Task with the same name, subject and deadline already exists
         '500':
           description: Error adding task
 
-  /dr/{id}:
-    delete:
+  /dr/{userId}:
+    get:
       tags:
-        - Reminder
-      summary: Delete a deadline reminder
-      description: Deletes a task by its ID.
+        - deadline
+      summary: Get all deadlines & reminders for a specific user
+      description: Fetches a list of all available tasks for the specified user, sorted by deadline.
       parameters:
-        - name: id
+        - name: userId
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the user whose tasks to fetch
+      responses:
+        '200':
+          description: A list of tasks for the specified user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '500':
+          description: Error fetching tasks
+
+  /dr/{userId}/{taskId}:
+    delete:
+      tags:
+        - deadline
+      summary: Delete a deadline reminder
+      description: Deletes a task by its ID, ensuring it belongs to the specified user.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the user who owns the task
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the task to delete
       responses:
         '200':
           description: Task deleted successfully
+        '400':
+          description: User ID and Task ID are required
         '404':
-          description: Task not found
+          description: Task not found or not authorized to delete
         '500':
           description: Error deleting task
-
-
-
-
-
-
-
 
 
 
@@ -1698,62 +1754,60 @@ components:
           type: string
           description: URL of the course image
 
-
-
-
     Task:
       type: object
       properties:
-        id:
+        _id:
           type: string
-          description: Unique identifier for the task
+        userId:
+          type: string
         name:
           type: string
-          description: Name of the task
         subject:
           type: string
-          description: Subject of the task
         deadline:
           type: string
           format: date-time
-          description: Deadline for the task
         priority:
           type: string
-          enum: [High, Medium, Low]
-          description: Priority level of the task
+          enum: ['High', 'Medium', 'Low']
         createdAt:
           type: string
           format: date-time
-          description: Timestamp of task creation
         updatedAt:
           type: string
           format: date-time
-          description: Timestamp of last update
-
-    TaskInput:
-      type: object
       required:
+        - userId
         - name
         - subject
         - deadline
+
+    TaskInput:
+      type: object
       properties:
+        userId:
+          type: string
+          required: true
         name:
           type: string
-          description: Name of the task
+          required: true
         subject:
           type: string
-          description: Subject of the task
+          required: true
         deadline:
           type: string
           format: date-time
-          description: Deadline for the task
+          required: true
         priority:
           type: string
-          enum: [High, Medium, Low]
-          description: Priority level of the task
-
-
-
+          enum: ['High', 'Medium', 'Low']
+          default: 'Medium'
+      required:
+        - userId
+        - name
+        - subject
+        - deadline
 
 
     Lecture:
@@ -2022,6 +2076,8 @@ components:
         timestamp:
           type: string
           format: date-time
+
+
 
 
 
