@@ -59,16 +59,19 @@ const Lectures = () => {
       try {
         const response = await axios.get(`http://localhost:3009/api/tn/lecture/${lectureId}`);
         if (response.data && response.data.notes) {
+          // Filter notes for the current user on the frontend
+          const filteredNotes = response.data.notes.filter(note => note.user_id === userId._id);
+    
           // Format notes with timestamp and note content
-          const formattedNotes = response.data.notes.map(note => ({
+          const formattedNotes = filteredNotes.map(note => ({
             timestamp: new Date(note.timestamp).toLocaleTimeString(),
             note: note.note
           }));
+    
           setNotes(formattedNotes);
         }
       } catch (err) {
         console.error("Error fetching notes:", err);
-        // Don't show error to user for notes as it's secondary functionality
       }
     };
 
