@@ -6,7 +6,7 @@ const Topbar = () => {
   return (
     <nav className="custom-topbar">
       <span className="custom-brand">My Learning Platform</span>
-      <button className="custom-logout-btn">Logout</button>
+      {/* <button className="custom-logout-btn">Logout</button> */}
     </nav>
   );
 };
