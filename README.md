@@ -55,6 +55,15 @@ npm install
 cd educational-platform-backend
 npm install
 ```
+
+### Create a .env file in the backend folder:
+```sh
+PORT = 3009
+MONGODB_URI = "mongodb+srv://root:root@clustersolnstech.1bikubl.mongodb.net/educationaPlatformIITM?retryWrites=true&w=majority&appName=ClusterSolnstech"
+HUGGINGFACE_API_KEY=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
+GOOGLE_GENAI_API_KEY=AIzaSyDXE_LGHuRXnovDtxJg-0zQc4h0OlAOcgE
+```
+
  ## Running the Application
 
  ### Start frontend development server:
@@ -75,15 +84,21 @@ Runs on: http://localhost:5000
 
 
 # 🔐 Default Login Credentials
-## Student Account:
+## Student Accounts:
 
 - Email: student1@example.com
 - Password: 1234
 
-## Instructor Account:
+- Email: student2@example.com
+- Password: 1234
 
-- Email: instructor@example.com
-- Password: password
+## Instructor Accounts:
+
+- Email: instructor1@example.com
+- Password: 1234
+
+- Email: instructor2@example.com
+- Password: 1234
 
 ## 📚 Platform Features
 **Course Management:** 
