@@ -4,6 +4,9 @@
 
 The **AI Agent for Academic Guidance** is a web-based learning platform designed to enhance the educational experience for students in the IITM BS degree program. Built using the **MERN Stack**, this application serves as an intelligent virtual guide that helps students navigate course materials, improve study habits, and maintain academic integrity without providing direct answers.
 
+## Project demo vedio.
+https://drive.google.com/file/d/1SiwejGsb08dXfTrjXmpeLi2CyCCReAqd/view?usp=sharing
+
 ## 🌟 Key Features
 
 - **Smart Academic Guidance**: AI assistant that suggests learning strategies and references rather than direct answers
